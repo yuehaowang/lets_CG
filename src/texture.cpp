@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "gl_header_files.h"
-#include "window.h"
-#include "shader.h"
-#include "loader.h"
-#include "image.h"
-#include "mat4x4.h"
-#include "vec3.h"
+#include "utils/gl_header_files.h"
+#include "utils/window.h"
+#include "utils/shader.h"
+#include "utils/loader.h"
+#include "utils/image.h"
+#include "utils/mat4x4.h"
+#include "utils/vec3.h"
 
 
 class MainWindow : public Window

@@ -1,6 +1,6 @@
-#include "window.h"
-#include "shader.h"
-#include "gl_header_files.h"
+#include "utils/window.h"
+#include "utils/shader.h"
+#include "utils/gl_header_files.h"
 
 
 class MainWindow : public Window

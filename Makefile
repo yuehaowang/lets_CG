@@ -26,6 +26,7 @@ EXECUTABLE = build/$@
 # COMMON_OPTS specifies some repeated compiling options
 COMMON_OPTS = $(LIB_OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
 
+# target hints
 CHOOSE_TARGET_HINT = "\
 	Available Targets: \n \
 		\n \
@@ -36,69 +37,75 @@ CHOOSE_TARGET_HINT = "\
 		\t 4. cube_texture \n \
 \n (e.g. make 3d_geom)"
 
-RUN_EXECUTABLE = echo "\n\nRunning...\n\n" && $(EXECUTABLE)
+# common headers
+GL_HEADER = src/utils/gl_header_files.h
+MATH_HEADERS = src/utils/mat4x4.h src/utils/vec3.h
+IMAGE_HEADERS = src/utils/external/stb_image.h src/utils/image.h
+OVERALL_HEADERS = $(GL_HEADER) $(MATH_HEADERS) $(IMAGE_HEADERS)
 
-COMMON_HEADERS = src/gl_header_files.h src/mat4x4.h src/vec3.h
+define RUN_EXECUTABLE
+
+	$(CC) build/$@.o $(COMMON_OPTS) -o $(EXECUTABLE)
+	@echo "\n\nRunning...\n\n"
+	$(EXECUTABLE)
+	
+endef
 
 
+# all
 all :
 	@echo $(CHOOSE_TARGET_HINT)
 
 
 # triangle
 triangle : $(LIB_OBJS) build/triangle.o
-	$(CC) build/triangle.o $(COMMON_OPTS) -o $(EXECUTABLE) \
-	&& $(RUN_EXECUTABLE)
+	$(RUN_EXECUTABLE)
 
-build/triangle.o : src/triangle.cpp src/gl_header_files.h
+build/triangle.o : src/triangle.cpp src/utils/gl_header_files.h
 	$(CC) -c src/triangle.cpp -o build/triangle.o
 
 
 # 3D geom demo
 3d_geom : $(LIB_OBJS) build/3d_geom.o
-	$(CC) build/3d_geom.o $(COMMON_OPTS) -o $(EXECUTABLE) \
-	&& $(RUN_EXECUTABLE)
+	$(RUN_EXECUTABLE)
 
-build/3d_geom.o : src/3d_geom.cpp $(COMMON_HEADERS)
+build/3d_geom.o : src/3d_geom.cpp $(GL_HEADER) $(MATH_HEADERS)
 	$(CC) -c src/3d_geom.cpp -o build/3d_geom.o
 
 
 # matrix test
 math_test : build/math_test.o
-	$(CC) build/math_test.o -o $(EXECUTABLE) \
-	&& $(RUN_EXECUTABLE)
+	$(RUN_EXECUTABLE)
 
-build/math_test.o : src/math_test.cpp src/mat4x4.h src/vec3.h
+build/math_test.o : src/math_test.cpp $(MATH_HEADERS)
 	$(CC) -c src/math_test.cpp -o build/math_test.o
 
 
 # texture
 texture : $(LIB_OBJS) build/texture.o
-	$(CC) build/texture.o $(COMMON_OPTS) -o $(EXECUTABLE) \
-	&& $(RUN_EXECUTABLE)
+	$(RUN_EXECUTABLE)
 
-build/texture.o : src/texture.cpp $(COMMON_HEADERS) src/external/stb_image.h src/image.h
+build/texture.o : src/texture.cpp $(OVERALL_HEADERS)
 	$(CC) -c src/texture.cpp -o build/texture.o
 
 
 # cube texture
 cube_texture : $(LIB_OBJS) build/cube_texture.o
-	$(CC) build/cube_texture.o $(COMMON_OPTS) -o $(EXECUTABLE) \
-	&& $(RUN_EXECUTABLE)
+	$(RUN_EXECUTABLE)
 
-build/cube_texture.o : src/cube_texture.cpp $(COMMON_HEADERS) src/external/stb_image.h src/image.h
+build/cube_texture.o : src/cube_texture.cpp $(OVERALL_HEADERS)
 	$(CC) -c src/cube_texture.cpp -o build/cube_texture.o
 
 
-# common
-build/loader.o : src/loader.cpp src/loader.h src/external/stb_image.h src/image.h
-	$(CC) -c src/loader.cpp -o build/loader.o
+# utils
+build/loader.o : src/utils/loader.cpp src/utils/loader.h src/utils/external/stb_image.h src/utils/image.h
+	$(CC) -c src/utils/loader.cpp -o build/loader.o
 
-build/shader.o : src/shader.cpp src/shader.h src/gl_header_files.h build/loader.o
-	$(CC) -c src/shader.cpp -o build/shader.o
+build/shader.o : src/utils/shader.cpp src/utils/shader.h src/utils/gl_header_files.h build/loader.o
+	$(CC) -c src/utils/shader.cpp -o build/shader.o
 
-build/window.o : src/window.cpp src/window.h src/gl_header_files.h
-	$(CC) -c src/window.cpp -o build/window.o
+build/window.o : src/utils/window.cpp src/utils/window.h src/utils/gl_header_files.h
+	$(CC) -c src/utils/window.cpp -o build/window.o
 
 
 # clear build directory

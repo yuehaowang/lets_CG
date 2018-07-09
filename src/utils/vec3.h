@@ -44,6 +44,7 @@ struct Vec3
     void operator *= (T c) { *this = *this * c; }
     void operator *= (Vec3<T> v) { *this = *this * v; }
     void operator += (Vec3<T> v1) { *this = *this + v1; }
+    void operator -= (Vec3<T> v1) { *this = *this - v1; }
 };
 
 template <typename T>
@@ -66,6 +67,13 @@ Vec3<T> operator + (Vec3<T> v1, Vec3<T> v2)
 {
     return Vec3<T>(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
 }
+
+template <typename T>
+Vec3<T> operator - (Vec3<T> v1, Vec3<T> v2)
+{
+    return Vec3<T>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+}
+
 
 template <typename T>
 std::ostream& operator << (std::ostream& os, const Vec3<T>& v)

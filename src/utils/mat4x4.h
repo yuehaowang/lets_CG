@@ -29,16 +29,19 @@ public:
     Mat4x4(T* arr);
     const T* Ptr() const;
     void operator = (const Mat4x4<T>& m);
-    T operator () (unsigned int row, unsigned int col);
+    T& operator () (unsigned int row, unsigned int col);
     void operator *= (const T c);
     void operator *= (const Mat4x4<T>& m);
     void operator += (const Mat4x4<T>& m);
+    void operator -= (const Mat4x4<T>& m);
     template <typename U> friend std::ostream& operator << (std::ostream& os, const Mat4x4<U>& m);
+    void Transpose();
     void Translate(T x = 0, T y = 0, T z = 0);
     void Rotate(T euler_x = 0, T euler_y = 0, T euler_z = 0);
     void Scale(T sx = 1, T sy = 1, T sz = 1);
     void Perspective(Vec3<T> image_plane);
     void Projection(Vec3<T> space);
+    void LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u);
 
 };
 
@@ -83,7 +86,7 @@ const T* Mat4x4<T>::Ptr() const
 }
 
 template <typename T>
-T Mat4x4<T>::operator () (unsigned int row, unsigned int col)
+T& Mat4x4<T>::operator () (unsigned int row, unsigned int col)
 {
     if (row >= MAT4X4_M) {
         row = MAT4X4_M - 1;
@@ -117,6 +120,28 @@ Mat4x4<T> operator + (const Mat4x4<T>& m1, const Mat4x4<T>& m2)
 
 template <typename T>
 void Mat4x4<T>::operator += (const Mat4x4<T>& m) { *this = *this + m; }
+
+template <typename T>
+Mat4x4<T> operator - (const Mat4x4<T>& m1, const Mat4x4<T>& m2)
+{
+    const T* a = m1.Ptr();
+    const T* b = m2.Ptr();
+
+    T* res_arr = new T[MAT4X4_LENGTH];
+
+    for (int j = 0; j < MAT4X4_LENGTH; j++) {
+        res_arr[j] = a[j] - b[j];
+    }
+
+    Mat4x4<T> res(res_arr);
+
+    delete[] res_arr;
+
+    return res;
+}
+
+template <typename T>
+void Mat4x4<T>::operator -= (const Mat4x4<T>& m) { *this = *this - m; }
 
 template <typename T>
 Mat4x4<T> operator * (const Mat4x4<T>& m1, const Mat4x4<T>& m2)
@@ -174,13 +199,7 @@ void Mat4x4<T>::operator *= (const Mat4x4<T>& m) { *this = *this * m; }
 template <typename T>
 void Mat4x4<T>::operator = (const Mat4x4<T>& m)
 {
-    const T* m_ptr = m.Ptr();
-
-    array = new T[MAT4X4_LENGTH];
-
-    for (int j = 0; j < MAT4X4_LENGTH; j++) {
-        array[j] = m_ptr[j];
-    }
+    std::memcpy(array, m.Ptr(), MAT4X4_LENGTH * sizeof(T));
 }
 
 template <typename U>
@@ -198,6 +217,21 @@ std::ostream& operator << (std::ostream& os, const Mat4x4<U>& m)
 }
 
 template <typename T>
+void Mat4x4<T>::Transpose()
+{
+    Mat4x4<T> new_m;
+
+    for (int j = 0; j < MAT4X4_LENGTH; j++) {
+        int col = j % MAT4X4_N;
+        int row = (j - col) / MAT4X4_N;
+
+        new_m(col, row) = array[j];
+    }
+
+    *this = new_m;
+}
+
+template <typename T>
 void Mat4x4<T>::Translate(T x, T y, T z)
 {
     Mat4x4<T> m_t((T [MAT4X4_LENGTH]) {
@@ -207,7 +241,7 @@ void Mat4x4<T>::Translate(T x, T y, T z)
         x,  y,  z, 1
     });
 
-    std::memcpy(array, (m_t * (*this)).Ptr(), MAT4X4_LENGTH * sizeof(T));
+    *this = m_t * (*this);
 }
 
 template <typename T>
@@ -237,7 +271,7 @@ void Mat4x4<T>::Rotate(T euler_x, T euler_y, T euler_z)
              0,        0,    0,    1
     });
 
-    std::memcpy(array, (m_x * m_y * m_z * (*this)).Ptr(), MAT4X4_LENGTH * sizeof(T));
+    *this = m_x * m_y * m_z * (*this);
 }
 
 template <typename T>
@@ -249,8 +283,38 @@ void Mat4x4<T>::Scale(T sx, T sy, T sz)
          0,  0, sz, 0,
          0,  0,  0, 1
     });
+    
+    *this = m_s * (*this);
+}
 
-    std::memcpy(array, (m_s * (*this)).Ptr(), MAT4X4_LENGTH * sizeof(T));
+template <typename T>
+void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
+{
+    cam_u.Normalize();
+
+    Vec3<T> cam_d = cam_pos - target;
+    cam_d.Normalize();
+
+    Vec3<T> cam_r = cam_d * cam_u;
+    
+    Mat4x4<T> orientation_mat((T [MAT4X4_LENGTH]) {
+        cam_r.x, cam_r.y, cam_r.z, 0,
+        cam_u.x, cam_u.y, cam_u.z, 0,
+        cam_d.x, cam_d.y, cam_d.z, 0,
+              0,       0,       0, 1
+    });
+
+    Mat4x4<T> translation_mat((T [MAT4X4_LENGTH]) {
+        1, 0, 0, -cam_pos.x,
+        0, 1, 0, -cam_pos.y,
+        0, 0, 1, -cam_pos.z,
+        0, 0, 0,          1
+    });
+
+    Mat4x4<T> view_mat = orientation_mat * translation_mat;
+    view_mat.Transpose();
+
+    *this = view_mat * (*this);
 }
 
 template <typename T>
@@ -265,7 +329,7 @@ void Mat4x4<T>::Perspective(Vec3<T> image_plane)
         0, 0,        0,       1
     });
 
-    std::memcpy(array, (m_p * (*this)).Ptr(), MAT4X4_LENGTH * sizeof(T));
+    *this = m_p * (*this);
 }
 
 template <typename T>
@@ -280,7 +344,7 @@ void Mat4x4<T>::Projection(Vec3<T> space)
                 0,           0,         0,  1,
     });
 
-    std::memcpy(array, (m_p * (*this)).Ptr(), MAT4X4_LENGTH * sizeof(T));
+    *this = m_p * (*this);
 }
 
 

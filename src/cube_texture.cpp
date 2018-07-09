@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include "gl_header_files.h"
-#include "window.h"
-#include "shader.h"
-#include "loader.h"
-#include "image.h"
-#include "mat4x4.h"
-#include "vec3.h"
+#include "utils/gl_header_files.h"
+#include "utils/window.h"
+#include "utils/shader.h"
+#include "utils/loader.h"
+#include "utils/image.h"
+#include "utils/mat4x4.h"
+#include "utils/vec3.h"
 
 
 class MainWindow : public Window
@@ -82,7 +82,7 @@ public:
 
             Mat4x4<GLfloat> trans_mat;
             trans_mat.Perspective(Vec3<GLfloat>(0, 0, -1));
-            trans_mat.Projection(Vec3<GLfloat>(5, 5, 10));
+             trans_mat.Projection(Vec3<GLfloat>(5, 5, 10));
             trans_mat.Translate(-3.5 + i * 1.8, 0, 0);
             trans_mat.Rotate(angle, angle, angle);
 

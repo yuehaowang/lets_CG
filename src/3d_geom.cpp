@@ -1,11 +1,11 @@
 #define TRANSLATION_STEP 1
 #define ROTATION_STEP 0.5
 
-#include "shader.h"
-#include "window.h"
-#include "mat4x4.h"
-#include "vec3.h"
-#include "gl_header_files.h"
+#include "utils/shader.h"
+#include "utils/window.h"
+#include "utils/mat4x4.h"
+#include "utils/vec3.h"
+#include "utils/gl_header_files.h"
 
 
 class MainWindow : public Window
