@@ -5,6 +5,15 @@
 int main()
 {
     // matrix
+    Mat4x4<float> m0((float [16]){
+        0, 1, 2, 4,
+        9, 4, 7, 8,
+        3, 6, 8, 0,
+        0, 0, 0, 1
+    });
+    m0.Transpose();
+    std::cout << m0 << std::endl;
+
     Mat4x4<float> m;
     m.Scale(10.0f, 10.0f, 10.0f);
 
