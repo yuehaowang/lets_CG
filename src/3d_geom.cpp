@@ -64,12 +64,16 @@ public:
         GLuint trans_mat = glGetUniformLocation(shader.Id(), "trans");
 
         Mat4x4<GLfloat> m;
-        m.Perspective(Vec3<GLfloat>(0.0f, 0.0f, -1.0f));
-        m.Projection(Vec3<GLfloat>(WindowWidth(), WindowHeight(), 400));
-        m.Translate(translation.x, translation.y, translation.z);
         m.Rotate(rotation.x, rotation.y, rotation.z);
+        m.Translate(translation.x, translation.y, translation.z);
 
-        glUniformMatrix4fv(trans_mat, 1, GL_FALSE, m.Ptr());
+        Mat4x4<GLfloat> v;
+        m.LookAt(Vec3<GLfloat>(0, 0, 400), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+        
+        Mat4x4<GLfloat> p;
+        m.Perspective(90, (float)WindowWidth() / (float)WindowHeight(), 300, 800);
+
+        glUniformMatrix4fv(trans_mat, 1, GL_TRUE, (p * v * m).Ptr());
 
         glDrawArrays(GL_TRIANGLES, 0, 6 * 16);
     }
@@ -101,17 +105,17 @@ public:
         } else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
             translation.z += TRANSLATION_STEP;
         } else if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-            rotation.x += ROTATION_STEP;
-        } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
             rotation.x -= ROTATION_STEP;
+        } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+            rotation.x += ROTATION_STEP;
         } else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
             rotation.y -= ROTATION_STEP;
         } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
             rotation.y += ROTATION_STEP;
         } else if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
-            rotation.z += ROTATION_STEP;
-        } else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
             rotation.z -= ROTATION_STEP;
+        } else if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+            rotation.z += ROTATION_STEP;
         }
     }
 

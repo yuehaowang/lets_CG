@@ -1,8 +1,8 @@
 # CC specifies which compiler we're using
-CC = g++
+CC = g++ -g
 
 # INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include -include src/gl_header_files.h
+INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include
 
 # LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = -L/usr/local/lib -I/opt/X11/lib

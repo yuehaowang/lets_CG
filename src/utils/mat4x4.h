@@ -36,11 +36,11 @@ public:
     void operator -= (const Mat4x4<T>& m);
     template <typename U> friend std::ostream& operator << (std::ostream& os, const Mat4x4<U>& m);
     void Transpose();
+    void Identity();
     void Translate(T x = 0, T y = 0, T z = 0);
     void Rotate(T euler_x = 0, T euler_y = 0, T euler_z = 0);
     void Scale(T sx = 1, T sy = 1, T sz = 1);
-    void Perspective(Vec3<T> image_plane);
-    void Projection(Vec3<T> space);
+    void Perspective(float fovv, float aspect_ratio, T n, T f);
     void LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u);
 
 };
@@ -77,7 +77,7 @@ Mat4x4<T>::Mat4x4(T* arr)
 }
 
 template <typename T>
-Mat4x4<T>::Mat4x4(const Mat4x4<T>& m) { *this = m; }
+Mat4x4<T>::Mat4x4(const Mat4x4<T>& m) : array(NULL) { *this = m; }
 
 template <typename T>
 const T* Mat4x4<T>::Ptr() const
@@ -199,6 +199,10 @@ void Mat4x4<T>::operator *= (const Mat4x4<T>& m) { *this = *this * m; }
 template <typename T>
 void Mat4x4<T>::operator = (const Mat4x4<T>& m)
 {
+    if (array == NULL) {
+        array = new T[MAT4X4_LENGTH];
+    }
+
     std::memcpy(array, m.Ptr(), MAT4X4_LENGTH * sizeof(T));
 }
 
@@ -232,13 +236,28 @@ void Mat4x4<T>::Transpose()
 }
 
 template <typename T>
+void Mat4x4<T>::Identity()
+{
+    for (int j = 0; j < MAT4X4_LENGTH; j++) {
+        int col = j % MAT4X4_N;
+        int row = (j - col) / MAT4X4_N;
+
+        if (col == row) {
+            array[j] = 1;
+        } else {
+            array[j] = 0;
+        }
+    }
+}
+
+template <typename T>
 void Mat4x4<T>::Translate(T x, T y, T z)
 {
     Mat4x4<T> m_t((T [MAT4X4_LENGTH]) {
-        1,  0,  0, 0,
-        0,  1,  0, 0,
-        0,  0,  1, 0,
-        x,  y,  z, 1
+        1,  0,  0, x,
+        0,  1,  0, y,
+        0,  0,  1, z,
+        0,  0,  0, 1
     });
 
     *this = m_t * (*this);
@@ -295,7 +314,7 @@ void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
     Vec3<T> cam_d = cam_pos - target;
     cam_d.Normalize();
 
-    Vec3<T> cam_r = cam_d * cam_u;
+    Vec3<T> cam_r = cam_u * cam_d;
     
     Mat4x4<T> orientation_mat((T [MAT4X4_LENGTH]) {
         cam_r.x, cam_r.y, cam_r.z, 0,
@@ -311,37 +330,20 @@ void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
         0, 0, 0,          1
     });
 
-    Mat4x4<T> view_mat = orientation_mat * translation_mat;
-    view_mat.Transpose();
-
-    *this = view_mat * (*this);
+    *this = orientation_mat * translation_mat * (*this);
 }
 
 template <typename T>
-void Mat4x4<T>::Perspective(Vec3<T> image_plane)
+void Mat4x4<T>::Perspective(float fovv, float aspect_ratio, T n, T f)
 {
-    T ex = image_plane.x, ey = image_plane.y, ez = image_plane.z;
-
+    T t = n * tan((fovv / 2) * PI / 180);
+    T r = t * aspect_ratio;
+    
     Mat4x4<T> m_p((T [MAT4X4_LENGTH]) {
-        1, 0, -ex / ez,       0,
-        0, 1, -ey / ez,       0,
-        0, 0,        1, -1 / ez,
-        0, 0,        0,       1
-    });
-
-    *this = m_p * (*this);
-}
-
-template <typename T>
-void Mat4x4<T>::Projection(Vec3<T> space)
-{
-    T width = space.x, height = space.y, depth = space.z;
-
-    Mat4x4<T> m_p((T [MAT4X4_LENGTH]) {
-        1 / width,           0,         0,  0,
-                0, 1 / height,          0,  0,
-                0,           0, 1 / depth,  0,
-                0,           0,         0,  1,
+        n / r,     0,                  0,                      0,
+            0, n / t,                  0,                      0,
+            0,     0, -(n + f) / (f - n), -(2 * f * n) / (f - n),
+            0,     0,                 -1,                      0
     });
 
     *this = m_p * (*this);

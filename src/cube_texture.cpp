@@ -1,5 +1,7 @@
 #define ROTATION_STEP 50
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <iostream>
 
 #include "utils/gl_header_files.h"
@@ -9,6 +11,7 @@
 #include "utils/image.h"
 #include "utils/mat4x4.h"
 #include "utils/vec3.h"
+#include "utils/glm_debug.h"
 
 
 class MainWindow : public Window
@@ -81,12 +84,32 @@ public:
             GLfloat angle = (GLfloat)glfwGetTime() * ROTATION_STEP * (i + 1);
 
             Mat4x4<GLfloat> trans_mat;
-            trans_mat.Perspective(Vec3<GLfloat>(0, 0, -1));
-             trans_mat.Projection(Vec3<GLfloat>(5, 5, 10));
-            trans_mat.Translate(-3.5 + i * 1.8, 0, 0);
             trans_mat.Rotate(angle, angle, angle);
+            trans_mat.Translate(-3.5 + i * 1.8, 0, 0);
+            trans_mat.LookAt(Vec3<GLfloat>(0, 0, 5), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+            trans_mat.Perspective(90, 1, 1, 100);
 
-            glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_FALSE, trans_mat.Ptr());
+            glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_TRUE, trans_mat.Ptr());
+
+/*****************************************************************
+ * Equivalent implementation of matrix transformation by GLM:
+
+            glm::mat4 v = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+            glm::mat4 p;
+            p = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 100.0f);
+
+            glm::mat4 m = glm::mat4(1.0f);
+            m = glm::translate(m, glm::vec3(-3.5 + i * 1.8, 0.0f, 0.0f));
+            m = glm::rotate(m, glm::radians((float)angle), glm::vec3(0.0, 0.0, 1.0));
+            m = glm::rotate(m, glm::radians((float)angle), glm::vec3(0.0, 1.0, 0.0));
+            m = glm::rotate(m, glm::radians((float)angle), glm::vec3(1.0, 0.0, 0.0));
+
+            glm::mat4 mvp = p*v*m;
+            
+            glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_FALSE, &mvp[0][0]);
+
+*****************************************************************/
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }

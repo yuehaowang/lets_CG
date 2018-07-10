@@ -4,7 +4,9 @@
 
 int main()
 {
+    ////////////////////////////////////////
     // matrix
+    ////////////////////////////////////////
     Mat4x4<float> m0((float [16]){
         0, 1, 2, 4,
         9, 4, 7, 8,
@@ -12,9 +14,12 @@ int main()
         0, 0, 0, 1
     });
     m0.Transpose();
-    std::cout << m0 << std::endl;
+    std::cout << m0 << std::endl << std::endl;
+    m0.Identity();
+    std::cout << m0 << std::endl << std::endl;
 
     Mat4x4<float> m;
+    std::cout << "scale" << std::endl;
     m.Scale(10.0f, 10.0f, 10.0f);
 
     Mat4x4<float> m2 = m;
@@ -31,7 +36,9 @@ int main()
 
     std::cout << std::endl;
 
+    ////////////////////////////////////////
     // vector
+    ////////////////////////////////////////
     Vec3<float> v(1.0f, 2.0f, 3.0f);
     Vec3<float> v2(2.0f, 1.0f, 3.0f);
 

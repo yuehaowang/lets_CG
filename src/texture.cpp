@@ -90,11 +90,11 @@ public:
         glUseProgram(shader.Id());
 
         Mat4x4<GLfloat> trans_mat;
-        trans_mat.Perspective(Vec3<GLfloat>(0, 0, -1));
-        trans_mat.Projection(Vec3<GLfloat>(1, 1, 1));
-        trans_mat.Rotate(-40.0, 0.0, 0.0);
+        trans_mat.Rotate(-30.0, 0.0, 0.0);
+        trans_mat.LookAt(Vec3<GLfloat>(0, 0, 1.5), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+        trans_mat.Perspective(90, 4 / 3, 1, 100);
 
-        glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_FALSE, trans_mat.Ptr());
+        glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_TRUE, trans_mat.Ptr());
 
         glUniform1i(glGetUniformLocation(shader.Id(), "texture0"), 0);
         glUniform1i(glGetUniformLocation(shader.Id(), "texture1"), 1);
