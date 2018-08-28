@@ -1,22 +1,32 @@
 # Installation
 
-## GLEW
+## On macOS
+
+### GLEW
 
 ```
 brew install glew
 ```
 
-## GLFW3
+### GLFW3
 
 ```
 brew install glfw3
 ```
 
-## GLM (if needed)
+### GLM (if needed)
 
 ```
 brew install glm
 ```
+
+## On Ubuntu
+
+```
+sudo apt-get install cmake libx11-dev xorg-dev libglu1-mesa-dev freeglut3-dev libglew1.5 libglew1.5-dev libglu1-mesa libglu1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev libglm-dev
+```
+
+Reference: https://medium.com/@Plimsky/how-to-install-a-opengl-environment-on-ubuntu-e3918cf5ab6c
 
 # How to Run
 

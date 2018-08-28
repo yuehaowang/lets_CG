@@ -1,5 +1,5 @@
 # CC specifies which compiler we're using
-CC = g++ -g
+CC = g++ -g -std=c++11 -O0
 
 # INCLUDE_PATHS specifies the additional include paths we'll need
 INCLUDE_PATHS = -I/usr/local/include -I/opt/X11/include
@@ -9,11 +9,24 @@ LIBRARY_PATHS = -L/usr/local/lib -I/opt/X11/lib
 
 # COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -w
+COMPILER_FLAGS = -w -Werror -Wall
+
+# DETECTED_OS specifies the current computer OS
+ifeq ($(OS), Windows_NT)
+	DETECTED_OS := Windows
+else
+	DETECTED_OS := $(shell uname -s)
+endif
 
 # LINKER_FLAGS specifies the libraries we're linking against
-# Cocoa, IOKit, and CoreVideo are needed for static GLFW3
-LINKER_FLAGS = -framework OpenGL -lglfw -lglew
+
+# macOS
+ifeq ($(DETECTED_OS), Darwin)
+	# Cocoa, IOKit, and CoreVideo are needed for static GLFW3
+	LINKER_FLAGS = -framework OpenGL -lglfw -lglew
+else ifeq ($(DETECTED_OS), Linux)
+	LINKER_FLAGS = -lGL -lGLU -lglut -lGLEW -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor
+endif
 
 # SOURCE specifies which files to compile as part of the project
 LIB_OBJS = build/loader.o \
@@ -44,7 +57,7 @@ IMAGE_HEADERS = src/utils/external/stb_image.h src/utils/image.h
 OVERALL_HEADERS = $(GL_HEADER) $(MATH_HEADERS) $(IMAGE_HEADERS)
 
 define RUN_EXECUTABLE
-
+	
 	$(CC) build/$@.o $(COMMON_OPTS) -o $(EXECUTABLE)
 	@echo "\n\nRunning...\n\n"
 	$(EXECUTABLE)
@@ -74,7 +87,7 @@ build/3d_geom.o : src/3d_geom.cpp $(GL_HEADER) $(MATH_HEADERS)
 
 
 # matrix test
-math_test : build/math_test.o
+math_test : $(LIB_OBJS) build/math_test.o
 	$(RUN_EXECUTABLE)
 
 build/math_test.o : src/math_test.cpp $(MATH_HEADERS)

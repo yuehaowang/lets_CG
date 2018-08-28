@@ -7,12 +7,15 @@ int main()
     ////////////////////////////////////////
     // matrix
     ////////////////////////////////////////
-    Mat4x4<float> m0((float [16]){
+
+    float temp_m_arr[16] = {
         0, 1, 2, 4,
         9, 4, 7, 8,
         3, 6, 8, 0,
         0, 0, 0, 1
-    });
+    };
+
+    Mat4x4<float> m0((float*)temp_m_arr);
     m0.Transpose();
     std::cout << m0 << std::endl << std::endl;
     m0.Identity();

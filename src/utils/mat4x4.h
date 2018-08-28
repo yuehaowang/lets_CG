@@ -253,12 +253,14 @@ void Mat4x4<T>::Identity()
 template <typename T>
 void Mat4x4<T>::Translate(T x, T y, T z)
 {
-    Mat4x4<T> m_t((T [MAT4X4_LENGTH]) {
+    T temp_m_arr[MAT4X4_LENGTH] = {
         1,  0,  0, x,
         0,  1,  0, y,
         0,  0,  1, z,
         0,  0,  0, 1
-    });
+    };
+
+    Mat4x4<T> m_t((T*)temp_m_arr);
 
     *this = m_t * (*this);
 }
@@ -267,28 +269,32 @@ template <typename T>
 void Mat4x4<T>::Rotate(T euler_x, T euler_y, T euler_z)
 {
     T a = euler_x * PI / 180;
-    Mat4x4<T> m_x((T [MAT4X4_LENGTH]) {
+    T temp_m_arr[MAT4X4_LENGTH] = {
         1,       0,        0,     0,
         0,  cos(a),  -sin(a),     0,
         0,  sin(a),   cos(a),     0,
         0,       0,        0,     1
-    });
+    };
+
+    Mat4x4<T> m_x((T*)temp_m_arr);
 
     a = euler_y * PI / 180;
-    Mat4x4<T> m_y((T [MAT4X4_LENGTH]) {
+    T temp_m_arr2[MAT4X4_LENGTH] = {
         cos(a),   0, sin(a),   0,
              0,   1,      0,   0,
         -sin(a),  0, cos(a),   0,
              0,   0,      0,   1
-    });
+    };
+    Mat4x4<T> m_y((T*)temp_m_arr2);
 
     a = euler_z * PI / 180;
-    Mat4x4<T> m_z((T [MAT4X4_LENGTH]) {
+    T temp_m_arr3[MAT4X4_LENGTH] = {
         cos(a),  -sin(a),    0,    0,
         sin(a),   cos(a),    0,    0,
              0,        0,    1,    0,
              0,        0,    0,    1
-    });
+    };
+    Mat4x4<T> m_z((T*)temp_m_arr3);
 
     *this = m_x * m_y * m_z * (*this);
 }
@@ -296,12 +302,14 @@ void Mat4x4<T>::Rotate(T euler_x, T euler_y, T euler_z)
 template <typename T>
 void Mat4x4<T>::Scale(T sx, T sy, T sz)
 {
-    Mat4x4<T> m_s((T [MAT4X4_LENGTH]) {
+    T temp_m_arr[MAT4X4_LENGTH] = {
         sx,  0,  0, 0,
          0, sy,  0, 0,
          0,  0, sz, 0,
          0,  0,  0, 1
-    });
+    };
+
+    Mat4x4<T> m_s((T*)temp_m_arr);
     
     *this = m_s * (*this);
 }
@@ -315,20 +323,24 @@ void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
     cam_d.Normalize();
 
     Vec3<T> cam_r = cam_u * cam_d;
-    
-    Mat4x4<T> orientation_mat((T [MAT4X4_LENGTH]) {
+
+    T temp_m_arr[MAT4X4_LENGTH] = {
         cam_r.x, cam_r.y, cam_r.z, 0,
         cam_u.x, cam_u.y, cam_u.z, 0,
         cam_d.x, cam_d.y, cam_d.z, 0,
               0,       0,       0, 1
-    });
+    };
+    
+    Mat4x4<T> orientation_mat((T*)temp_m_arr);
 
-    Mat4x4<T> translation_mat((T [MAT4X4_LENGTH]) {
+    T temp_m_arr2[MAT4X4_LENGTH] = {
         1, 0, 0, -cam_pos.x,
         0, 1, 0, -cam_pos.y,
         0, 0, 1, -cam_pos.z,
         0, 0, 0,          1
-    });
+    };
+
+    Mat4x4<T> translation_mat((T*)temp_m_arr2);
 
     *this = orientation_mat * translation_mat * (*this);
 }
@@ -339,12 +351,13 @@ void Mat4x4<T>::Perspective(float fovv, float aspect_ratio, T n, T f)
     T t = n * tan((fovv / 2) * PI / 180);
     T r = t * aspect_ratio;
     
-    Mat4x4<T> m_p((T [MAT4X4_LENGTH]) {
+    T temp_m_arr[MAT4X4_LENGTH] = {
         n / r,     0,                  0,                      0,
             0, n / t,                  0,                      0,
             0,     0, -(n + f) / (f - n), -(2 * f * n) / (f - n),
             0,     0,                 -1,                      0
-    });
+    };
+    Mat4x4<T> m_p((T*)temp_m_arr);
 
     *this = m_p * (*this);
 }
