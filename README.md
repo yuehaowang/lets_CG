@@ -58,7 +58,7 @@ AA^-1 = 1
 Transformation: translate -> rotate -> scale
 
 ```
-model_vec_3d = Translation * Rotation * Scaling
+model_mat_4x4 = Translation * Rotation * Scaling
 ```
 
 **Model - View - Projection (MVP)**
