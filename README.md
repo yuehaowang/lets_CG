@@ -1,4 +1,10 @@
-# Installation
+# Intro
+
+This is a repo where I upload my OpenGL learning notes and code.
+
+Reference: https://learnopengl.com/
+
+# Setup
 
 ## On macOS
 
@@ -35,15 +41,18 @@ make target_name
 ```
 All of the `target_name` will be listed by typing `make`.
 
-# Matrix
 
-## Matrix Transposition
+# Notes
+
+## Matrix
+
+### Matrix Transposition
 
 ```
 (AB)' = B'A'
 ```
 
-## Inverse Matrix
+### Inverse Matrix
 
 ```
 AA^-1 = 1
@@ -51,7 +60,7 @@ AA^-1 = 1
 (AB)^-1 = B^-1 * A^-1
 ```
 
-## Matrix Transformation
+### Matrix Transformation
 
 **Model**
 
@@ -70,7 +79,7 @@ MVP matrix is used to transform space coordinates to image plane: Word coordinat
 vertex_pos_2d = Projection * View * Model * pos_vec_3d
 ```
 
-**Note**
+### Caveats
 
 `mat` in GLSL reads input data one after another but `mat` is constructed by columns (a `vec`) not rows, which means `mat2(1, 2, 3, 4)` will construct a matrix:
 
