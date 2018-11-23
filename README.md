@@ -1,4 +1,4 @@
-# Intro
+# Let's OpenGL
 
 This is a repo where I upload my OpenGL learning notes and code.
 
