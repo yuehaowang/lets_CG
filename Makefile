@@ -72,52 +72,65 @@ all :
 
 # triangle
 triangle : $(LIB_OBJS) build/triangle.o
+	@mkdir -p build
 	$(RUN_EXECUTABLE)
 
 build/triangle.o : src/triangle.cpp src/utils/gl_header_files.h
+	@mkdir -p build
 	$(CC) -c src/triangle.cpp -o build/triangle.o
 
 
 # 3D geom demo
 3d_geom : $(LIB_OBJS) build/3d_geom.o
+	@mkdir -p build
 	$(RUN_EXECUTABLE)
 
 build/3d_geom.o : src/3d_geom.cpp $(GL_HEADER) $(MATH_HEADERS)
+	@mkdir -p build
 	$(CC) -c src/3d_geom.cpp -o build/3d_geom.o
 
 
 # matrix test
 math_test : $(LIB_OBJS) build/math_test.o
+	@mkdir -p build
 	$(RUN_EXECUTABLE)
 
 build/math_test.o : src/math_test.cpp $(MATH_HEADERS)
+	@mkdir -p build
 	$(CC) -c src/math_test.cpp -o build/math_test.o
 
 
 # texture
 texture : $(LIB_OBJS) build/texture.o
+	@mkdir -p build
 	$(RUN_EXECUTABLE)
 
 build/texture.o : src/texture.cpp $(OVERALL_HEADERS)
+	@mkdir -p build
 	$(CC) -c src/texture.cpp -o build/texture.o
 
 
 # cube texture
 cube_texture : $(LIB_OBJS) build/cube_texture.o
+	@mkdir -p build
 	$(RUN_EXECUTABLE)
 
 build/cube_texture.o : src/cube_texture.cpp $(OVERALL_HEADERS)
+	@mkdir -p build
 	$(CC) -c src/cube_texture.cpp -o build/cube_texture.o
 
 
 # utils
 build/loader.o : src/utils/loader.cpp src/utils/loader.h src/utils/external/stb_image.h src/utils/image.h
+	@mkdir -p build
 	$(CC) -c src/utils/loader.cpp -o build/loader.o
 
 build/shader.o : src/utils/shader.cpp src/utils/shader.h src/utils/gl_header_files.h build/loader.o
+	@mkdir -p build
 	$(CC) -c src/utils/shader.cpp -o build/shader.o
 
 build/window.o : src/utils/window.cpp src/utils/window.h src/utils/gl_header_files.h
+	@mkdir -p build
 	$(CC) -c src/utils/window.cpp -o build/window.o
 
 
