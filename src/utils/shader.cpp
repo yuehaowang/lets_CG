@@ -1,11 +1,60 @@
 #include <vector>
+#include <iostream>
 
 #include "shader.h"
 #include "loader.h"
 
 
+std::map<Shader::ShaderKey, Shader::ShaderProgram> Shader::shader_list = std::map<Shader::ShaderKey, Shader::ShaderProgram>();
+
+bool operator < (const Shader::ShaderKey& k1, const Shader::ShaderKey& k2) {
+    return (k1.vert_shader_file != k2.vert_shader_file) || (k1.frag_shader_file != k1.frag_shader_file);
+}
+
+Shader::Shader()
+{
+
+}
+
 Shader::Shader(const std::string& vert_shader_path, const std::string& frag_shader_path)
 {
+    CreateProgram(vert_shader_path, frag_shader_path);
+}
+
+void Shader::EmployProgram()
+{
+    if (shader_list.find(ShaderKey(vert_shader_file, frag_shader_file)) != shader_list.end()) {
+        ShaderProgram& prog = shader_list[ShaderKey(vert_shader_file, frag_shader_file)];
+        prog.ref_count++;
+    }
+
+}
+
+void Shader::DismissProgram()
+{
+    if (shader_list.find(ShaderKey(vert_shader_file, frag_shader_file)) != shader_list.end()) {
+
+        ShaderProgram& prog = shader_list[ShaderKey(vert_shader_file, frag_shader_file)];
+        prog.ref_count--;
+
+        if (prog.ref_count == 0) {
+            glDeleteProgram(prog.program_id);
+            shader_list.erase(ShaderKey(vert_shader_file, frag_shader_file));
+        }
+    }
+}
+
+void Shader::CreateProgram(const std::string& vert_shader_path, const std::string& frag_shader_path)
+{
+    vert_shader_file = vert_shader_path;
+    frag_shader_file = frag_shader_path;
+
+    std::map<ShaderKey, ShaderProgram>::iterator search = shader_list.find(ShaderKey(vert_shader_path, frag_shader_path));
+    if (search != shader_list.end()) {
+        program_id = search->second.program_id;
+        return;
+    }
+
     GLuint vert_shader_id = CompileShader(Loader::LoadPlainText(vert_shader_path), GL_VERTEX_SHADER);
     GLuint frag_shader_id = CompileShader(Loader::LoadPlainText(frag_shader_path), GL_FRAGMENT_SHADER);
 
@@ -14,6 +63,7 @@ Shader::Shader(const std::string& vert_shader_path, const std::string& frag_shad
     glAttachShader(program_id, frag_shader_id);
     glLinkProgram(program_id);
 
+    shader_list.insert(std::pair<ShaderKey, ShaderProgram>(ShaderKey(vert_shader_path, frag_shader_path), ShaderProgram(program_id)));
 }
 
 GLuint Shader::CompileShader(const std::string& src, GLenum shader_type)

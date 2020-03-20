@@ -24,7 +24,7 @@ private:
 public:
 
     Mat4x4();
-    ~Mat4x4();
+    virtual ~Mat4x4();
     Mat4x4(const Mat4x4<T>& m);
     Mat4x4(T* arr);
     const T* Ptr() const;
@@ -41,7 +41,9 @@ public:
     void Rotate(T euler_x = 0, T euler_y = 0, T euler_z = 0);
     void Scale(T sx = 1, T sy = 1, T sz = 1);
     void Perspective(float fovv, float aspect_ratio, T n, T f);
+    void Orthographic(float fovv, float aspect_ratio, T n, T f);
     void LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u);
+    void Eye(Vec3<T> cam_pos, Vec3<T> cam_d, Vec3<T> cam_u);
 
 };
 
@@ -188,6 +190,25 @@ Mat4x4<T> operator * (const Mat4x4<T>& m1, const T c)
 }
 
 template <typename T>
+Vec3<T> operator * (const Mat4x4<T>& m1, const Vec3<T>& v)
+{
+    const T* a = m1.Ptr();
+    T v_arr[] = {v.x, v.y, v.z, 1};
+    T res_arr[MAT4X4_N];
+
+    for (int j = 0; j < MAT4X4_N; j++) {
+        res_arr[j] = 0;
+
+        for (int i = 0; i < MAT4X4_N; i++) {
+            res_arr[j] += a[j * MAT4X4_N + i] * v_arr[i];
+        }
+    }
+
+    Vec3<T> res(res_arr[0] / res_arr[3], res_arr[1] / res_arr[3], res_arr[2] / res_arr[3]);
+    return res;
+}
+
+template <typename T>
 Mat4x4<T> operator * (const T c, const Mat4x4<T>& m1) { return m1 * c; }
 
 template <typename T>
@@ -317,11 +338,14 @@ void Mat4x4<T>::Scale(T sx, T sy, T sz)
 template <typename T>
 void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
 {
+    Eye(cam_pos, cam_pos - target, cam_u);
+}
+
+template <typename T>
+void Mat4x4<T>::Eye(Vec3<T> cam_pos, Vec3<T> cam_d, Vec3<T> cam_u)
+{
     cam_u.Normalize();
-
-    Vec3<T> cam_d = cam_pos - target;
     cam_d.Normalize();
-
     Vec3<T> cam_r = cam_u * cam_d;
 
     T temp_m_arr[MAT4X4_LENGTH] = {
@@ -330,7 +354,6 @@ void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
         cam_d.x, cam_d.y, cam_d.z, 0,
               0,       0,       0, 1
     };
-    
     Mat4x4<T> orientation_mat((T*)temp_m_arr);
 
     T temp_m_arr2[MAT4X4_LENGTH] = {
@@ -339,7 +362,6 @@ void Mat4x4<T>::LookAt(Vec3<T> cam_pos, Vec3<T> target, Vec3<T> cam_u)
         0, 0, 1, -cam_pos.z,
         0, 0, 0,          1
     };
-
     Mat4x4<T> translation_mat((T*)temp_m_arr2);
 
     *this = orientation_mat * translation_mat * (*this);
@@ -356,6 +378,24 @@ void Mat4x4<T>::Perspective(float fovv, float aspect_ratio, T n, T f)
             0, n / t,                  0,                      0,
             0,     0, -(n + f) / (f - n), -(2 * f * n) / (f - n),
             0,     0,                 -1,                      0
+    };
+    Mat4x4<T> m_p((T*)temp_m_arr);
+
+    *this = m_p * (*this);
+}
+
+
+template <typename T>
+void Mat4x4<T>::Orthographic(float fovv, float aspect_ratio, T n, T f)
+{
+    T t = n * tan((fovv / 2) * PI / 180);
+    T r = t * aspect_ratio;
+    
+    T temp_m_arr[MAT4X4_LENGTH] = {
+        1 / r,     0,            0,                  0,
+            0, 1 / t,            0,                  0,
+            0,     0, -2 / (f - n), -(f + n) / (f - n),
+            0,     0,            0,                  1
     };
     Mat4x4<T> m_p((T*)temp_m_arr);
 

@@ -68,10 +68,10 @@ public:
         m.Translate(translation.x, translation.y, translation.z);
 
         Mat4x4<GLfloat> v;
-        m.LookAt(Vec3<GLfloat>(0, 0, 400), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+        v.LookAt(Vec3<GLfloat>(0, 0, 400), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
         
         Mat4x4<GLfloat> p;
-        m.Perspective(90, (float)WindowWidth() / (float)WindowHeight(), 300, 800);
+        p.Perspective(90, (float)WindowWidth() / (float)WindowHeight(), 300, 800);
 
         glUniformMatrix4fv(trans_mat, 1, GL_TRUE, (p * v * m).Ptr());
 

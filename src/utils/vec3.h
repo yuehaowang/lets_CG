@@ -2,6 +2,7 @@
 #define _VEC3_H_
 
 #include <cmath>
+#include <ostream>
 
 
 template <typename T>
@@ -11,7 +12,11 @@ struct Vec3
     T y;
     T z;
 
+    Vec3() : x(0), y(0), z(0) {}
+
     Vec3(T v_x, T v_y, T v_z) : x(v_x), y(v_y), z(v_z) {}
+
+    Vec3(const Vec3<T>& v) { *this = v; }
 
     float Length()
     {
@@ -45,6 +50,12 @@ struct Vec3
     void operator *= (Vec3<T> v) { *this = *this * v; }
     void operator += (Vec3<T> v1) { *this = *this + v1; }
     void operator -= (Vec3<T> v1) { *this = *this - v1; }
+    void operator = (const Vec3<T>& v)
+    {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+    }
 };
 
 template <typename T>

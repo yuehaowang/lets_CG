@@ -31,7 +31,12 @@ endif
 # SOURCE specifies which files to compile as part of the project
 LIB_OBJS = build/loader.o \
 		   build/shader.o \
-		   build/window.o
+		   build/window.o \
+		   build/mesh.o   \
+		   build/displayobject.o \
+		   build/camera.o \
+		   build/light.o  \
+		   build/scene.o  \
 
 # EXECUTABLE specifies the path of the executable file
 EXECUTABLE = build/$@
@@ -54,7 +59,7 @@ CHOOSE_TARGET_HINT = "\
 GL_HEADER = src/utils/gl_header_files.h
 MATH_HEADERS = src/utils/mat4x4.h src/utils/vec3.h
 IMAGE_HEADERS = src/utils/external/stb_image.h src/utils/image.h
-OVERALL_HEADERS = $(GL_HEADER) $(MATH_HEADERS) $(IMAGE_HEADERS)
+OVERALL_HEADERS = $(GL_HEADER) $(MATH_HEADERS) $(IMAGE_HEADERS) src/utils/material.h
 
 define RUN_EXECUTABLE
 	
@@ -120,6 +125,16 @@ build/cube_texture.o : src/cube_texture.cpp $(OVERALL_HEADERS)
 	$(CC) -c src/cube_texture.cpp -o build/cube_texture.o
 
 
+# lighting
+lighting : $(LIB_OBJS) build/lighting.o
+	@mkdir -p build
+	$(RUN_EXECUTABLE)
+
+build/lighting.o : src/lighting.cpp $(OVERALL_HEADERS)
+	@mkdir -p build
+	$(CC) -c src/lighting.cpp -o build/lighting.o
+
+
 # utils
 build/loader.o : src/utils/loader.cpp src/utils/loader.h src/utils/external/stb_image.h src/utils/image.h
 	@mkdir -p build
@@ -132,6 +147,26 @@ build/shader.o : src/utils/shader.cpp src/utils/shader.h src/utils/gl_header_fil
 build/window.o : src/utils/window.cpp src/utils/window.h src/utils/gl_header_files.h
 	@mkdir -p build
 	$(CC) -c src/utils/window.cpp -o build/window.o
+
+build/displayobject.o : src/utils/displayobject.cpp src/utils/displayobject.h src/utils/gl_header_files.h $(MATH_HEADERS)
+	@mkdir -p build
+	$(CC) -c src/utils/displayobject.cpp -o build/displayobject.o
+
+build/mesh.o : src/utils/mesh.cpp src/utils/mesh.h src/utils/material.h src/utils/gl_header_files.h build/shader.o build/displayobject.o
+	@mkdir -p build
+	$(CC) -c src/utils/mesh.cpp -o build/mesh.o
+
+build/camera.o : src/utils/camera.cpp src/utils/camera.h src/utils/gl_header_files.h build/displayobject.o
+	@mkdir -p build
+	$(CC) -c src/utils/camera.cpp -o build/camera.o
+
+build/light.o : src/utils/light.cpp src/utils/light.h src/utils/gl_header_files.h build/displayobject.o
+	@mkdir -p build
+	$(CC) -c src/utils/light.cpp -o build/light.o
+
+build/scene.o : src/utils/scene.cpp src/utils/scene.h src/utils/gl_header_files.h build/light.o build/mesh.o build/camera.o $(MATH_HEADERS)
+	@mkdir -p build
+	$(CC) -c src/utils/scene.cpp -o build/scene.o
 
 
 # clear build directory

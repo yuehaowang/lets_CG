@@ -15,7 +15,9 @@ struct Image
         , width(w)
         , height(h)
         , channels(ch)
-    {}
+    {
+    
+    }
 
     void Free()
     {

@@ -1,16 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "window.h"
-#include "loader.h"
-#include "mat4x4.h"
 
+
+GLFWwindow* Window::window = NULL;
+std::string Window::window_title = "";
+int Window::window_width = 0;
+int Window::window_height = 0;
 
 Window::Window(const std::string& title, int width, int height)
-    : window_title(title)
-    , window_width(width)
-    , window_height(height)
 {
+    window_width = width;
+    window_height = height;
+    window_title = title;
+
     if(!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW.\n");
     }
@@ -36,7 +39,12 @@ Window::Window(const std::string& title, int width, int height)
         }
 
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+        glfwSetFramebufferSizeCallback(window, OnFrameBufferResized);
     }
+
+    int framebuffer_width, framebuffer_height;
+    glfwGetFramebufferSize(window, &framebuffer_width, &framebuffer_height);
+    glViewport(0, 0, framebuffer_width, framebuffer_height);
 }
 
 Window::~Window()
@@ -44,11 +52,28 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::OnStart() {}
+void Window::OnStart()
+{
 
-void Window::OnUpdate() {}
+}
 
-void Window::OnDestroy() {}
+void Window::OnUpdate()
+{
+
+}
+
+void Window::OnDestroy()
+{
+
+}
+
+void Window::OnFrameBufferResized(GLFWwindow* win, int new_width, int new_height)
+{
+    glViewport(0, 0, new_width, new_height);
+
+    int framebuffer_width, framebuffer_height;
+    glfwGetWindowSize(win, &window_width, &window_height);
+}
 
 void Window::Run()
 {
@@ -76,6 +101,11 @@ int Window::WindowWidth() const
 int Window::WindowHeight() const
 {
     return window_height;
+}
+
+GLFWwindow* Window::WindowHandler() const
+{
+    return window;
 }
 
 const std::string& Window::WindowTitle() const
