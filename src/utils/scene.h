@@ -16,8 +16,9 @@ protected:
     std::vector<Mesh*> mesh_list;
     std::vector<Light*> light_list;
     Camera* main_camera;
-    void PrepareCamera(Mesh* m);
-    void PrepareLights(Mesh* m);
+    void PrepareMesh(GLuint shader_id, Mesh* m);
+    void PrepareCamera(GLuint shader_id);
+    void PrepareLights(GLuint shader_id);
 
 public:
 

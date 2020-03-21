@@ -1,6 +1,7 @@
 #include "scene.h"
 #include "vec3.h"
 
+
 Scene::Scene()
 : main_camera(NULL)
 {
@@ -35,53 +36,45 @@ void Scene::SetMainCamera(Camera* cam)
     if (!cam) {
         return;
     }
-
     main_camera = cam;
 }
 
-void Scene::PrepareCamera(Mesh* m)
+void Scene::PrepareMesh(GLuint shader_id, Mesh* mesh)
+{
+    if (!mesh) {
+        return;
+    }
+    mesh->PipeUniformData(shader_id);
+}
+
+void Scene::PrepareCamera(GLuint shader_id)
 {
     if (!main_camera) {
         return;
     }
-
-    glUniformMatrix4fv(
-        glGetUniformLocation(m->shader.Id(), "transform.view"), 1,
-        GL_TRUE, main_camera->View()->Ptr()
-    );
-    glUniformMatrix4fv(
-        glGetUniformLocation(m->shader.Id(), "transform.projection"), 1,
-        GL_TRUE, main_camera->Projection()->Ptr()
-    );
-
-    Vec3<GLfloat> cam_pos = main_camera->Position();
-    glUniform3f(
-        glGetUniformLocation(m->shader.Id(), "camera_pos"),
-        cam_pos.x, cam_pos.y, cam_pos.z
-    );
+    main_camera->PipeUniformData(shader_id);
 }
 
-void Scene::PrepareLights(Mesh* m)
+void Scene::PrepareLights(GLuint shader_id)
 {
-    GLuint shader_id = m->shader.Id();
-
     std::vector<Light*>::iterator it;
     unsigned int light_index = 0;
 
     for (it = light_list.begin(); it != light_list.end(); it++, light_index++) {
         Light* light = *it;
-        light->PipeData(shader_id, light_index);
+        light->PipeUniformData(shader_id, light_index);
     }
 }
 
 void Scene::Render()
 {
-    
     for (std::vector<Mesh*>::iterator it = mesh_list.begin(); it != mesh_list.end(); it++) {
         Mesh* m = *it;
-        m->PrepareRender();
-        PrepareCamera(m);
-        PrepareLights(m);
+        GLuint shader_id = m->ShaderId();
+        glUseProgram(shader_id);
+        PrepareMesh(shader_id, m);
+        PrepareCamera(shader_id);
+        PrepareLights(shader_id);
         m->Render();
     }
 }

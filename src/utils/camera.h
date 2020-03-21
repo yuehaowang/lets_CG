@@ -8,23 +8,28 @@
 
 /***************** Camera *****************/
 
+class Scene;
+
 class Camera : public DisplayObject
 {
 
 protected:
 
-    Mat4x4<GLfloat> view;
     Mat4x4<GLfloat> projection;
+
+    virtual void PipeUniformData(GLuint shader_id);
+    virtual std::string ShaderCameraUniformIdentifier(const std::string& member_name);
+
+    friend class Scene;
 
 public:
 
+    static std::string camera_uniform_name;
+
     Camera();
     virtual ~Camera();
-    const Mat4x4<GLfloat>* View() const;
-    const Mat4x4<GLfloat>* Projection() const;
-    void Translate(GLfloat x, GLfloat y, GLfloat z);
-    void Scale(GLfloat sx, GLfloat sy, GLfloat sz);
-    void Rotate(GLfloat euler_x, GLfloat euler_y, GLfloat euler_z);
+    Mat4x4<GLfloat> View() const;
+    Mat4x4<GLfloat> Projection() const;
     virtual void SetProjection(GLfloat fovv, GLfloat aspect_ratio, GLfloat near, GLfloat far) = 0;
 
 };

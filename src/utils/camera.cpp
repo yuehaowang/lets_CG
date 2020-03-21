@@ -4,6 +4,8 @@
 
 /***************** Camera *****************/
 
+std::string Camera::camera_uniform_name = "camera";
+
 Camera::Camera()
 {
 
@@ -14,41 +16,42 @@ Camera::~Camera()
 
 }
 
-const Mat4x4<GLfloat>* Camera::View() const
+Mat4x4<GLfloat> Camera::View() const
 {
-    return &view;
+    Mat4x4<GLfloat> view;
+    view.Translate(-translation.x, -translation.y, -translation.z);
+    view.Rotate(-rotation.x, -rotation.y, -rotation.z);
+    view.Scale(1 / scaling.x, 1 / scaling.y, 1 / scaling.z);
+
+    return view;
 }
 
-const Mat4x4<GLfloat>* Camera::Projection() const
+Mat4x4<GLfloat> Camera::Projection() const
 {
-    return &projection;
+    return projection;
 }
 
-void Camera::Translate(GLfloat x, GLfloat y, GLfloat z)
+std::string Camera::ShaderCameraUniformIdentifier(const std::string& member_name)
 {
-    DisplayObject::Translate(x, y, z);
-
-    Mat4x4<GLfloat> m;
-    m.Translate(-x, -y, -z);
-    view = m * view;
+    return camera_uniform_name + "." + member_name;
 }
 
-void Camera::Scale(GLfloat sx, GLfloat sy, GLfloat sz)
+void Camera::PipeUniformData(GLuint shader_id)
 {
-    DisplayObject::Scale(sx, sy, sz);
+    glUniformMatrix4fv(
+        glGetUniformLocation(shader_id, ShaderCameraUniformIdentifier("view").c_str()), 1,
+        GL_TRUE, View().Ptr()
+    );
+    glUniformMatrix4fv(
+        glGetUniformLocation(shader_id, ShaderCameraUniformIdentifier("projection").c_str()), 1,
+        GL_TRUE, projection.Ptr()
+    );
 
-    Mat4x4<GLfloat> m;
-    m.Scale(1 / sx, 1 / sy, 1 / sz);
-    view = m * view;
-}
-
-void Camera::Rotate(GLfloat euler_x, GLfloat euler_y, GLfloat euler_z)
-{
-    DisplayObject::Rotate(euler_x, euler_y, euler_z);
-
-    Mat4x4<GLfloat> m;
-    m.Rotate(-euler_x, -euler_y, -euler_z);
-    view = m * view;
+    Vec3<GLfloat> cam_pos = Position();
+    glUniform3f(
+        glGetUniformLocation(shader_id, ShaderCameraUniformIdentifier("position").c_str()),
+        cam_pos.x, cam_pos.y, cam_pos.z
+    );
 }
 
 

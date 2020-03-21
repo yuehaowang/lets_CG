@@ -1,5 +1,5 @@
-#define TRANSLATION_STEP 0.01
-#define ROTATION_STEP 0.1
+#define TRANSLATION_STEP 0.01f
+#define ROTATION_STEP 0.1f
 
 #include <vector>
 #include <iterator>
@@ -191,6 +191,8 @@ private:
     Scene main_scene;
     PerspectiveCamera cam;
     std::vector<Mesh*> mesh_list;
+    BasicColorMaterial* box_mat;
+    BasicColorMaterial* sphere_mat;
 
 public:
 
@@ -199,9 +201,11 @@ public:
         , cam(45, (float)WindowWidth() / (float)WindowHeight(), 0.1, 100)
         , old_mouse_pos(0, 0, 0)
     {
+        /* Cameras */
         cam.Translate(0, 0, 5);
         main_scene.SetMainCamera(&cam);
 
+        /* Lights */
         DirectionalLight* light1 = new DirectionalLight(
             Vec3<GLfloat>(0.05f, 0.05f, 0.05f),
             Vec3<GLfloat>(0.1f, 0.2f, 0.3f),
@@ -226,6 +230,23 @@ public:
         );
         main_scene.Add(light3);
 
+
+        /* Materials */
+        sphere_mat = new BasicColorMaterial(
+            "src/shaders/lighting",
+            Vec3<GLfloat>(1.0f, 0.5f, 0.31f),
+            Vec3<GLfloat>(0.5f, 0.5f, 0.5f),
+            12.0f
+        );
+
+        box_mat = new BasicColorMaterial(
+            "src/shaders/lighting",
+            Vec3<GLfloat>(1.0f, 0.5f, 0.31f),
+            Vec3<GLfloat>(0.5f, 0.5f, 0.5f),
+            20.0f
+        );
+
+        /* Create Objects */
         CreateBox();
         CreateBall();
     }
@@ -235,13 +256,7 @@ public:
         std::vector<GLfloat> vertices(box_vertices, box_vertices + sizeof(box_vertices) / sizeof(box_vertices[0]));
         std::vector<GLfloat> normals(box_normals, box_normals + sizeof(box_normals) / sizeof(box_normals[0]));
 
-        BasicMaterial mat(
-            "src/shaders/lighting",
-            Vec3<GLfloat>(1.0f, 0.5f, 0.31f),
-            Vec3<GLfloat>(0.5f, 0.5f, 0.5f),
-            20.0f
-        );
-        Mesh* box = new Mesh(mat, vertices, normals);
+        Mesh* box = new Mesh(box_mat, vertices, normals);
         box->Translate(-1.5, 0, 0.5);
         main_scene.Add(box);
     }
@@ -253,13 +268,7 @@ public:
         std::vector<unsigned int> indices;
         generate_geometry(1, 100, 100, vertices, normals, indices);
 
-        BasicMaterial mat(
-            "src/shaders/lighting",
-            Vec3<GLfloat>(1.0f, 0.5f, 0.31f),
-            Vec3<GLfloat>(0.5f, 0.5f, 0.5f),
-            12.0f
-        );
-        Mesh* sphere = new Mesh(mat, vertices, normals, indices);
+        Mesh* sphere = new Mesh(sphere_mat, vertices, normals, indices);
         sphere->Translate(1, 0, 0);
         main_scene.Add(sphere);
     }
@@ -269,9 +278,13 @@ public:
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
-        glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        glEnable(GL_MULTISAMPLE);
+
+        glClearColor(0.7f, 0.7f, 0.7f, 0.0f);
 
         glfwSetInputMode(WindowHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     }
 
     void OnUpdate()
@@ -287,6 +300,9 @@ public:
         for (std::vector<Mesh*>::iterator it = mesh_list.begin(); it != mesh_list.end(); it++) {
             delete *it;
         }
+
+        delete box_mat;
+        delete sphere_mat;
     }
 
     void MouseControl()
@@ -306,14 +322,14 @@ public:
 
     void KeyControl()
     {
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-            cam.Translate(-TRANSLATION_STEP, 0, 0);
-        } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-            cam.Translate(TRANSLATION_STEP, 0, 0);
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            cam.Translate(-cam.Forward() * TRANSLATION_STEP);
         } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-            cam.Translate(0, 0, TRANSLATION_STEP);
-        } else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-            cam.Translate(0, 0, -TRANSLATION_STEP);
+            cam.Translate(cam.Forward() * TRANSLATION_STEP);
+        } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            cam.Translate(cam.Right() * TRANSLATION_STEP);
+        } else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            cam.Translate(-cam.Right() * TRANSLATION_STEP);
         }
     }
 

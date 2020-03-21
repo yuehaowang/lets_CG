@@ -12,6 +12,8 @@ bool operator < (const Shader::ShaderKey& k1, const Shader::ShaderKey& k2) {
 }
 
 Shader::Shader()
+: vert_shader_file("")
+, frag_shader_file("")
 {
 
 }
@@ -21,8 +23,12 @@ Shader::Shader(const std::string& vert_shader_path, const std::string& frag_shad
     CreateProgram(vert_shader_path, frag_shader_path);
 }
 
-void Shader::EmployProgram()
+void Shader::Employ()
 {
+    if (vert_shader_file.size() == 0 || frag_shader_file.size() == 0) {
+        return;
+    }
+
     if (shader_list.find(ShaderKey(vert_shader_file, frag_shader_file)) != shader_list.end()) {
         ShaderProgram& prog = shader_list[ShaderKey(vert_shader_file, frag_shader_file)];
         prog.ref_count++;
@@ -30,8 +36,12 @@ void Shader::EmployProgram()
 
 }
 
-void Shader::DismissProgram()
+void Shader::Dismiss()
 {
+    if (vert_shader_file.size() == 0 || frag_shader_file.size() == 0) {
+        return;
+    }
+
     if (shader_list.find(ShaderKey(vert_shader_file, frag_shader_file)) != shader_list.end()) {
 
         ShaderProgram& prog = shader_list[ShaderKey(vert_shader_file, frag_shader_file)];

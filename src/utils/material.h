@@ -7,34 +7,60 @@
 #include "vec3.h"
 
 
-struct BasicMaterial
+class Mesh;
+
+
+/***************** Material *****************/
+
+class Material
 {
+
+protected:
+
     std::string shader_name;
+    virtual void PipeUniformData(GLuint shader_id) const = 0;
+    virtual std::string ShaderMaterialUniformIdentifier(const std::string& member_name) const = 0;
+
+    friend class Mesh;
+
+public:
+
+    Material();
+    Material(const std::string& shader);
+    virtual ~Material();
+    std::string ShaderName() const;
+
+};
+
+
+/***************** BasicColorMaterial *****************/
+
+class BasicColorMaterial : public Material
+{
+    
+protected:
+
     Vec3<GLfloat> diffuse;
     Vec3<GLfloat> specular;
     GLfloat shininess;
 
-    BasicMaterial()
-    : shader_name("")
-    , diffuse(Vec3<GLfloat>(0.0f, 0.0f, 0.0f))
-    , specular(Vec3<GLfloat>(0.0f, 0.0f, 0.0f))
-    , shininess(0)
-    {
+    virtual void PipeUniformData(GLuint shader_id) const;
+    virtual std::string ShaderMaterialUniformIdentifier(const std::string& member_name) const;
 
-    }
+public:
 
-    BasicMaterial(
+    static std::string material_uniform_name;
+
+    BasicColorMaterial();
+    BasicColorMaterial(
         const std::string& shader_name,
         const Vec3<GLfloat>& diffuse,
         const Vec3<GLfloat>& specular,
-        GLfloat shininess)
-    : shader_name(shader_name)
-    , diffuse(diffuse)
-    , specular(specular)
-    , shininess(shininess)
-    {
+        GLfloat shininess);
+    Vec3<GLfloat> Diffuse() const;
+    Vec3<GLfloat> Specular() const;
+    GLfloat Shininess() const;
 
-    }
 };
 
 

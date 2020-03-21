@@ -18,8 +18,8 @@ protected:
     std::string frag_shader_file;
 
     GLuint CompileShader(const std::string& src, GLenum shader_type);
-    void EmployProgram();
-    void DismissProgram();
+    void Employ();
+    void Dismiss();
 
     struct ShaderKey
     {

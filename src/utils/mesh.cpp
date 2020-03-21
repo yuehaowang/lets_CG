@@ -3,43 +3,55 @@
 #include "mesh.h"
 
 
+std::string Mesh::mesh_uniform_name = "mesh";
+
 Mesh::Mesh(
-    const BasicMaterial& material,
+    const Material* mat,
     const std::vector<GLfloat>& vertex_data,
     const std::vector<GLfloat>& normal_data,
     const std::vector<unsigned int>& index_data)
 : DisplayObject()
 {
-    Initialize(material, vertex_data, normal_data, index_data);
+    Initialize(mat, vertex_data, normal_data, index_data);
 }
 
 Mesh::Mesh(
-    const BasicMaterial& material,
+    const Material* mat,
     const std::vector<GLfloat>& vertex_data,
     const std::vector<GLfloat>& normal_data)
 : DisplayObject()
 {
-    Initialize(material, vertex_data, normal_data, std::vector<unsigned int>());
+    Initialize(mat, vertex_data, normal_data, std::vector<unsigned int>());
 }
 
 Mesh::Mesh(
-    const BasicMaterial& material,
+    const Material* mat,
     const std::vector<GLfloat>& vertex_data)
 : DisplayObject()
 {
-    Initialize(material, vertex_data, std::vector<GLfloat>(), std::vector<unsigned int>());
+    Initialize(mat, vertex_data, std::vector<GLfloat>(), std::vector<unsigned int>());
+}
+
+Mesh::~Mesh()
+{
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+
+    glDeleteBuffers(1, &EBO);
+    glDeleteBuffers(1, &vertex_buffer);
+    glDeleteBuffers(1, &normal_buffer);
+    glDeleteVertexArrays(1, &VAO);
+
+    shader.Dismiss();
 }
 
 void Mesh::Initialize(
-        const BasicMaterial& material,
+        const Material* mat,
         const std::vector<GLfloat>& vertex_data,
         const std::vector<GLfloat>& normal_data,
         const std::vector<unsigned int>& index_data)
 {
-    shader = Shader(material.shader_name + ".vs", material.shader_name + ".fs");
-    shader.EmployProgram();
-
-    mat = material;
+    SetMaterial(mat);
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -69,40 +81,13 @@ void Mesh::Initialize(
     }
 }
 
-Mesh::~Mesh()
+void Mesh::SetMaterial(const Material* mat)
 {
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
+    shader.Dismiss();
+    shader = Shader(mat->ShaderName() + ".vs", mat->ShaderName() + ".fs");
+    shader.Employ();
 
-    glDeleteBuffers(1, &EBO);
-    glDeleteBuffers(1, &vertex_buffer);
-    glDeleteBuffers(1, &normal_buffer);
-    glDeleteVertexArrays(1, &VAO);
-
-    shader.DismissProgram();
-}
-
-void Mesh::PrepareRender()
-{
-    glUseProgram(shader.Id());
-
-    glUniformMatrix4fv(
-        glGetUniformLocation(shader.Id(), "transform.model"), 1,
-        GL_TRUE, transform.Ptr()
-    );
-
-    glUniform3f(
-        glGetUniformLocation(shader.Id(), "material.diffuse"),
-        mat.diffuse.x, mat.diffuse.y, mat.diffuse.z
-    );
-    glUniform3f(
-        glGetUniformLocation(shader.Id(), "material.specular"),
-        mat.specular.x, mat.specular.y, mat.specular.z
-    );
-    glUniform1f(
-        glGetUniformLocation(shader.Id(), "material.shininess"),
-        mat.shininess
-    );
+    material = mat;
 }
 
 void Mesh::Render()
@@ -114,4 +99,32 @@ void Mesh::Render()
         glDrawElements(GL_TRIANGLES, draw_count, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
+}
+
+std::string Mesh::ShaderMeshUniformIdentifier(const std::string& member_name)
+{
+    return mesh_uniform_name + "." + member_name;
+}
+
+void Mesh::PrepareMaterial(GLuint shader_id)
+{
+    if (!material) {
+        return;
+    }
+    material->PipeUniformData(shader_id);
+}
+
+void Mesh::PipeUniformData(GLuint shader_id)
+{
+    glUniformMatrix4fv(
+        glGetUniformLocation(shader_id, ShaderMeshUniformIdentifier("model").c_str()), 1,
+        GL_TRUE, Transform().Ptr()
+    );
+
+    PrepareMaterial(shader_id);
+}
+
+GLuint Mesh::ShaderId() const
+{
+    return shader.Id();
 }

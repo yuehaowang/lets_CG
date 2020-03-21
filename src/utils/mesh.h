@@ -32,37 +32,43 @@ protected:
     GLuint vertex_buffer;
     GLuint normal_buffer;
     GLuint EBO; 
-    BasicMaterial mat;
+    const Material* material;
 
     void Initialize(
-        const BasicMaterial& material,
+        const Material* mat,
         const std::vector<GLfloat>& vertex_data,
         const std::vector<GLfloat>& normal_data,
         const std::vector<unsigned int>& index_data
     );
-    void PrepareRender();
     void Render();
+    void PrepareMaterial(GLuint shader_id);
+    void PipeUniformData(GLuint shader_id);
+    std::string ShaderMeshUniformIdentifier(const std::string& member_name);
 
     friend class Scene; 
 
 public:
 
+    static std::string mesh_uniform_name;
+
     Mesh(
-        const BasicMaterial& material,
+        const Material* mat,
         const std::vector<GLfloat>& vertex_data,
         const std::vector<GLfloat>& normal_data,
         const std::vector<unsigned int>& index_data
     );
     Mesh(
-        const BasicMaterial& material,
+        const Material* mat,
         const std::vector<GLfloat>& vertex_data,
         const std::vector<GLfloat>& normal_data
     );
     Mesh(
-        const BasicMaterial& material,
+        const Material* mat,
         const std::vector<GLfloat>& vertex_data
     );
     virtual ~Mesh();
+    GLuint ShaderId() const;
+    void SetMaterial(const Material* mat);
 
 };
 
