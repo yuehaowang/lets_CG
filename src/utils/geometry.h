@@ -2,7 +2,7 @@
 #define _GEOMETRY_H_
 
 #include "gl_header_files.h"
-#include "vector"
+#include <vector>
 
 
 /***************** Geometry *****************/
@@ -38,12 +38,36 @@ class BoxGeometry : public Geometry
 
 protected:
 
-    static const GLfloat VERTICES[108];
-    static const GLfloat NORMALS[108];
+    static GLfloat VERTICES[108];
+    static GLfloat NORMALS[108];
 
 public:
 
     BoxGeometry();
+
+};
+
+
+/***************** SphereGeometry *****************/
+
+class SphereGeometry : public Geometry
+{
+
+protected:
+
+    static std::vector<GLfloat> VERTICES;
+    static std::vector<GLfloat> NORMALS;
+    static std::vector<unsigned int> INDICES;
+
+    void GenerateSphere(
+        std::vector<GLfloat>& vert,
+        std::vector<GLfloat>& norm,
+        std::vector<unsigned int>& index,
+        float radius, unsigned int divi_count);
+
+public:
+
+    SphereGeometry();
 
 };
 
