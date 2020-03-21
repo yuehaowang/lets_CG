@@ -78,27 +78,17 @@ std::string DirectionalLight::lights_uniform_name = "dir_lights";
 DirectionalLight::DirectionalLight(
     const Vec3<GLfloat>& a,
     const Vec3<GLfloat>& d,
-    const Vec3<GLfloat>& s,
-    const Vec3<GLfloat>& dir)
+    const Vec3<GLfloat>& s)
 : Light(a, d, s)
-, direction(dir)
 {
 
-}
-
-Vec3<GLfloat> DirectionalLight::Direction() const
-{
-    return direction;
-}
-
-void DirectionalLight::SetDirection(const Vec3<GLfloat>& dir)
-{
-    direction = dir;
 }
 
 void DirectionalLight::PipeUniformData(GLuint shader_id, unsigned int light_index)
 {
     Light::PipeUniformData(shader_id, light_index);
+
+    Vec3<GLfloat> direction = Forward();
 
     glUniform3f(
         glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "direction").c_str()),

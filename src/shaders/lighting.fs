@@ -56,14 +56,19 @@ vec3 compute_dir_light(Material material, vec3 normal, vec3 view_dir)
 }
 
 
-/* Camera Position */
-uniform vec3 camera_pos;
+/* Camera */
+struct Camera {
+    mat4 view;
+    mat4 projection;
+    vec3 position;
+};
+uniform Camera camera;
 
 
 void main()
 {
     vec3 normal = normalize(frag_normal);
-    vec3 view_dir = normalize(camera_pos - frag_pos);
+    vec3 view_dir = normalize(camera.position - frag_pos);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
 

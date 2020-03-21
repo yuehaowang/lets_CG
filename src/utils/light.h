@@ -49,8 +49,6 @@ class DirectionalLight : public Light
 
 protected:
 
-    Vec3<GLfloat> direction;
-
     void PipeUniformData(GLuint shader_id, unsigned int light_index);
     std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name);
     std::string ShaderLightCountUniformIdentifier();
@@ -59,9 +57,7 @@ public:
 
     static std::string lights_uniform_name;
 
-    DirectionalLight(const Vec3<GLfloat>& a, const Vec3<GLfloat>& d, const Vec3<GLfloat>& s, const Vec3<GLfloat>& dir);
-    Vec3<GLfloat> Direction() const;
-    void SetDirection(const Vec3<GLfloat>& dir);
+    DirectionalLight(const Vec3<GLfloat>& a, const Vec3<GLfloat>& d, const Vec3<GLfloat>& s);
 
 };
 

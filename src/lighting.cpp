@@ -1,5 +1,6 @@
 #define TRANSLATION_STEP 0.01f
 #define ROTATION_STEP 0.1f
+#define LIMIT_ROTATION_X 60.0f
 
 #include <vector>
 #include <iterator>
@@ -13,6 +14,7 @@
 #include "utils/light.h"
 #include "utils/scene.h"
 #include "utils/gl_header_files.h"
+#include "utils/geometry.h"
 
 
 ///////////////// Generate Sphere /////////////////
@@ -206,28 +208,31 @@ public:
         main_scene.SetMainCamera(&cam);
 
         /* Lights */
+        // Lightblue light directed to -Z
         DirectionalLight* light1 = new DirectionalLight(
             Vec3<GLfloat>(0.05f, 0.05f, 0.05f),
-            Vec3<GLfloat>(0.1f, 0.2f, 0.3f),
-            Vec3<GLfloat>(0.5f, 0.6f, 0.8f),
-            Vec3<GLfloat>(0.0f, -1.0f, -1.0f)
+            Vec3<GLfloat>(0.1f, 0.2f, 0.8f),
+            Vec3<GLfloat>(0.4f, 0.6f, 0.8f)
         );
+        light1->SetRotation(180, 0, 0);
         main_scene.Add(light1);
 
+        // White light directed to -Y
         DirectionalLight* light2 = new DirectionalLight(
-            Vec3<GLfloat>(0.5f, 0.5f, 0.5f),
-            Vec3<GLfloat>(0.1f, 0.5f, 0.1f),
-            Vec3<GLfloat>(0.0f, 1.0f, 1.0f),
-            Vec3<GLfloat>(1.0f, 0.0f, 0.0f)
+            Vec3<GLfloat>(0.08f, 0.08f, 0.08f),
+            Vec3<GLfloat>(1.0f, 1.0f, 1.0f),
+            Vec3<GLfloat>(0.8f, 0.1f, 0.2f)
         );
+        light2->SetRotation(90, 0, 0);
         main_scene.Add(light2);
 
+        // Green light directed to X
         DirectionalLight* light3 = new DirectionalLight(
             Vec3<GLfloat>(0.1f, 0.1f, 0.1f),
-            Vec3<GLfloat>(0.0f, 0.3f, 0.8f),
-            Vec3<GLfloat>(0.0f, 1.0f, 1.0f),
-            Vec3<GLfloat>(0.0f, -1.0f, 0.0f)
+            Vec3<GLfloat>(0.2f, 0.7f, 0.2f),
+            Vec3<GLfloat>(0.1f, 0.7f, 0.2f)
         );
+        light3->SetRotation(0, 90, 0);
         main_scene.Add(light3);
 
 
@@ -243,20 +248,20 @@ public:
             "src/shaders/lighting",
             Vec3<GLfloat>(1.0f, 0.5f, 0.31f),
             Vec3<GLfloat>(0.5f, 0.5f, 0.5f),
-            20.0f
+            32.0f
         );
 
-        /* Create Objects */
+        /* Create objects */
         CreateBox();
         CreateBall();
     }
 
     void CreateBox()
     {
-        std::vector<GLfloat> vertices(box_vertices, box_vertices + sizeof(box_vertices) / sizeof(box_vertices[0]));
-        std::vector<GLfloat> normals(box_normals, box_normals + sizeof(box_normals) / sizeof(box_normals[0]));
+        // std::vector<GLfloat> vertices(box_vertices, box_vertices + sizeof(box_vertices) / sizeof(box_vertices[0]));
+        // std::vector<GLfloat> normals(box_normals, box_normals + sizeof(box_normals) / sizeof(box_normals[0]));
 
-        Mesh* box = new Mesh(box_mat, vertices, normals);
+        Mesh* box = new Mesh(box_mat, BoxGeometry());
         box->Translate(-1.5, 0, 0.5);
         main_scene.Add(box);
     }
@@ -278,13 +283,14 @@ public:
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
+        /* Enabled MSAA */
         glfwWindowHint(GLFW_SAMPLES, 4);
         glEnable(GL_MULTISAMPLE);
 
-        glClearColor(0.7f, 0.7f, 0.7f, 0.0f);
+        // glClearColor(0.7f, 0.7f, 0.7f, 0.0f);
 
+        /* Hide mouse cursor */
         glfwSetInputMode(WindowHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
     }
 
     void OnUpdate()
@@ -315,6 +321,12 @@ public:
 
         cam.Rotate(rotate_x, rotate_y, 0);
 
+        if (cam.Rotation().x > LIMIT_ROTATION_X) {
+            cam.SetRotation(LIMIT_ROTATION_X);
+        } else if (cam.Rotation().x < -LIMIT_ROTATION_X) {
+            cam.SetRotation(-LIMIT_ROTATION_X);
+        }
+
         old_mouse_pos.x = mouse_x;
         old_mouse_pos.y = mouse_y;
         old_mouse_pos.z = 1;
@@ -326,7 +338,9 @@ public:
             cam.Translate(-cam.Forward() * TRANSLATION_STEP);
         } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
             cam.Translate(cam.Forward() * TRANSLATION_STEP);
-        } else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        }
+        
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             cam.Translate(cam.Right() * TRANSLATION_STEP);
         } else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             cam.Translate(-cam.Right() * TRANSLATION_STEP);

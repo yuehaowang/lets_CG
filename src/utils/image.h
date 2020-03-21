@@ -3,6 +3,7 @@
 
 #include "external/stb_image.h"
 
+
 struct Image
 {
     unsigned char* data;

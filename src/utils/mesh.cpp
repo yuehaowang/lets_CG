@@ -32,6 +32,12 @@ Mesh::Mesh(
     Initialize(mat, vertex_data, std::vector<GLfloat>(), std::vector<unsigned int>());
 }
 
+Mesh::Mesh(const Material* mat, const Geometry& geom)
+: DisplayObject()
+{
+    Initialize(mat, geom.VertexData(), geom.NormalData(), geom.IndexData());
+}
+
 Mesh::~Mesh()
 {
     glDisableVertexAttribArray(0);
@@ -62,7 +68,7 @@ void Mesh::Initialize(
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
-    glGenBuffers(1, &normal_buffer);  
+    glGenBuffers(1, &normal_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
     glBufferData(GL_ARRAY_BUFFER, normal_data.size() * sizeof(GLfloat), &normal_data[0], GL_STATIC_DRAW);
     glVertexAttribPointer(1, (normal_data.size() > 0) ? 3 : 0, GL_FLOAT, GL_FALSE, 0, (void*)0);

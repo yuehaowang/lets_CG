@@ -20,8 +20,9 @@ out vec3 frag_normal;
 
 void main()
 {
-    gl_Position = camera.projection * camera.view * mesh.model * vec4(vertex_pos, 1);
+    vec4 world_pos = mesh.model * vec4(vertex_pos, 1.0);
 
-    frag_pos = vec3(gl_Position);
+    frag_pos = world_pos.xyz;
     frag_normal = mat3(transpose(inverse(mesh.model))) * vertex_normal;
+    gl_Position = camera.projection * camera.view * world_pos;
 }

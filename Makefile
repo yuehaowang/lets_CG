@@ -37,7 +37,8 @@ LIB_OBJS = build/loader.o \
 		   build/camera.o \
 		   build/light.o  \
 		   build/scene.o  \
-		   build/material.o
+		   build/material.o \
+		   build/geometry.o
 
 # EXECUTABLE specifies the path of the executable file
 EXECUTABLE = build/$@
@@ -153,7 +154,7 @@ build/displayobject.o : src/utils/displayobject.cpp src/utils/displayobject.h sr
 	@mkdir -p build
 	$(CC) -c src/utils/displayobject.cpp -o build/displayobject.o
 
-build/mesh.o : src/utils/mesh.cpp src/utils/mesh.h src/utils/material.h src/utils/gl_header_files.h build/shader.o build/displayobject.o
+build/mesh.o : src/utils/mesh.cpp src/utils/mesh.h src/utils/material.h src/utils/gl_header_files.h build/shader.o build/displayobject.o build/geometry.o
 	@mkdir -p build
 	$(CC) -c src/utils/mesh.cpp -o build/mesh.o
 
@@ -168,6 +169,10 @@ build/light.o : src/utils/light.cpp src/utils/light.h src/utils/gl_header_files.
 build/material.o : src/utils/material.cpp src/utils/material.h src/utils/gl_header_files.h $(MATH_HEADERS)
 	@mkdir -p build
 	$(CC) -c src/utils/material.cpp -o build/material.o
+
+build/geometry.o : src/utils/geometry.cpp src/utils/geometry.h src/utils/gl_header_files.h
+	@mkdir -p build
+	$(CC) -c src/utils/geometry.cpp -o build/geometry.o
 
 build/scene.o : src/utils/scene.cpp src/utils/scene.h src/utils/gl_header_files.h build/light.o build/mesh.o build/camera.o $(MATH_HEADERS)
 	@mkdir -p build

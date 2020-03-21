@@ -10,6 +10,7 @@
 #include "shader.h"
 #include "displayobject.h"
 #include "material.h"
+#include "geometry.h"
 
 
 class Scene;
@@ -55,17 +56,15 @@ public:
         const Material* mat,
         const std::vector<GLfloat>& vertex_data,
         const std::vector<GLfloat>& normal_data,
-        const std::vector<unsigned int>& index_data
-    );
+        const std::vector<unsigned int>& index_data);
     Mesh(
         const Material* mat,
         const std::vector<GLfloat>& vertex_data,
-        const std::vector<GLfloat>& normal_data
-    );
+        const std::vector<GLfloat>& normal_data);
     Mesh(
         const Material* mat,
-        const std::vector<GLfloat>& vertex_data
-    );
+        const std::vector<GLfloat>& vertex_data);
+    Mesh(const Material* mat, const Geometry& geom);
     virtual ~Mesh();
     GLuint ShaderId() const;
     void SetMaterial(const Material* mat);

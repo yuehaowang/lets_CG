@@ -64,9 +64,79 @@ void DisplayObject::Rotate(const Vec3<GLfloat>& e)
     rotation += e;
 }
 
+void DisplayObject::SetPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    SetPosition(Vec3<GLfloat>(x, y, z));
+}
+
+void DisplayObject::SetPosition(GLfloat x, GLfloat y)
+{
+    SetPosition(Vec3<GLfloat>(x, y, translation.z));
+}
+
+void DisplayObject::SetPosition(GLfloat x)
+{
+    SetPosition(Vec3<GLfloat>(x, translation.y, translation.z));
+}
+
+void DisplayObject::SetPosition(const Vec3<GLfloat>& t)
+{
+    translation = t;
+}
+
+void DisplayObject::SetScaling(GLfloat sx, GLfloat sy, GLfloat sz)
+{
+    SetScaling(Vec3<GLfloat>(sx, sy, sz));
+}
+
+void DisplayObject::SetScaling(GLfloat sx, GLfloat sy)
+{
+    SetScaling(Vec3<GLfloat>(sx, sy, scaling.z));
+}
+
+void DisplayObject::SetScaling(GLfloat sx)
+{
+    SetScaling(Vec3<GLfloat>(sx, scaling.y, scaling.z));
+}
+
+void DisplayObject::SetScaling(const Vec3<GLfloat>& s)
+{
+    scaling = s;
+}
+
+void DisplayObject::SetRotation(GLfloat euler_x, GLfloat euler_y, GLfloat euler_z)
+{
+    SetRotation(Vec3<GLfloat>(euler_x, euler_y, euler_z));
+}
+
+void DisplayObject::SetRotation(GLfloat euler_x, GLfloat euler_y)
+{
+    SetRotation(Vec3<GLfloat>(euler_x, euler_y, rotation.z));
+}
+
+void DisplayObject::SetRotation(GLfloat euler_x)
+{
+    SetRotation(Vec3<GLfloat>(euler_x, rotation.y, rotation.z));
+}
+
+void DisplayObject::SetRotation(const Vec3<GLfloat>& e)
+{
+    rotation = e;
+}
+
 Vec3<GLfloat> DisplayObject::Position() const
 {
     return translation;
+}
+
+Vec3<GLfloat> DisplayObject::Rotation() const
+{
+    return rotation;
+}
+
+Vec3<GLfloat> DisplayObject::Scaling() const
+{
+    return scaling;
 }
 
 Vec3<GLfloat> DisplayObject::Forward() const
