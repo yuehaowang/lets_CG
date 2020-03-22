@@ -7,7 +7,7 @@
 #include "mat4x4.h"
 #include "vec3.h"
 #include "shader.h"
-#include "displayobject.h"
+#include "object3d.h"
 #include "material.h"
 #include "geometry.h"
 
@@ -15,7 +15,7 @@
 class Scene;
 
 
-class Mesh : public DisplayObject
+class Mesh : public Object3D
 {
 
 protected:

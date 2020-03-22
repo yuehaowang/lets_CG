@@ -8,7 +8,7 @@ Mesh::Mesh(
     const std::vector<float>& vertex_data,
     const std::vector<float>& normal_data,
     const std::vector<unsigned int>& index_data)
-: DisplayObject()
+: Object3D()
 {
     Initialize(mat, vertex_data, normal_data, index_data);
 }
@@ -17,7 +17,7 @@ Mesh::Mesh(
     const Material* mat,
     const std::vector<float>& vertex_data,
     const std::vector<float>& normal_data)
-: DisplayObject()
+: Object3D()
 {
     Initialize(mat, vertex_data, normal_data, std::vector<unsigned int>());
 }
@@ -25,13 +25,13 @@ Mesh::Mesh(
 Mesh::Mesh(
     const Material* mat,
     const std::vector<float>& vertex_data)
-: DisplayObject()
+: Object3D()
 {
     Initialize(mat, vertex_data, std::vector<float>(), std::vector<unsigned int>());
 }
 
 Mesh::Mesh(const Material* mat, const Geometry& geom)
-: DisplayObject()
+: Object3D()
 {
     Initialize(mat, geom.VertexData(), geom.NormalData(), geom.IndexData());
 }

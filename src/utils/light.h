@@ -4,7 +4,7 @@
 #include <iostream>
 #include "gl_header_files.h"
 #include "vec3.h"
-#include "displayobject.h"
+#include "object3d.h"
 
 
 class Scene;
@@ -12,7 +12,7 @@ class Scene;
 
 /***************** Light *****************/
 
-class Light : public DisplayObject
+class Light : public Object3D
 {
 
 protected:

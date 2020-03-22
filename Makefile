@@ -33,7 +33,7 @@ LIB_OBJS = build/loader.o \
 		   build/shader.o \
 		   build/window.o \
 		   build/mesh.o   \
-		   build/displayobject.o \
+		   build/object3d.o \
 		   build/camera.o \
 		   build/light.o  \
 		   build/scene.o  \
@@ -150,19 +150,19 @@ build/window.o : src/utils/window.cpp src/utils/window.h src/utils/gl_header_fil
 	@mkdir -p build
 	$(CC) -c src/utils/window.cpp -o build/window.o
 
-build/displayobject.o : src/utils/displayobject.cpp src/utils/displayobject.h src/utils/gl_header_files.h $(MATH_HEADERS)
+build/object3d.o : src/utils/object3d.cpp src/utils/object3d.h src/utils/gl_header_files.h $(MATH_HEADERS)
 	@mkdir -p build
-	$(CC) -c src/utils/displayobject.cpp -o build/displayobject.o
+	$(CC) -c src/utils/object3d.cpp -o build/object3d.o
 
-build/mesh.o : src/utils/mesh.cpp src/utils/mesh.h src/utils/material.h src/utils/gl_header_files.h build/shader.o build/displayobject.o build/geometry.o
+build/mesh.o : src/utils/mesh.cpp src/utils/mesh.h src/utils/material.h src/utils/gl_header_files.h build/shader.o build/object3d.o build/geometry.o
 	@mkdir -p build
 	$(CC) -c src/utils/mesh.cpp -o build/mesh.o
 
-build/camera.o : src/utils/camera.cpp src/utils/camera.h src/utils/gl_header_files.h build/displayobject.o
+build/camera.o : src/utils/camera.cpp src/utils/camera.h src/utils/gl_header_files.h build/object3d.o
 	@mkdir -p build
 	$(CC) -c src/utils/camera.cpp -o build/camera.o
 
-build/light.o : src/utils/light.cpp src/utils/light.h src/utils/gl_header_files.h build/displayobject.o
+build/light.o : src/utils/light.cpp src/utils/light.h src/utils/gl_header_files.h build/object3d.o
 	@mkdir -p build
 	$(CC) -c src/utils/light.cpp -o build/light.o
 

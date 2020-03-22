@@ -3,14 +3,14 @@
 
 #include "gl_header_files.h"
 #include "mat4x4.h"
-#include "displayobject.h"
+#include "object3d.h"
 
 
 /***************** Camera *****************/
 
 class Scene;
 
-class Camera : public DisplayObject
+class Camera : public Object3D
 {
 
 protected:

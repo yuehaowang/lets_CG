@@ -77,7 +77,6 @@ private:
     Vec3f camera_rotation;
     Scene main_scene;
     PerspectiveCamera cam;
-    std::vector<Mesh*> mesh_list;
     BasicColorMaterial* mat1;
     BasicColorMaterial* mat2;
 
@@ -213,10 +212,6 @@ public:
 
     void OnDestroy()
     {
-        for (std::vector<Mesh*>::iterator it = mesh_list.begin(); it != mesh_list.end(); it++) {
-            delete *it;
-        }
-
         delete mat1;
         delete mat2;
     }

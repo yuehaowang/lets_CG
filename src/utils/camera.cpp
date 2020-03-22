@@ -56,7 +56,7 @@ void Camera::Translate(float x, float y, float z)
 
 void Camera::Translate(const Vec3f& t)
 {
-    DisplayObject::Translate(t);
+    Object3D::Translate(t);
 
     view.Translate(-t.x, -t.y, -t.z);
 }
@@ -68,7 +68,7 @@ void Camera::Scale(float sx, float sy, float sz)
 
 void Camera::Scale(const Vec3f& s)
 {
-    DisplayObject::Scale(s);
+    Object3D::Scale(s);
 
     view.Scale(1 / s.x, 1 / s.y, 1 / s.z);
 }
@@ -80,7 +80,7 @@ void Camera::Rotate(float euler_x, float euler_y, float euler_z)
 
 void Camera::Rotate(const Vec3f& e)
 {
-    DisplayObject::Rotate(e);
+    Object3D::Rotate(e);
 
     view.Rotate(-e.x, -e.y, -e.z);
 }
