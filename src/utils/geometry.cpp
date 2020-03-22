@@ -11,8 +11,8 @@ Geometry::Geometry()
 }
 
 Geometry::Geometry(
-    std::vector<GLfloat> vert,
-    std::vector<GLfloat> norm,
+    std::vector<float> vert,
+    std::vector<float> norm,
     std::vector<unsigned int> index)
 : vertex_data(vert)
 , normal_data(norm)
@@ -26,12 +26,12 @@ Geometry::~Geometry()
 
 }
 
-const std::vector<GLfloat>& Geometry::VertexData() const
+const std::vector<float>& Geometry::VertexData() const
 {
     return vertex_data;
 }
 
-const std::vector<GLfloat>& Geometry::NormalData() const
+const std::vector<float>& Geometry::NormalData() const
 {
     return normal_data;
 }
@@ -44,7 +44,7 @@ const std::vector<unsigned int>& Geometry::IndexData() const
 
 /***************** BoxGeometry *****************/
 
-GLfloat BoxGeometry::VERTICES[108] = {
+float BoxGeometry::VERTICES[108] = {
     -0.5f, -0.5f, -0.5f,
     0.5f, -0.5f, -0.5f,
     0.5f,  0.5f, -0.5f,
@@ -88,7 +88,7 @@ GLfloat BoxGeometry::VERTICES[108] = {
     -0.5f,  0.5f, -0.5f
 };
 
-GLfloat BoxGeometry::NORMALS[108] = {
+float BoxGeometry::NORMALS[108] = {
     0.0f,  0.0f, -1.0f,
     0.0f,  0.0f, -1.0f,
     0.0f,  0.0f, -1.0f,
@@ -134,15 +134,15 @@ GLfloat BoxGeometry::NORMALS[108] = {
 
 BoxGeometry::BoxGeometry()
 {
-    vertex_data = std::vector<GLfloat>(VERTICES, VERTICES + sizeof(VERTICES) / sizeof(VERTICES[0]));
-    normal_data = std::vector<GLfloat>(NORMALS, NORMALS + sizeof(NORMALS) / sizeof(NORMALS[0]));
+    vertex_data = std::vector<float>(VERTICES, VERTICES + sizeof(VERTICES) / sizeof(VERTICES[0]));
+    normal_data = std::vector<float>(NORMALS, NORMALS + sizeof(NORMALS) / sizeof(NORMALS[0]));
 }
 
 
 /***************** SphereGeometry *****************/
 
-std::vector<GLfloat> SphereGeometry::VERTICES;
-std::vector<GLfloat> SphereGeometry::NORMALS;
+std::vector<float> SphereGeometry::VERTICES;
+std::vector<float> SphereGeometry::NORMALS;
 std::vector<unsigned int> SphereGeometry::INDICES;
 
 
@@ -158,8 +158,8 @@ SphereGeometry::SphereGeometry()
 }
 
 void SphereGeometry::GenerateSphere(
-    std::vector<GLfloat>& vert,
-    std::vector<GLfloat>& norm,
+    std::vector<float>& vert,
+    std::vector<float>& norm,
     std::vector<unsigned int>& index,
     float radius, unsigned int divi_count)
 {
@@ -192,16 +192,12 @@ void SphereGeometry::GenerateSphere(
             norm.push_back(y / radius);
             norm.push_back(z / radius);
 
-            if (i != 0) {
-                index.push_back(i * divi_count + j);
-                index.push_back((i + 1) * divi_count + j);
-                index.push_back(i * divi_count + j + 1);
-            }
-            if (i != divi_count - 1) {
-                index.push_back(i * divi_count + j + 1); 
-                index.push_back((i + 1) * divi_count + j);
-                index.push_back((i + 1) * divi_count + j + 1);
-            }
+            index.push_back(i * divi_count + j);
+            index.push_back((i + 1) * divi_count + j);
+            index.push_back(i * divi_count + (j + 1) % divi_count);
+            index.push_back(i * divi_count + (j + 1) % divi_count); 
+            index.push_back((i + 1) * divi_count + j);
+            index.push_back((i + 1) * divi_count + (j + 1) % divi_count);
         }
     }
 }

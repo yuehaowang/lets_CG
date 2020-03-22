@@ -10,7 +10,7 @@ private:
 
     Shader shader;
 
-    static const GLfloat g_vertex_data[9];
+    static const float g_vertex_data[9];
 
 public:
 
@@ -42,7 +42,7 @@ public:
 
 };
 
-const GLfloat MainWindow::g_vertex_data[9] = {
+const float MainWindow::g_vertex_data[9] = {
     -1.0, -1.0, 0,
     0, 1.0, 0,
     1.0, -1.0, 0

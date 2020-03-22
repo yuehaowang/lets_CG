@@ -17,9 +17,9 @@ class Light : public DisplayObject
 
 protected:
 
-    Vec3<GLfloat> ambient;
-    Vec3<GLfloat> diffuse;
-    Vec3<GLfloat> specular;
+    Vec3f ambient;
+    Vec3f diffuse;
+    Vec3f specular;
     
     virtual void PipeUniformData(GLuint shader_id, unsigned int light_index);
     virtual std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name) = 0;
@@ -30,14 +30,14 @@ protected:
 public:
 
     Light();
-    Light(const Vec3<GLfloat>& a, const Vec3<GLfloat>& d, const Vec3<GLfloat>& s);
+    Light(const Vec3f& a, const Vec3f& d, const Vec3f& s);
     virtual ~Light();
-    Vec3<GLfloat> Ambient() const;
-    Vec3<GLfloat> Diffuse() const;
-    Vec3<GLfloat> Specular() const;
-    void SetAmbient(const Vec3<GLfloat>& v);
-    void SetDiffuse(const Vec3<GLfloat>& v);
-    void SetSpecular(const Vec3<GLfloat>& v);
+    Vec3f Ambient() const;
+    Vec3f Diffuse() const;
+    Vec3f Specular() const;
+    void SetAmbient(const Vec3f& v);
+    void SetDiffuse(const Vec3f& v);
+    void SetSpecular(const Vec3f& v);
 
 };
 
@@ -57,7 +57,7 @@ public:
 
     static std::string lights_uniform_name;
 
-    DirectionalLight(const Vec3<GLfloat>& a, const Vec3<GLfloat>& d, const Vec3<GLfloat>& s);
+    DirectionalLight(const Vec3f& a, const Vec3f& d, const Vec3f& s);
 
 };
 

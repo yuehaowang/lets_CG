@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-
 #include "gl_header_files.h"
 #include "mat4x4.h"
 #include "vec3.h"
@@ -37,8 +36,8 @@ protected:
 
     void Initialize(
         const Material* mat,
-        const std::vector<GLfloat>& vertex_data,
-        const std::vector<GLfloat>& normal_data,
+        const std::vector<float>& vertex_data,
+        const std::vector<float>& normal_data,
         const std::vector<unsigned int>& index_data
     );
     void Render();
@@ -54,16 +53,16 @@ public:
 
     Mesh(
         const Material* mat,
-        const std::vector<GLfloat>& vertex_data,
-        const std::vector<GLfloat>& normal_data,
+        const std::vector<float>& vertex_data,
+        const std::vector<float>& normal_data,
         const std::vector<unsigned int>& index_data);
     Mesh(
         const Material* mat,
-        const std::vector<GLfloat>& vertex_data,
-        const std::vector<GLfloat>& normal_data);
+        const std::vector<float>& vertex_data,
+        const std::vector<float>& normal_data);
     Mesh(
         const Material* mat,
-        const std::vector<GLfloat>& vertex_data);
+        const std::vector<float>& vertex_data);
     Mesh(const Material* mat, const Geometry& geom);
     virtual ~Mesh();
     GLuint ShaderId() const;

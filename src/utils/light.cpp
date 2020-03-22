@@ -8,7 +8,7 @@ Light::Light()
 
 }
 
-Light::Light(const Vec3<GLfloat>& a, const Vec3<GLfloat>& d, const Vec3<GLfloat>& s)
+Light::Light(const Vec3f& a, const Vec3f& d, const Vec3f& s)
 : ambient(a)
 , diffuse(d)
 , specular(s)
@@ -21,31 +21,31 @@ Light::~Light()
 
 }
 
-Vec3<GLfloat> Light::Ambient() const
+Vec3f Light::Ambient() const
 {
     return ambient;
 }
 
-Vec3<GLfloat> Light::Diffuse() const
+Vec3f Light::Diffuse() const
 {
     return diffuse;
 }
-Vec3<GLfloat> Light::Specular() const
+Vec3f Light::Specular() const
 {
     return specular;
 }
 
-void Light::SetAmbient(const Vec3<GLfloat>& v)
+void Light::SetAmbient(const Vec3f& v)
 {
     ambient = v;
 }
 
-void Light::SetDiffuse(const Vec3<GLfloat>& v)
+void Light::SetDiffuse(const Vec3f& v)
 {
     diffuse = v;
 }
 
-void Light::SetSpecular(const Vec3<GLfloat>& v)
+void Light::SetSpecular(const Vec3f& v)
 {
     specular = v;
 }
@@ -76,9 +76,9 @@ void Light::PipeUniformData(GLuint shader_id, unsigned int light_index)
 std::string DirectionalLight::lights_uniform_name = "dir_lights";
 
 DirectionalLight::DirectionalLight(
-    const Vec3<GLfloat>& a,
-    const Vec3<GLfloat>& d,
-    const Vec3<GLfloat>& s)
+    const Vec3f& a,
+    const Vec3f& d,
+    const Vec3f& s)
 : Light(a, d, s)
 {
 
@@ -88,7 +88,7 @@ void DirectionalLight::PipeUniformData(GLuint shader_id, unsigned int light_inde
 {
     Light::PipeUniformData(shader_id, light_index);
 
-    Vec3<GLfloat> direction = Forward();
+    Vec3f direction = Forward();
 
     glUniform3f(
         glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "direction").c_str()),

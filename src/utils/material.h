@@ -40,9 +40,9 @@ class BasicColorMaterial : public Material
     
 protected:
 
-    Vec3<GLfloat> diffuse;
-    Vec3<GLfloat> specular;
-    GLfloat shininess;
+    Vec3f diffuse;
+    Vec3f specular;
+    float shininess;
 
     virtual void PipeUniformData(GLuint shader_id) const;
     virtual std::string ShaderMaterialUniformIdentifier(const std::string& member_name) const;
@@ -54,12 +54,12 @@ public:
     BasicColorMaterial();
     BasicColorMaterial(
         const std::string& shader_name,
-        const Vec3<GLfloat>& diffuse,
-        const Vec3<GLfloat>& specular,
-        GLfloat shininess);
-    Vec3<GLfloat> Diffuse() const;
-    Vec3<GLfloat> Specular() const;
-    GLfloat Shininess() const;
+        const Vec3f& diffuse,
+        const Vec3f& specular,
+        float shininess);
+    Vec3f Diffuse() const;
+    Vec3f Specular() const;
+    float Shininess() const;
 
 };
 

@@ -22,7 +22,7 @@ private:
     GLuint texture1;
     GLuint cube_vertex_buf;
 
-    static const GLfloat g_vertices_data[32];
+    static const float g_vertices_data[32];
     static const GLuint g_elements_data[6];
 
 public:
@@ -40,13 +40,13 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, vertex_buf);
         glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertices_data), g_vertices_data, GL_STATIC_DRAW);
         
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void*)(6 * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buf);
@@ -89,9 +89,9 @@ public:
     {
         glUseProgram(shader.Id());
 
-        Mat4x4<GLfloat> trans_mat;
+        Mat4x4f trans_mat;
         trans_mat.Rotate(-30.0, 0.0, 0.0);
-        trans_mat.LookAt(Vec3<GLfloat>(0, 0, 1.5), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+        trans_mat.LookAt(Vec3f(0, 0, 1.5), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
         trans_mat.Perspective(90, 4 / 3, 1, 100);
 
         glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_TRUE, trans_mat.Ptr());
@@ -104,7 +104,7 @@ public:
 
 };
 
-const GLfloat MainWindow::g_vertices_data[32] = {
+const float MainWindow::g_vertices_data[32] = {
     // positions          // colors          // texture coords
     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.5f, 0.0f,   // top right
     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.5f, 1.0f,   // bottom right

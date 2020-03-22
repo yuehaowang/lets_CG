@@ -17,10 +17,10 @@ private:
     GLuint VAO;
     GLuint vertex_buffer;
     GLuint color_buffer;
-    static const GLfloat g_vertex_buffer_data[18 * 16];
-    static const GLfloat g_color_buffer_data[18 * 16];
-    Vec3<GLfloat> translation;
-    Vec3<GLfloat> rotation;
+    static const float g_vertex_buffer_data[18 * 16];
+    static const float g_color_buffer_data[18 * 16];
+    Vec3f translation;
+    Vec3f rotation;
 
 public:
 
@@ -63,14 +63,14 @@ public:
 
         GLuint trans_mat = glGetUniformLocation(shader.Id(), "trans");
 
-        Mat4x4<GLfloat> m;
+        Mat4x4f m;
         m.Rotate(rotation.x, rotation.y, rotation.z);
         m.Translate(translation.x, translation.y, translation.z);
 
-        Mat4x4<GLfloat> v;
-        v.LookAt(Vec3<GLfloat>(0, 0, 400), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+        Mat4x4f v;
+        v.LookAt(Vec3f(0, 0, 400), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
         
-        Mat4x4<GLfloat> p;
+        Mat4x4f p;
         p.Perspective(90, (float)WindowWidth() / (float)WindowHeight(), 300, 800);
 
         glUniformMatrix4fv(trans_mat, 1, GL_TRUE, (p * v * m).Ptr());
@@ -121,7 +121,7 @@ public:
 
 };
 
-const GLfloat MainWindow::g_vertex_buffer_data[] = {
+const float MainWindow::g_vertex_buffer_data[] = {
     // left column front
     0,   0,  0,
     0, 150,  0,
@@ -251,7 +251,7 @@ const GLfloat MainWindow::g_vertex_buffer_data[] = {
     0, 150,   0
 };
 
-const GLfloat MainWindow::g_color_buffer_data[] = {
+const float MainWindow::g_color_buffer_data[] = {
     // left column front
     200,  70, 120,
     200,  70, 120,

@@ -32,8 +32,8 @@ std::string BasicColorMaterial::material_uniform_name = "material";
 
 BasicColorMaterial::BasicColorMaterial()
 : Material("")
-, diffuse(Vec3<GLfloat>(0.0f, 0.0f, 0.0f))
-, specular(Vec3<GLfloat>(0.0f, 0.0f, 0.0f))
+, diffuse(Vec3f(0.0f, 0.0f, 0.0f))
+, specular(Vec3f(0.0f, 0.0f, 0.0f))
 , shininess(0)
 {
 
@@ -41,9 +41,9 @@ BasicColorMaterial::BasicColorMaterial()
 
 BasicColorMaterial::BasicColorMaterial(
     const std::string& shader_name,
-    const Vec3<GLfloat>& diffuse,
-    const Vec3<GLfloat>& specular,
-    GLfloat shininess)
+    const Vec3f& diffuse,
+    const Vec3f& specular,
+    float shininess)
 : Material(shader_name)
 , diffuse(diffuse)
 , specular(specular)
@@ -52,17 +52,17 @@ BasicColorMaterial::BasicColorMaterial(
 
 }
 
-Vec3<GLfloat> BasicColorMaterial::Diffuse() const
+Vec3f BasicColorMaterial::Diffuse() const
 {
     return diffuse;
 }
 
-Vec3<GLfloat> BasicColorMaterial::Specular() const
+Vec3f BasicColorMaterial::Specular() const
 {
     return specular;
 }
 
-GLfloat BasicColorMaterial::Shininess() const
+float BasicColorMaterial::Shininess() const
 {
     return shininess;
 }

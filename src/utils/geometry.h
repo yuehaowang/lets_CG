@@ -12,20 +12,20 @@ class Geometry
 
 protected:
 
-    std::vector<GLfloat> vertex_data;
-    std::vector<GLfloat> normal_data;
+    std::vector<float> vertex_data;
+    std::vector<float> normal_data;
     std::vector<unsigned int> index_data;
 
 public:
 
     Geometry();
     Geometry(
-        std::vector<GLfloat> vert,
-        std::vector<GLfloat> norm,
+        std::vector<float> vert,
+        std::vector<float> norm,
         std::vector<unsigned int> index);
     virtual ~Geometry();
-    const std::vector<GLfloat>& VertexData() const;
-    const std::vector<GLfloat>& NormalData() const;
+    const std::vector<float>& VertexData() const;
+    const std::vector<float>& NormalData() const;
     const std::vector<unsigned int>& IndexData() const;
 
 };
@@ -38,8 +38,8 @@ class BoxGeometry : public Geometry
 
 protected:
 
-    static GLfloat VERTICES[108];
-    static GLfloat NORMALS[108];
+    static float VERTICES[108];
+    static float NORMALS[108];
 
 public:
 
@@ -55,13 +55,13 @@ class SphereGeometry : public Geometry
 
 protected:
 
-    static std::vector<GLfloat> VERTICES;
-    static std::vector<GLfloat> NORMALS;
+    static std::vector<float> VERTICES;
+    static std::vector<float> NORMALS;
     static std::vector<unsigned int> INDICES;
 
     void GenerateSphere(
-        std::vector<GLfloat>& vert,
-        std::vector<GLfloat>& norm,
+        std::vector<float>& vert,
+        std::vector<float>& norm,
         std::vector<unsigned int>& index,
         float radius, unsigned int divi_count);
 

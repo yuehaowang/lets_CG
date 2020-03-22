@@ -15,7 +15,8 @@ class Camera : public DisplayObject
 
 protected:
 
-    Mat4x4<GLfloat> projection;
+    Mat4x4f projection;
+    Mat4x4f view;
 
     virtual void PipeUniformData(GLuint shader_id);
     virtual std::string ShaderCameraUniformIdentifier(const std::string& member_name);
@@ -28,10 +29,17 @@ public:
 
     Camera();
     virtual ~Camera();
-    Mat4x4<GLfloat> View() const;
-    Mat4x4<GLfloat> Projection() const;
-    virtual void SetProjection(GLfloat fovv, GLfloat aspect_ratio, GLfloat near, GLfloat far) = 0;
-
+    const Mat4x4f& View() const;
+    const Mat4x4f& Projection() const;
+    virtual void SetProjection(float fovv, float aspect_ratio, float near, float far) = 0;
+    virtual void Translate(float x, float y, float z);
+    virtual void Translate(const Vec3f& t);
+    virtual void Scale(float sx, float sy, float sz);
+    virtual void Scale(const Vec3f& s);
+    virtual void Rotate(float euler_x, float euler_y, float euler_z);
+    virtual void Rotate(const Vec3f& e);
+    virtual void LookAt(const Vec3f& f);
+    
 };
 
 
@@ -43,8 +51,8 @@ class PerspectiveCamera : public Camera
 public:
 
     PerspectiveCamera();
-    PerspectiveCamera(GLfloat fovv, GLfloat aspect_ratio, GLfloat near, GLfloat far);
-    void SetProjection(GLfloat fovv, GLfloat aspect_ratio, GLfloat near, GLfloat far);
+    PerspectiveCamera(float fovv, float aspect_ratio, float near, float far);
+    void SetProjection(float fovv, float aspect_ratio, float near, float far);
 
 };
 
@@ -57,8 +65,8 @@ class OrthographicCamera : public Camera
 public:
 
     OrthographicCamera();
-    OrthographicCamera(GLfloat fovv, GLfloat aspect_ratio, GLfloat near, GLfloat far);
-    void SetProjection(GLfloat fovv, GLfloat aspect_ratio, GLfloat near, GLfloat far);
+    OrthographicCamera(float fovv, float aspect_ratio, float near, float far);
+    void SetProjection(float fovv, float aspect_ratio, float near, float far);
 
 };
 

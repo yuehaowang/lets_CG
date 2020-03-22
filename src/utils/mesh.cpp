@@ -1,5 +1,3 @@
-#include <string>
-#include <vector>
 #include "mesh.h"
 
 
@@ -7,8 +5,8 @@ std::string Mesh::mesh_uniform_name = "mesh";
 
 Mesh::Mesh(
     const Material* mat,
-    const std::vector<GLfloat>& vertex_data,
-    const std::vector<GLfloat>& normal_data,
+    const std::vector<float>& vertex_data,
+    const std::vector<float>& normal_data,
     const std::vector<unsigned int>& index_data)
 : DisplayObject()
 {
@@ -17,8 +15,8 @@ Mesh::Mesh(
 
 Mesh::Mesh(
     const Material* mat,
-    const std::vector<GLfloat>& vertex_data,
-    const std::vector<GLfloat>& normal_data)
+    const std::vector<float>& vertex_data,
+    const std::vector<float>& normal_data)
 : DisplayObject()
 {
     Initialize(mat, vertex_data, normal_data, std::vector<unsigned int>());
@@ -26,10 +24,10 @@ Mesh::Mesh(
 
 Mesh::Mesh(
     const Material* mat,
-    const std::vector<GLfloat>& vertex_data)
+    const std::vector<float>& vertex_data)
 : DisplayObject()
 {
-    Initialize(mat, vertex_data, std::vector<GLfloat>(), std::vector<unsigned int>());
+    Initialize(mat, vertex_data, std::vector<float>(), std::vector<unsigned int>());
 }
 
 Mesh::Mesh(const Material* mat, const Geometry& geom)
@@ -53,8 +51,8 @@ Mesh::~Mesh()
 
 void Mesh::Initialize(
         const Material* mat,
-        const std::vector<GLfloat>& vertex_data,
-        const std::vector<GLfloat>& normal_data,
+        const std::vector<float>& vertex_data,
+        const std::vector<float>& normal_data,
         const std::vector<unsigned int>& index_data)
 {
     SetMaterial(mat);
@@ -64,13 +62,13 @@ void Mesh::Initialize(
 
     glGenBuffers(1, &vertex_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(GLfloat), &vertex_data[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertex_data.size() * sizeof(float), &vertex_data[0], GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
     glGenBuffers(1, &normal_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
-    glBufferData(GL_ARRAY_BUFFER, normal_data.size() * sizeof(GLfloat), &normal_data[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, normal_data.size() * sizeof(float), &normal_data[0], GL_STATIC_DRAW);
     glVertexAttribPointer(1, (normal_data.size() > 0) ? 3 : 0, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(1);
 

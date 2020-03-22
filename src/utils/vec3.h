@@ -101,4 +101,10 @@ std::ostream& operator << (std::ostream& os, const Vec3<T>& v)
 }
 
 
+typedef Vec3<float> Vec3f;
+typedef Vec3<double> Vec3d;
+typedef Vec3<int> Vec3i;
+typedef Vec3<unsigned int> Vec3ui;
+
+
 #endif

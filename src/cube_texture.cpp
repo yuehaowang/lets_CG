@@ -24,7 +24,7 @@ private:
     GLuint vertex_buffer;
     GLuint texture0;
 
-    static const GLfloat g_cube_vertices_data[180];
+    static const float g_cube_vertices_data[180];
 
 public:
 
@@ -41,9 +41,9 @@ public:
         glBufferData(GL_ARRAY_BUFFER, sizeof(g_cube_vertices_data), g_cube_vertices_data, GL_STATIC_DRAW);
         
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     
         CreateTexture();
     }
@@ -81,12 +81,12 @@ public:
         glUseProgram(shader.Id());
 
         for (int i = 0; i < 5; i++) {
-            GLfloat angle = (GLfloat)glfwGetTime() * ROTATION_STEP * (i + 1);
+            float angle = (float)glfwGetTime() * ROTATION_STEP * (i + 1);
 
-            Mat4x4<GLfloat> trans_mat;
+            Mat4x4f trans_mat;
             trans_mat.Rotate(angle, angle, angle);
             trans_mat.Translate(-3.5 + i * 1.8, 0, 0);
-            trans_mat.LookAt(Vec3<GLfloat>(0, 0, 5), Vec3<GLfloat>(0, 0, 0), Vec3<GLfloat>(0, 1, 0));
+            trans_mat.LookAt(Vec3f(0, 0, 5), Vec3f(0, 0, 0), Vec3f(0, 1, 0));
             trans_mat.Perspective(90, 1, 1, 100);
 
             glUniformMatrix4fv(glGetUniformLocation(shader.Id(), "trans"), 1, GL_TRUE, trans_mat.Ptr());
@@ -117,7 +117,7 @@ public:
 
 };
 
-const GLfloat MainWindow::g_cube_vertices_data[180] = {
+const float MainWindow::g_cube_vertices_data[180] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
      0.5f,  0.5f, -0.5f,  1.0f, 1.0f,

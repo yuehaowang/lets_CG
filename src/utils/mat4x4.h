@@ -9,7 +9,6 @@
 #include <iostream>
 #include <cmath>
 #include <cstring>
-
 #include "vec3.h"
 
 
@@ -317,7 +316,7 @@ void Mat4x4<T>::Rotate(T euler_x, T euler_y, T euler_z)
     };
     Mat4x4<T> m_z((T*)temp_m_arr3);
 
-    *this = m_x * m_y * m_z * (*this);
+    *this = m_z * m_y * m_x * (*this);
 }
 
 template <typename T>
@@ -401,6 +400,12 @@ void Mat4x4<T>::Orthographic(float fovv, float aspect_ratio, T n, T f)
 
     *this = m_p * (*this);
 }
+
+
+typedef Mat4x4<float> Mat4x4f;
+typedef Mat4x4<double> Mat4x4d;
+typedef Mat4x4<int> Mat4x4i;
+typedef Mat4x4<unsigned int> Mat4x4ui;
 
 
 #endif

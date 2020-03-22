@@ -1,6 +1,5 @@
 #include <vector>
 #include <iostream>
-
 #include "shader.h"
 #include "loader.h"
 
