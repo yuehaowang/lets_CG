@@ -59,15 +59,14 @@ protected:
     static std::vector<float> NORMALS;
     static std::vector<unsigned int> INDICES;
 
-    void GenerateSphere(
+public:
+
+    SphereGeometry();
+    static void GenerateSphere(
         std::vector<float>& vert,
         std::vector<float>& norm,
         std::vector<unsigned int>& index,
         float radius, unsigned int divi_count);
-
-public:
-
-    SphereGeometry();
 
 };
 

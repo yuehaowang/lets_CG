@@ -45,7 +45,7 @@ void DisplayObject::Scale(float sx, float sy, float sz)
 void DisplayObject::Scale(const Vec3f& s)
 {
     Mat4x4f m;
-    m.Translate(s.x, s.y, s.z);
+    m.Scale(s.x, s.y, s.z);
     transform *= m;
 }
 

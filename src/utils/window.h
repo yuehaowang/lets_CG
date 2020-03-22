@@ -22,9 +22,9 @@ public:
     Window(const std::string& title, int width, int height);
     virtual ~Window();
     void Run();
-    virtual void OnStart() = 0;
-    virtual void OnUpdate() = 0;
-    virtual void OnDestroy() = 0;
+    virtual void OnStart();
+    virtual void OnUpdate();
+    virtual void OnDestroy();
     int WindowWidth() const;
     int WindowHeight() const;
     GLFWwindow* WindowHandler() const;

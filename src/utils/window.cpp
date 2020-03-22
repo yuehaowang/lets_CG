@@ -52,6 +52,21 @@ Window::~Window()
     glfwTerminate();
 }
 
+void Window::OnStart()
+{
+
+}
+
+void Window::OnUpdate()
+{
+
+}
+
+void Window::OnDestroy()
+{
+
+}
+
 void Window::OnFrameBufferResized(GLFWwindow* win, int new_width, int new_height)
 {
     glViewport(0, 0, new_width, new_height);

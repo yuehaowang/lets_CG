@@ -17,6 +17,55 @@
 #include "utils/geometry.h"
 
 
+const float TRIANGLE_VERTICES[9] = {
+    -0.5, -0.5, 0.0,
+    0.0, 0.5, 0.0,
+    0.5, -0.5, 0.0
+};
+
+const float TRIANGLE_NORMALS[9] = {
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0
+};
+
+const float TETRAHEDRON_VERTICES[36] = {
+    0.0, 0.5, 0.0,
+    0.0, 0.0, 0.5,
+    0.43, 0.0, -0.25,
+
+    0.0, 0.5, 0.0,
+    -0.43, 0.0, -0.25,
+    0.0, 0.0, 0.5,
+
+    0.0, 0.5, 0.0,
+    0.43, 0.0, -0.25,
+    -0.43, 0.0, -0.25,
+
+    0.0, 0.0, 0.5,
+    -0.43, 0.0, -0.25,
+    0.43, 0.0, -0.25
+};
+
+const float TETRAHEDRON_NORMALS[36] = {
+    1.0, 1.0, 1.0,
+    1.0, 1.0, 1.0,
+    1.0, 1.0, 1.0,
+
+    -1.0, 1.0, 1.0,
+    -1.0, 1.0, 1.0,
+    -1.0, 1.0, 1.0,
+
+    -1.0, 1.0, -1.0,
+    -1.0, 1.0, -1.0,
+    -1.0, 1.0, -1.0,
+
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0,
+    0.0, -1.0, 0.0
+};
+
+
 ///////////////// Main Window /////////////////
 
 class MainWindow : public Window
@@ -29,13 +78,13 @@ private:
     Scene main_scene;
     PerspectiveCamera cam;
     std::vector<Mesh*> mesh_list;
-    BasicColorMaterial* box_mat;
-    BasicColorMaterial* sphere_mat;
+    BasicColorMaterial* mat1;
+    BasicColorMaterial* mat2;
 
 public:
 
     MainWindow()
-        : Window("Lighting", 800, 800)
+        : Window("Lighting", 800, 600)
         , cam(45, (float)WindowWidth() / (float)WindowHeight(), 0.1, 100)
         , old_mouse_pos(0, 0, 0)
     {
@@ -44,64 +93,97 @@ public:
         main_scene.SetMainCamera(&cam);
 
         /* Lights */
-        // Lightblue light directed to -Z
         DirectionalLight* light1 = new DirectionalLight(
             Vec3f(0.05f, 0.05f, 0.05f),
-            Vec3f(0.1f, 0.2f, 0.8f),
+            Vec3f(0.4f, 0.4f, 0.4f),
             Vec3f(0.4f, 0.6f, 0.8f)
         );
         light1->Rotate(180, 0, 0);
         main_scene.Add(light1);
 
-        // White light directed to -Y
         DirectionalLight* light2 = new DirectionalLight(
             Vec3f(0.08f, 0.08f, 0.08f),
             Vec3f(1.0f, 1.0f, 1.0f),
-            Vec3f(0.8f, 0.1f, 0.2f)
+            Vec3f(0.8f, 0.5f, 0.2f)
         );
-        light2->Rotate(90, 0, 0);
+        light2->Rotate(45, 0, 0);
         main_scene.Add(light2);
 
-        // Green light directed to X
         DirectionalLight* light3 = new DirectionalLight(
             Vec3f(0.1f, 0.1f, 0.1f),
-            Vec3f(0.2f, 0.7f, 0.2f),
-            Vec3f(0.1f, 0.7f, 0.2f)
+            Vec3f(0.4f, 0.5f, 0.4f),
+            Vec3f(0.6f, 0.7f, 0.6f)
         );
         light3->Rotate(0, 90, 0);
         main_scene.Add(light3);
 
 
         /* Materials */
-        sphere_mat = new BasicColorMaterial(
+        mat1 = new BasicColorMaterial(
             "src/shaders/lighting",
             Vec3f(1.0f, 0.5f, 0.31f),
             Vec3f(0.5f, 0.5f, 0.5f),
             12.0f
         );
 
-        box_mat = new BasicColorMaterial(
+        mat2 = new BasicColorMaterial(
             "src/shaders/lighting",
-            Vec3f(1.0f, 0.5f, 0.31f),
-            Vec3f(0.5f, 0.5f, 0.5f),
+            Vec3f(1.0f, 0.7f, 0.31f),
+            Vec3f(0.8f, 0.8f, 0.8f),
             32.0f
         );
 
         /* Create objects */
+        CreateTriangle();
+        CreateTetrahedron();
         CreateBox();
         CreateBall();
     }
 
+    void CreateTriangle()
+    {
+        std::vector<float> vert = std::vector<float>(
+            TRIANGLE_VERTICES,
+            TRIANGLE_VERTICES + (sizeof(TRIANGLE_VERTICES) / sizeof(TRIANGLE_VERTICES[0]))
+        );
+        std::vector<float> norm = std::vector<float>(
+            TRIANGLE_NORMALS,
+            TRIANGLE_NORMALS + (sizeof(TRIANGLE_NORMALS) / sizeof(TRIANGLE_NORMALS[0]))
+        );
+        Mesh* tri = new Mesh(mat2, vert, norm);
+        tri->Translate(-3.5, 0, 1.3);
+        tri->Rotate(0, 30, 0);
+        main_scene.Add(tri);
+    }
+
+    void CreateTetrahedron()
+    {
+        std::vector<float> vert = std::vector<float>(
+            TETRAHEDRON_VERTICES,
+            TETRAHEDRON_VERTICES + (sizeof(TETRAHEDRON_VERTICES) / sizeof(TETRAHEDRON_VERTICES[0]))
+        );
+        std::vector<float> norm = std::vector<float>(
+            TETRAHEDRON_NORMALS,
+            TETRAHEDRON_NORMALS + (sizeof(TETRAHEDRON_NORMALS) / sizeof(TETRAHEDRON_NORMALS[0]))
+        );
+
+        Mesh* tetra = new Mesh(mat2, vert, norm);
+        tetra->Translate(2.0, -0.5, 3);
+        tetra->Scale(1, 1.3, 1);
+        tetra->Rotate(0, 60, 0);
+        main_scene.Add(tetra);
+    }
+
     void CreateBox()
     {
-        Mesh* box = new Mesh(box_mat, BoxGeometry());
+        Mesh* box = new Mesh(mat2, BoxGeometry());
         box->Translate(-1.5, 0, 0.5);
         main_scene.Add(box);
     }
 
     void CreateBall()
     {
-        Mesh* sphere = new Mesh(sphere_mat, SphereGeometry());
+        Mesh* sphere = new Mesh(mat1, SphereGeometry());
         sphere->Translate(1, 0, 0);
         main_scene.Add(sphere);
     }
@@ -115,7 +197,7 @@ public:
         glfwWindowHint(GLFW_SAMPLES, 4);
         glEnable(GL_MULTISAMPLE);
 
-        glClearColor(0.7f, 0.7f, 0.7f, 0.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
 
         /* Hide mouse cursor */
         glfwSetInputMode(WindowHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -135,8 +217,8 @@ public:
             delete *it;
         }
 
-        delete box_mat;
-        delete sphere_mat;
+        delete mat1;
+        delete mat2;
     }
 
     void MouseControl()
