@@ -17,16 +17,7 @@ add_library(${PROJECT_NAME}
 
 
 ###### Add shader files ######
-file(GLOB SHADER_FILES
-    "shaders/*.vs"
-    "shaders/*.fs"
-)
-
-foreach(SHADER ${SHADER_FILES})
-    file(COPY ${SHADER} DESTINATION ${PROJECT_BINARY_DIR}/shaders/)
-endforeach(SHADER)
-
-# message(STATUS ${PROJECT_BINARY_DIR})
+include(${CMAKE_SOURCE_DIR}/FindShaders.cmake)
 
 
 ###### Set include directories ######

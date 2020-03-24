@@ -41,12 +41,7 @@ endif (APPLE)
 
 
 ###### Copy common resources ######
-
-file(GLOB RESOURCE_FILES "resources/*")
-
-foreach(RESOURCE ${RESOURCE_FILES})
-    file(COPY ${RESOURCE} DESTINATION ${CMAKE_BINARY_DIR}/resources/)
-endforeach(RESOURCE)
+include(FindResources.cmake)
 
 
 ###### Add subdirectories ######
