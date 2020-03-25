@@ -41,7 +41,7 @@ Type commands below to build the project.
 git clone https://github.com/yuehaowang/lets_openGL.git
 # Get into the project directory
 cd ./lets_openGL
-# Create build/ directory
+# Create a build/ directory
 mkdir build
 cd build/
 # Build
@@ -77,7 +77,7 @@ lighting/lighting
 
 ### Row-major v.s. Column-major order
 
-`mat` in GLSL reads input data in column-major order not row-major order, which means `mat2(1, 2, 3, 4)` will construct a matrix:
+`mat` in GLSL reads input data in column-major order not row-major order, e.g. `mat2(1, 2, 3, 4)` will construct a matrix like
 
 ```math
 1  3
