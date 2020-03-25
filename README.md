@@ -1,116 +1,97 @@
 # Let's OpenGL
 
-This is a repo where I upload my OpenGL learning notes and code.
+Learning and Practice of Modern OpenGL.
 
-Reference: https://learnopengl.com/
 
-# Setup
+## Setup
 
-## On macOS
+### Build Tools
 
-### GLEW
+- GCC/Clang (C++ 11 supported)
+- CMake
 
-```
+### On macOS
+
+Install packages below via *Homebrew*. In addition, you may also need to install *Xcode*, which encompasses C/C++ build tools and essential frameworks for development.
+
+```bash
+# The OpenGL extension wrangler library
 brew install glew
-```
-
-### GLFW3
-
-```
+# Multi-platform Library for OpenGL
 brew install glfw3
-```
-
-### GLM (if needed)
-
-```
+# OpenGL Mathematics
 brew install glm
 ```
 
-## On Ubuntu
+### On Ubuntu
 
-```
+Install packages below via *apt-get*.
+
+```bash
 sudo apt-get install cmake libx11-dev xorg-dev libglu1-mesa-dev freeglut3-dev libglew1.5 libglew1.5-dev libglu1-mesa libglu1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev libglm-dev
 ```
 
-Reference: https://medium.com/@Plimsky/how-to-install-a-opengl-environment-on-ubuntu-e3918cf5ab6c
 
-# How to Run
+## Build & Run
 
-```
-make target_name
-```
-All of the `target_name` will be listed by typing `make`.
+Type commands below to build the project.
 
-
-# Notes
-
-## Matrix
-
-### Matrix Transposition
-
-```
-(AB)' = B'A'
+```bash
+# Clone this repo
+git clone https://github.com/yuehaowang/lets_openGL.git
+# Get into the project directory
+cd ./lets_openGL
+# Create build/ directory
+mkdir build
+cd build/
+# Build
+cmake ..
+make
 ```
 
-### Inverse Matrix
+If you manage to build the project, you can run binaries as below:
+
+```bash
+# Draw a triangle
+triangle/triangle
+
+# Bind textures to 2D geometries
+texture/texture
+
+# Draw a 3D geometry
+3d_geom/3d_geom
+
+# Test mathematical computation
+math_test/math_test
+
+# Bind textures to 3D geometries
+cube_texture/cube_texture
+
+# Phong shading
+lighting/lighting
 
 ```
-AA^-1 = 1
-
-(AB)^-1 = B^-1 * A^-1
-```
-
-### Matrix Transformation
-
-**Model**
-
-Transformation: translate -> rotate -> scale
-
-```
-model_mat_4x4 = Translation * Rotation * Scaling
-```
-
-**Model - View - Projection (MVP)**
-
-MVP matrix is used to transform space coordinates to image plane: Word coordinates (* Model) -> Camera coordinates (* View) -> Image plane coordinates (* Projection).
 
 
-```
-vertex_pos_2d = Projection * View * Model * pos_vec_3d
-```
+## Notes
 
-### Caveats
+### Row-major v.s. Column-major order
 
-`mat` in GLSL reads input data one after another but `mat` is constructed by columns (a `vec`) not rows, which means `mat2(1, 2, 3, 4)` will construct a matrix:
+`mat` in GLSL reads input data in column-major order not row-major order, which means `mat2(1, 2, 3, 4)` will construct a matrix:
 
-```
+```math
 1  3
 2  4
 ```
 
-Therefore, every matrix passed to shader program by `glUnifromMatrixXXX` will be transposed via  `mat`'s data-reading process if `glUnifromMatrixXXX`'s 3rd parameter is not set to `GL_TRUE`. However, some math libraries like glm will provide transposed transformation matrix, for example, translation matrix constructed by the code below will give a transposed matrix:
+Therefore, matrices stored in row-major order should be transposed before sent to shader programs. A more general way is to set the 3rd parameter of `glUnifromMatrixXXX` to `GL_TRUE`. Also note, some mathematical frameworks like *glm* stores matrices in column-major order and `mat[i][j]` gives element at column *i* and row *j*, which is different from the mathematical convention.
 
-```cpp
-glm::mat4 trans;
-trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
 
-/*
+## References
 
-trans:
-
-1 0 0 0
-0 1 0 0
-0 0 1 0
-x y z 1
-
-but translation matrix is expected to look like:
-
-1 0 0 x
-0 1 0 y
-0 0 1 z
-0 0 0 1
-
-*/
-```
-
-Also note, `glm::mat` is similar to `mat`, namely constructed by columns and `m[i][j]` gives element at column *i* and row *j* (different from the mathematical convention). 
+- [Learn OpenGL](https://learnopengl.com/)
+- [OpenGL Projection Matrix](http://www.songho.ca/opengl/gl_projectionmatrix.html)
+- [WebGL Fundamentals](https://webglfundamentals.org/)
+- [How to install a OpenGL environment on Ubuntu](https://medium.com/@Plimsky/how-to-install-a-opengl-environment-on-ubuntu-e3918cf5ab6c)
+- [CMake Examples](http://ttroy50.github.io/cmake-examples/)
+- Dunn, Fletcher, and Ian Parberry. 3D math primer for graphics and game development. Jones & Bartlett Publishers, 2010.
