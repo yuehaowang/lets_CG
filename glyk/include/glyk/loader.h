@@ -2,7 +2,8 @@
 #define _LOADER_H_
 
 #include <string>
-// #include "glyk/image.h"
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "thirdparty/tiny_obj_loader.h"
 
 
 /***************** Image *****************/
