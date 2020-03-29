@@ -2,7 +2,7 @@
 #define _LOADER_H_
 
 #include <string>
-#define TINYOBJLOADER_IMPLEMENTATION
+#include "glyk/geometry.h"
 #include "thirdparty/tiny_obj_loader.h"
 
 
@@ -15,7 +15,9 @@ struct Image
     int height;
     int channels;
 
+    Image();
     Image(unsigned char* d, int w, int h, int ch);
+    bool IsNull();
     void Free();
 };
 
@@ -29,6 +31,7 @@ public:
 
     static std::string LoadPlainText(const std::string& file_path);
     static Image LoadImage(const std::string& path);
+    static std::vector<Geometry> LoadModel(const std::string& path);
 
 };
 

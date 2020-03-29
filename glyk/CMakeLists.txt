@@ -17,8 +17,7 @@ add_library(${PROJECT_NAME}
 
 
 ###### Add shader files ######
-include(${CMAKE_SOURCE_DIR}/FindShaders.cmake)
-
+find_shaders()
 
 ###### Set include directories ######
 target_include_directories(${PROJECT_NAME}
@@ -28,5 +27,5 @@ target_include_directories(${PROJECT_NAME}
 
 ###### Link thirdparty libraries ######
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE stb_image
+    PRIVATE stb_image tiny_obj_loader
 )

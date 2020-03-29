@@ -11,11 +11,13 @@ Geometry::Geometry()
 }
 
 Geometry::Geometry(
-    std::vector<float> vert,
-    std::vector<float> norm,
-    std::vector<unsigned int> index)
+    const std::vector<float>& vert,
+    const std::vector<float>& norm,
+    const std::vector<float>& texc,
+    const std::vector<unsigned int>& index)
 : vertex_data(vert)
 , normal_data(norm)
+, texcoord_data(texc)
 , index_data(index)
 {
 
@@ -34,6 +36,11 @@ const std::vector<float>& Geometry::VertexData() const
 const std::vector<float>& Geometry::NormalData() const
 {
     return normal_data;
+}
+
+const std::vector<float>& Geometry::TexCoordData() const
+{
+    return texcoord_data;
 }
 
 const std::vector<unsigned int>& Geometry::IndexData() const

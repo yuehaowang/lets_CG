@@ -7,10 +7,21 @@ Mesh::Mesh(
     const Material* mat,
     const std::vector<float>& vertex_data,
     const std::vector<float>& normal_data,
+    const std::vector<float>& texcoord_data,
     const std::vector<unsigned int>& index_data)
 : Object3D()
 {
-    Initialize(mat, vertex_data, normal_data, index_data);
+    Initialize(mat, vertex_data, normal_data, texcoord_data, index_data);
+}
+
+Mesh::Mesh(
+    const Material* mat,
+    const std::vector<float>& vertex_data,
+    const std::vector<float>& normal_data,
+    const std::vector<float>& texcoord_data)
+: Object3D()
+{
+    Initialize(mat, vertex_data, normal_data, texcoord_data, std::vector<unsigned int>());
 }
 
 Mesh::Mesh(
@@ -19,7 +30,7 @@ Mesh::Mesh(
     const std::vector<float>& normal_data)
 : Object3D()
 {
-    Initialize(mat, vertex_data, normal_data, std::vector<unsigned int>());
+    Initialize(mat, vertex_data, normal_data, std::vector<float>(), std::vector<unsigned int>());
 }
 
 Mesh::Mesh(
@@ -27,13 +38,13 @@ Mesh::Mesh(
     const std::vector<float>& vertex_data)
 : Object3D()
 {
-    Initialize(mat, vertex_data, std::vector<float>(), std::vector<unsigned int>());
+    Initialize(mat, vertex_data, std::vector<float>(), std::vector<float>(), std::vector<unsigned int>());
 }
 
 Mesh::Mesh(const Material* mat, const Geometry& geom)
 : Object3D()
 {
-    Initialize(mat, geom.VertexData(), geom.NormalData(), geom.IndexData());
+    Initialize(mat, geom.VertexData(), geom.NormalData(), std::vector<float>(), geom.IndexData());
 }
 
 Mesh::~Mesh()
@@ -44,6 +55,7 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &EBO);
     glDeleteBuffers(1, &vertex_buffer);
     glDeleteBuffers(1, &normal_buffer);
+    glDeleteBuffers(1, &texcoord_buffer);
     glDeleteVertexArrays(1, &VAO);
 
     shader.Dismiss();
@@ -53,6 +65,7 @@ void Mesh::Initialize(
         const Material* mat,
         const std::vector<float>& vertex_data,
         const std::vector<float>& normal_data,
+        const std::vector<float>& texcoord_data,
         const std::vector<unsigned int>& index_data)
 {
     SetMaterial(mat);
@@ -69,8 +82,14 @@ void Mesh::Initialize(
     glGenBuffers(1, &normal_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
     glBufferData(GL_ARRAY_BUFFER, normal_data.size() * sizeof(float), &normal_data[0], GL_STATIC_DRAW);
-    glVertexAttribPointer(1, (normal_data.size() > 0) ? 3 : 0, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(1);
+
+    glGenBuffers(1, &texcoord_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, texcoord_buffer);
+    glBufferData(GL_ARRAY_BUFFER, texcoord_data.size() * sizeof(float), &texcoord_data[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(2);
 
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

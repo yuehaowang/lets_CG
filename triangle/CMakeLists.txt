@@ -2,7 +2,7 @@ project(triangle)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-include(${CMAKE_SOURCE_DIR}/FindShaders.cmake)
+find_shaders()
 
 target_link_libraries(${PROJECT_NAME}
     glyk ${LIBS}

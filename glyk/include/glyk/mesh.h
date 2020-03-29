@@ -31,6 +31,7 @@ protected:
     GLuint VAO;
     GLuint vertex_buffer;
     GLuint normal_buffer;
+    GLuint texcoord_buffer;
     GLuint EBO; 
     const Material* material;
 
@@ -38,6 +39,7 @@ protected:
         const Material* mat,
         const std::vector<float>& vertex_data,
         const std::vector<float>& normal_data,
+        const std::vector<float>& texcoord_data,
         const std::vector<unsigned int>& index_data
     );
     void Render();
@@ -55,7 +57,13 @@ public:
         const Material* mat,
         const std::vector<float>& vertex_data,
         const std::vector<float>& normal_data,
+        const std::vector<float>& texcoord_data,
         const std::vector<unsigned int>& index_data);
+    Mesh(
+        const Material* mat,
+        const std::vector<float>& vertex_data,
+        const std::vector<float>& normal_data,
+        const std::vector<float>& texcoord_data);
     Mesh(
         const Material* mat,
         const std::vector<float>& vertex_data,

@@ -14,18 +14,21 @@ protected:
 
     std::vector<float> vertex_data;
     std::vector<float> normal_data;
+    std::vector<float> texcoord_data;
     std::vector<unsigned int> index_data;
 
 public:
 
     Geometry();
     Geometry(
-        std::vector<float> vert,
-        std::vector<float> norm,
-        std::vector<unsigned int> index);
+        const std::vector<float>& vert,
+        const std::vector<float>& norm,
+        const std::vector<float>& texc,
+        const std::vector<unsigned int>& index);
     virtual ~Geometry();
     const std::vector<float>& VertexData() const;
     const std::vector<float>& NormalData() const;
+    const std::vector<float>& TexCoordData() const;
     const std::vector<unsigned int>& IndexData() const;
 
 };

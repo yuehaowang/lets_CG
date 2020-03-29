@@ -14,6 +14,8 @@ Window::Window(const std::string& title, int width, int height)
     window_height = height;
     window_title = title;
 
+    glfwInitHint(GLFW_COCOA_CHDIR_RESOURCES, GLFW_FALSE);
+
     if(!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW.\n");
     }
@@ -22,7 +24,7 @@ Window::Window(const std::string& title, int width, int height)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(window_width, window_height, window_title.c_str(), NULL, NULL);
     

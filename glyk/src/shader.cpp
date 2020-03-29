@@ -24,7 +24,7 @@ Shader::Shader(const std::string& vert_shader_path, const std::string& frag_shad
 
 void Shader::Employ()
 {
-    if (vert_shader_file.size() == 0 || frag_shader_file.size() == 0) {
+    if (vert_shader_file.empty() || frag_shader_file.empty()) {
         return;
     }
 
@@ -37,7 +37,7 @@ void Shader::Employ()
 
 void Shader::Dismiss()
 {
-    if (vert_shader_file.size() == 0 || frag_shader_file.size() == 0) {
+    if (vert_shader_file.empty() || frag_shader_file.empty()) {
         return;
     }
 
