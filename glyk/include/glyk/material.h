@@ -33,9 +33,9 @@ public:
 };
 
 
-/***************** BasicColorMaterial *****************/
+/***************** BasicMaterial *****************/
 
-class BasicColorMaterial : public Material
+class BasicMaterial : public Material
 {
     
 protected:
@@ -51,8 +51,8 @@ public:
 
     static std::string material_uniform_name;
 
-    BasicColorMaterial();
-    BasicColorMaterial(
+    BasicMaterial();
+    BasicMaterial(
         const std::string& shader_name,
         const Vec3f& diffuse,
         const Vec3f& specular,

@@ -78,8 +78,8 @@ private:
     Vec3f camera_rotation;
     Scene main_scene;
     PerspectiveCamera cam;
-    BasicColorMaterial* mat1;
-    BasicColorMaterial* mat2;
+    BasicMaterial* mat1;
+    BasicMaterial* mat2;
 
 public:
 
@@ -119,14 +119,14 @@ public:
 
 
         /* Materials */
-        mat1 = new BasicColorMaterial(
+        mat1 = new BasicMaterial(
             "glyk/shaders/standard",
             Vec3f(1.0f, 0.5f, 0.31f),
             Vec3f(0.5f, 0.5f, 0.5f),
             12.0f
         );
 
-        mat2 = new BasicColorMaterial(
+        mat2 = new BasicMaterial(
             "glyk/shaders/standard",
             Vec3f(1.0f, 0.7f, 0.31f),
             Vec3f(0.8f, 0.8f, 0.8f),

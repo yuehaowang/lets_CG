@@ -26,11 +26,11 @@ std::string Material::ShaderName() const
 }
 
 
-/***************** BasicColorMaterial *****************/
+/***************** BasicMaterial *****************/
 
-std::string BasicColorMaterial::material_uniform_name = "material";
+std::string BasicMaterial::material_uniform_name = "material";
 
-BasicColorMaterial::BasicColorMaterial()
+BasicMaterial::BasicMaterial()
 : Material("")
 , diffuse(Vec3f(0.0f, 0.0f, 0.0f))
 , specular(Vec3f(0.0f, 0.0f, 0.0f))
@@ -39,7 +39,7 @@ BasicColorMaterial::BasicColorMaterial()
 
 }
 
-BasicColorMaterial::BasicColorMaterial(
+BasicMaterial::BasicMaterial(
     const std::string& shader_name,
     const Vec3f& diffuse,
     const Vec3f& specular,
@@ -52,22 +52,22 @@ BasicColorMaterial::BasicColorMaterial(
 
 }
 
-Vec3f BasicColorMaterial::Diffuse() const
+Vec3f BasicMaterial::Diffuse() const
 {
     return diffuse;
 }
 
-Vec3f BasicColorMaterial::Specular() const
+Vec3f BasicMaterial::Specular() const
 {
     return specular;
 }
 
-float BasicColorMaterial::Shininess() const
+float BasicMaterial::Shininess() const
 {
     return shininess;
 }
 
-void BasicColorMaterial::PipeUniformData(GLuint shader_id) const
+void BasicMaterial::PipeUniformData(GLuint shader_id) const
 {
     glUniform3f(
         glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("diffuse").c_str()),
@@ -83,7 +83,7 @@ void BasicColorMaterial::PipeUniformData(GLuint shader_id) const
     );
 }
 
-std::string BasicColorMaterial::ShaderMaterialUniformIdentifier(const std::string& member_name) const
+std::string BasicMaterial::ShaderMaterialUniformIdentifier(const std::string& member_name) const
 {
     return material_uniform_name + "." + member_name;
 }

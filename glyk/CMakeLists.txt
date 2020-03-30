@@ -12,6 +12,7 @@ add_library(${PROJECT_NAME}
     src/object3d.cpp
     src/scene.cpp
     src/shader.cpp
+    src/texture.cpp
     src/window.cpp
 )
 

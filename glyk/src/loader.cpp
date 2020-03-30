@@ -2,44 +2,9 @@
 #include <sstream>
 #include <iostream>
 #include "glyk/loader.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "thirdparty/stb_image.h"
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "thirdparty/tiny_obj_loader.h"
 
-
-/***************** Image *****************/
-
-Image::Image()
-: data(NULL)
-, width(0)
-, height(0)
-, channels(0)
-{
-
-}
-
-Image::Image(unsigned char* d, int w, int h, int ch)
-: data(d)
-, width(w)
-, height(h)
-, channels(ch)
-{
-
-}
-
-bool Image::IsNull()
-{
-    return data == NULL;
-}
-
-void Image::Free()
-{
-    stbi_image_free(data);
-}
-
-
-/***************** Loader *****************/
 
 std::string Loader::LoadPlainText(const std::string& file_path)
 {
@@ -60,13 +25,12 @@ std::string Loader::LoadPlainText(const std::string& file_path)
     return txt;
 }
 
-Image Loader::LoadImage(const std::string& path)
+Texture Loader::LoadTexture(const std::string& path)
 {
-    int width, height, channels;
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    Texture tex;
+    tex.Load(path);
 
-    return Image(data, width, height, channels);
-    return Image();
+    return tex;
 }
 
 std::vector<Geometry> Loader::LoadModel(const std::string& path)

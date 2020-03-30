@@ -3,6 +3,7 @@
 #include "glyk/gl_header_files.h"
 #include "glyk/window.h"
 #include "glyk/shader.h"
+#include "glyk/texture.h"
 #include "glyk/loader.h"
 #include "glyk/mat4x4.h"
 #include "glyk/vec3.h"
@@ -68,10 +69,10 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         // load an image
-        Image img = Loader::LoadImage(img_path);
+        Texture img = Loader::LoadTexture(img_path);
 
-        if (img.data) {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img.data);
+        if (!img.IsNull()) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.Width(), img.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img.Data());
             glGenerateMipmap(GL_TEXTURE_2D);
         }
 
