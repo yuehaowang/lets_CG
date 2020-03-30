@@ -7,6 +7,7 @@ add_library(${PROJECT_NAME}
     src/geometry.cpp
     src/light.cpp
     src/loader.cpp
+    src/image.cpp
     src/material.cpp
     src/mesh.cpp
     src/object3d.cpp

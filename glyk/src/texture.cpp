@@ -1,56 +1,63 @@
-#include <string.h>
 #include "glyk/texture.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "thirdparty/stb_image.h"
 
 
 Texture::Texture()
-: data(NULL)
-, width(0)
-, height(0)
-, channels(0)
+: is_null(true)
 {
 
 }
 
-Texture::Texture(unsigned char* d, int w, int h, int ch)
-: width(w)
-, height(h)
-, channels(ch)
+Texture::Texture(const std::string& path)
 {
-    Free();
-    data = (unsigned char*)malloc(w * h * ch * sizeof(unsigned char));
-    memcpy(data, d, w * h * ch);
+    Load(path);
 }
 
-Texture::Texture(const Texture& tex)
+Texture::Texture(const Image& img)
 {
-    Texture(tex.Data(), tex.Width(), tex.Height(), tex.Channels());
+    Load(img);
+}
+
+void Texture::Load(const Image& img)
+{
+    if (img.IsNull()) {
+        return;
+    }
+
+    width = img.Width();
+    height = img.Height();
+    channels = img.Channels();
+
+    glGenTextures(1, &tex_id);
+
+    GLenum format;
+    if (img.Channels() == 1) {
+        format = GL_RED;
+    } else if (img.Channels() == 3) {
+        format = GL_RGB;
+    } else if (img.Channels() == 4) {
+        format = GL_RGBA;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, tex_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, img.Width(), img.Height(), 0, format, GL_UNSIGNED_BYTE, img.Data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    is_null = false;
 }
 
 void Texture::Load(const std::string& path)
 {
-    Free();
-    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-}
+    Image img;
+    img.Load(path);
 
-bool Texture::IsNull() const
-{
-    return data == NULL;
-}
+    Load(img);
 
-void Texture::Free()
-{
-    if (IsNull()) {
-        return;
-    }
-    stbi_image_free(data);
-    data = NULL;
-}
-
-unsigned char* Texture::Data() const
-{
-    return data;
+    img.Free();
 }
 
 int Texture::Width() const
@@ -66,4 +73,14 @@ int Texture::Height() const
 int Texture::Channels() const
 {
     return channels;
+}
+
+GLuint Texture::TexId() const
+{
+    return tex_id;
+}
+
+bool Texture::IsNull() const
+{
+    return is_null;
 }

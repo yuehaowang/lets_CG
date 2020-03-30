@@ -6,7 +6,7 @@ std::string Mesh::mesh_uniform_name = "mesh";
 Mesh::Mesh(const Material* mat, const Geometry& geom)
 : Object3D()
 {
-    Initialize(mat, geom.VertexData(), geom.NormalData(), std::vector<float>(), geom.IndexData());
+    Initialize(mat, geom.VertexData(), geom.NormalData(), geom.TexCoordData(), geom.IndexData());
 }
 
 Mesh::~Mesh()
@@ -45,13 +45,17 @@ void Mesh::Initialize(
     glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
     glBufferData(GL_ARRAY_BUFFER, normal_data.size() * sizeof(float), &normal_data[0], GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(1);
+    if (!normal_data.empty()) {
+        glEnableVertexAttribArray(1);
+    }
 
     glGenBuffers(1, &texcoord_buffer);
     glBindBuffer(GL_ARRAY_BUFFER, texcoord_buffer);
     glBufferData(GL_ARRAY_BUFFER, texcoord_data.size() * sizeof(float), &texcoord_data[0], GL_STATIC_DRAW);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(2);
+    if (!texcoord_data.empty()) {
+        glEnableVertexAttribArray(2);
+    }
 
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

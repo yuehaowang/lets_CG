@@ -25,15 +25,15 @@ std::string Loader::LoadPlainText(const std::string& file_path)
     return txt;
 }
 
-Texture Loader::LoadTexture(const std::string& path)
+Image Loader::LoadImage(const std::string& path)
 {
-    Texture tex;
-    tex.Load(path);
+    Image img;
+    img.Load(path);
 
-    return tex;
+    return img;
 }
 
-std::vector<Geometry> Loader::LoadModel(const std::string& path)
+std::vector<Geometry> Loader::LoadModel(const std::string& path, PreprocessFlag flag)
 {
     std::vector<Geometry> res;
 
@@ -77,8 +77,16 @@ std::vector<Geometry> Loader::LoadModel(const std::string& path)
                 norm.push_back(attrib.normals[3 * idx.normal_index + 1]);
                 norm.push_back(attrib.normals[3 * idx.normal_index + 2]);
 
-                texc.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
-                texc.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
+                float texcoord_x = attrib.texcoords[2 * idx.texcoord_index + 0];
+                float texcoord_y = attrib.texcoords[2 * idx.texcoord_index + 1];
+                if (flag & FlipTexcoordX) {
+                    texcoord_x = 1.0 - texcoord_x;
+                }
+                if (flag & FlipTexcoordY) {
+                    texcoord_y = 1.0 - texcoord_y;
+                }
+                texc.push_back(texcoord_x);
+                texc.push_back(texcoord_y);
             }
             index_offset += fv;
         }

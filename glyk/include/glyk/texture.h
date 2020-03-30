@@ -2,31 +2,35 @@
 #define _TEXTURE_H_
 
 #include <string>
-// #include "thirdparty/stb_image.h"
+#include "glyk/image.h"
+#include "glyk/gl_header_files.h"
 
+
+class Material;
 
 class Texture
 {
 
 protected:
 
-    unsigned char* data;
+    GLuint tex_id;
     int width;
     int height;
     int channels;
+    bool is_null;
 
 public:
 
     Texture();
-    Texture(const Texture& tex);
-    Texture(unsigned char* d, int w, int h, int ch);
-    bool IsNull() const;
-    void Free();
+    Texture(const std::string& path);
+    Texture(const Image& img);
+    void Load(const Image& img);
     void Load(const std::string& path);
-    unsigned char* Data() const;
     int Width() const;
     int Height() const;
     int Channels() const;
+    GLuint TexId() const;
+    bool IsNull() const;
 
 };
 

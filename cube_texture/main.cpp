@@ -10,7 +10,7 @@
 #include "glyk/loader.h"
 #include "glyk/mat4x4.h"
 #include "glyk/vec3.h"
-#include "glyk/texture.h"
+#include "glyk/image.h"
 #include "glyk/glm_debug.h"
 
 
@@ -58,7 +58,7 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
-        Texture img = Loader::LoadTexture("resources/avatar.png");
+        Image img = Loader::LoadImage("resources/avatar.png");
 
         if (!img.IsNull()) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.Width(), img.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, img.Data());

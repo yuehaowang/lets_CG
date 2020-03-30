@@ -6,6 +6,7 @@
 /* Input */
 in vec3 frag_pos;
 in vec3 frag_normal;
+in vec2 frag_texcoord;
 
 /* Ouput */
 out vec4 frag_color;
@@ -16,6 +17,9 @@ struct Material
     vec3 diffuse;
     vec3 specular;
     float shininess;
+    sampler2D diffuse_map;
+    sampler2D specular_map;
+    sampler2D shininess_map;
 };
 uniform Material material;
 
@@ -39,15 +43,18 @@ vec3 compute_dir_light(Material material, vec3 normal, vec3 view_dir)
         DirectionalLight light = dir_lights[i];
 
         vec3 light_dir = normalize(-light.direction);
-        
+
+        vec3 mat_diffuse = min(material.diffuse + vec3(texture(material.diffuse_map, frag_texcoord)), 1.0);
+        vec3 mat_specular = min(material.specular + vec3(texture(material.specular_map, frag_texcoord)), 1.0);
+        float mat_shininess = material.shininess + texture(material.shininess_map, frag_texcoord).r + 0.0001;
+
         // ambient
-        vec3 ambient = light.ambient * material.diffuse;
+        vec3 ambient = light.ambient * mat_diffuse;
         // diffuse
-        vec3 diffuse = light.diffuse * max(dot(normal, light_dir), 0.0) * material.diffuse;
+        vec3 diffuse = light.diffuse * max(dot(normal, light_dir), 0.0) * mat_diffuse;
         // specular
         vec3 reflect_dir = reflect(-light_dir, normal);
-        float intensity = pow(max(dot(view_dir, reflect_dir), 0.0), material.shininess);
-        vec3 specular = light.specular * intensity * material.specular;
+        vec3 specular = light.specular * pow(max(dot(view_dir, reflect_dir), 0.0), mat_shininess) * mat_specular;
 
         res += ambient + diffuse + specular;
     }

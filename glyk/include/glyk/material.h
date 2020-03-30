@@ -5,6 +5,7 @@
 #include <string>
 #include "glyk/gl_header_files.h"
 #include "glyk/vec3.h"
+#include "glyk/texture.h"
 
 
 class Mesh;
@@ -43,6 +44,9 @@ protected:
     Vec3f diffuse;
     Vec3f specular;
     float shininess;
+    Texture diffuse_map;
+    Texture specular_map;
+    Texture shininess_map;
 
     virtual void PipeUniformData(GLuint shader_id) const;
     virtual std::string ShaderMaterialUniformIdentifier(const std::string& member_name) const;
@@ -57,6 +61,22 @@ public:
         const Vec3f& diffuse,
         const Vec3f& specular,
         float shininess);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Vec3f& diffuse);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Texture& diffuse_map,
+        const Texture& specular_map,
+        float shininess);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Texture& diffuse_map,
+        const Texture& specular_map,
+        const Texture& shininess_map);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Texture& diffuse_map);
     Vec3f Diffuse() const;
     Vec3f Specular() const;
     float Shininess() const;

@@ -16,55 +16,7 @@
 #include "glyk/scene.h"
 #include "glyk/gl_header_files.h"
 #include "glyk/geometry.h"
-
-
-const float TRIANGLE_VERTICES[9] = {
-    -0.5, -0.5, 0.0,
-    0.0, 0.5, 0.0,
-    0.5, -0.5, 0.0
-};
-
-const float TRIANGLE_NORMALS[9] = {
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0
-};
-
-const float TETRAHEDRON_VERTICES[36] = {
-    0.0, 0.5, 0.0,
-    0.0, 0.0, 0.5,
-    0.43, 0.0, -0.25,
-
-    0.0, 0.5, 0.0,
-    -0.43, 0.0, -0.25,
-    0.0, 0.0, 0.5,
-
-    0.0, 0.5, 0.0,
-    0.43, 0.0, -0.25,
-    -0.43, 0.0, -0.25,
-
-    0.0, 0.0, 0.5,
-    -0.43, 0.0, -0.25,
-    0.43, 0.0, -0.25
-};
-
-const float TETRAHEDRON_NORMALS[36] = {
-    1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0,
-
-    -1.0, 1.0, 1.0,
-    -1.0, 1.0, 1.0,
-    -1.0, 1.0, 1.0,
-
-    -1.0, 1.0, -1.0,
-    -1.0, 1.0, -1.0,
-    -1.0, 1.0, -1.0,
-
-    0.0, -1.0, 0.0,
-    0.0, -1.0, 0.0,
-    0.0, -1.0, 0.0
-};
+#include "glyk/texture.h"
 
 
 ///////////////// Main Window /////////////////
@@ -106,7 +58,7 @@ public:
             Vec3f(1.0f, 1.0f, 1.0f),
             Vec3f(0.8f, 0.5f, 0.2f)
         );
-        light2->Rotate(45, 0, 0);
+        light2->Rotate(-45, 0, 0);
         main_scene.Add(light2);
 
         DirectionalLight* light3 = new DirectionalLight(
@@ -117,63 +69,25 @@ public:
         light3->Rotate(0, 90, 0);
         main_scene.Add(light3);
 
-
         /* Materials */
         mat1 = new BasicMaterial(
             "glyk/shaders/standard",
-            Vec3f(1.0f, 0.5f, 0.31f),
-            Vec3f(0.5f, 0.5f, 0.5f),
+            Texture("model_texture/resources/cat_tex.jpg"),
+            Texture("model_texture/resources/cat_tex.jpg"),
             12.0f
         );
 
         mat2 = new BasicMaterial(
             "glyk/shaders/standard",
-            Vec3f(1.0f, 0.7f, 0.31f),
-            Vec3f(0.8f, 0.8f, 0.8f),
-            32.0f
+            Texture("model_texture/resources/pikachu.jpg")
         );
 
         /* Create objects */
-        // CreateTriangle();
-        // CreateTetrahedron();
         // CreateBox();
         // CreateBall();
         LoadPikachuModel();
+        LoadCatModel();
     }
-
-    // void CreateTriangle()
-    // {
-    //     std::vector<float> vert = std::vector<float>(
-    //         TRIANGLE_VERTICES,
-    //         TRIANGLE_VERTICES + (sizeof(TRIANGLE_VERTICES) / sizeof(TRIANGLE_VERTICES[0]))
-    //     );
-    //     std::vector<float> norm = std::vector<float>(
-    //         TRIANGLE_NORMALS,
-    //         TRIANGLE_NORMALS + (sizeof(TRIANGLE_NORMALS) / sizeof(TRIANGLE_NORMALS[0]))
-    //     );
-    //     Mesh* tri = new Mesh(mat2, vert, norm);
-    //     tri->Translate(-3.5, 0, 1.3);
-    //     tri->Rotate(0, 30, 0);
-    //     main_scene.Add(tri);
-    // }
-
-    // void CreateTetrahedron()
-    // {
-    //     std::vector<float> vert = std::vector<float>(
-    //         TETRAHEDRON_VERTICES,
-    //         TETRAHEDRON_VERTICES + (sizeof(TETRAHEDRON_VERTICES) / sizeof(TETRAHEDRON_VERTICES[0]))
-    //     );
-    //     std::vector<float> norm = std::vector<float>(
-    //         TETRAHEDRON_NORMALS,
-    //         TETRAHEDRON_NORMALS + (sizeof(TETRAHEDRON_NORMALS) / sizeof(TETRAHEDRON_NORMALS[0]))
-    //     );
-
-    //     Mesh* tetra = new Mesh(mat2, vert, norm);
-    //     tetra->Translate(2.0, -0.5, 3);
-    //     tetra->Scale(1, 1.3, 1);
-    //     tetra->Rotate(0, 60, 0);
-    //     main_scene.Add(tetra);
-    // }
 
     void CreateBox()
     {
@@ -189,11 +103,24 @@ public:
         main_scene.Add(sphere);
     }
 
+    void LoadCatModel()
+    {
+        std::vector<Geometry> models = Loader::LoadModel("model_texture/resources/cat.obj", Loader::FlipTexcoordY);
+
+        Mesh* cat = new Mesh(mat1, models[0]);
+        cat->Translate(4, -3, -5);
+        cat->Scale(0.1, 0.1, 0.1);
+        cat->Rotate(-90, 0, 0);
+        main_scene.Add(cat);
+    }
+
     void LoadPikachuModel()
     {
         std::vector<Geometry> models = Loader::LoadModel("model_texture/resources/pikachu.obj");
-        Mesh* pikachu = new Mesh(mat1, models[0]);
-        pikachu->Translate(0, 0, -4.5);
+
+        Mesh* pikachu = new Mesh(mat2, models[0]);
+        pikachu->Scale(0.5, 0.5, 0.5);
+        pikachu->Translate(-1, -5, -4.5);
         main_scene.Add(pikachu);
     }
 
@@ -206,7 +133,7 @@ public:
         glfwWindowHint(GLFW_SAMPLES, 4);
         glEnable(GL_MULTISAMPLE);
 
-        glClearColor(0.1f, 0.1f, 0.1f, 0.0f);
+        glClearColor(0.6f, 0.6f, 0.6f, 0.6f);
 
         /* Hide mouse cursor */
         glfwSetInputMode(WindowHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
