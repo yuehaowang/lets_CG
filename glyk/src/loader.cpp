@@ -84,7 +84,7 @@ std::vector<Geometry> Loader::LoadModel(const std::string& path)
         printf("Failed to open %s: %s\n", path.c_str(), err.c_str());
     }
     if (!warn.empty()) {
-        printf("Warning of opening %s: %s\n", path.c_str(), warn.c_str());
+        printf("Warning at loading %s: %s\n", path.c_str(), warn.c_str());
     }
 
     for (size_t i = 0; i < shapes.size(); i++) {
@@ -99,7 +99,7 @@ std::vector<Geometry> Loader::LoadModel(const std::string& path)
         for (size_t f = 0; f < mesh->num_face_vertices.size(); f++) {
             int fv = mesh->num_face_vertices[f];
             if (fv > 3) {
-                printf("Warning of loading %s: the number of face vertices can not be more than 3.", path.c_str());
+                printf("Warning at loading %s: faces with more than 3 vertices are not supported.", path.c_str());
                 break;
             }
             for (size_t v = 0; v < fv; v++) {
@@ -119,7 +119,7 @@ std::vector<Geometry> Loader::LoadModel(const std::string& path)
             index_offset += fv;
         }
 
-        Geometry geom(vert, norm, texc, std::vector<unsigned int>());
+        Geometry geom(vert, norm, texc);
         res.push_back(geom);
     }
 

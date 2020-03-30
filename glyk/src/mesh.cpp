@@ -3,44 +3,6 @@
 
 std::string Mesh::mesh_uniform_name = "mesh";
 
-Mesh::Mesh(
-    const Material* mat,
-    const std::vector<float>& vertex_data,
-    const std::vector<float>& normal_data,
-    const std::vector<float>& texcoord_data,
-    const std::vector<unsigned int>& index_data)
-: Object3D()
-{
-    Initialize(mat, vertex_data, normal_data, texcoord_data, index_data);
-}
-
-Mesh::Mesh(
-    const Material* mat,
-    const std::vector<float>& vertex_data,
-    const std::vector<float>& normal_data,
-    const std::vector<float>& texcoord_data)
-: Object3D()
-{
-    Initialize(mat, vertex_data, normal_data, texcoord_data, std::vector<unsigned int>());
-}
-
-Mesh::Mesh(
-    const Material* mat,
-    const std::vector<float>& vertex_data,
-    const std::vector<float>& normal_data)
-: Object3D()
-{
-    Initialize(mat, vertex_data, normal_data, std::vector<float>(), std::vector<unsigned int>());
-}
-
-Mesh::Mesh(
-    const Material* mat,
-    const std::vector<float>& vertex_data)
-: Object3D()
-{
-    Initialize(mat, vertex_data, std::vector<float>(), std::vector<float>(), std::vector<unsigned int>());
-}
-
 Mesh::Mesh(const Material* mat, const Geometry& geom)
 : Object3D()
 {

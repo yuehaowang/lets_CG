@@ -23,6 +23,32 @@ Geometry::Geometry(
 
 }
 
+Geometry::Geometry(
+    const std::vector<float>& vert,
+    const std::vector<float>& norm,
+    const std::vector<float>& texc)
+: vertex_data(vert)
+, normal_data(norm)
+, texcoord_data(texc)
+{
+
+}
+
+Geometry::Geometry(
+    const std::vector<float>& vert,
+    const std::vector<float>& norm)
+: vertex_data(vert)
+, normal_data(norm)
+{
+
+}
+
+Geometry::Geometry(const std::vector<float>& vert)
+: vertex_data(vert)
+{
+
+}
+
 Geometry::~Geometry()
 {
 

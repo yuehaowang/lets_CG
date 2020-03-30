@@ -53,24 +53,6 @@ public:
 
     static std::string mesh_uniform_name;
 
-    Mesh(
-        const Material* mat,
-        const std::vector<float>& vertex_data,
-        const std::vector<float>& normal_data,
-        const std::vector<float>& texcoord_data,
-        const std::vector<unsigned int>& index_data);
-    Mesh(
-        const Material* mat,
-        const std::vector<float>& vertex_data,
-        const std::vector<float>& normal_data,
-        const std::vector<float>& texcoord_data);
-    Mesh(
-        const Material* mat,
-        const std::vector<float>& vertex_data,
-        const std::vector<float>& normal_data);
-    Mesh(
-        const Material* mat,
-        const std::vector<float>& vertex_data);
     Mesh(const Material* mat, const Geometry& geom);
     virtual ~Mesh();
     GLuint ShaderId() const;

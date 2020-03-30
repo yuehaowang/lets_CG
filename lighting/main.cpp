@@ -149,7 +149,10 @@ public:
             TRIANGLE_NORMALS,
             TRIANGLE_NORMALS + (sizeof(TRIANGLE_NORMALS) / sizeof(TRIANGLE_NORMALS[0]))
         );
-        Mesh* tri = new Mesh(mat2, vert, norm);
+
+        Geometry geom(vert, norm);
+
+        Mesh* tri = new Mesh(mat2, geom);
         tri->Translate(-3.5, 0, 1.3);
         tri->Rotate(0, 30, 0);
         main_scene.Add(tri);
@@ -166,7 +169,9 @@ public:
             TETRAHEDRON_NORMALS + (sizeof(TETRAHEDRON_NORMALS) / sizeof(TETRAHEDRON_NORMALS[0]))
         );
 
-        Mesh* tetra = new Mesh(mat2, vert, norm);
+        Geometry geom(vert, norm);
+
+        Mesh* tetra = new Mesh(mat2, geom);
         tetra->Translate(2.0, -0.5, 3);
         tetra->Scale(1, 1.3, 1);
         tetra->Rotate(0, 60, 0);

@@ -25,6 +25,14 @@ public:
         const std::vector<float>& norm,
         const std::vector<float>& texc,
         const std::vector<unsigned int>& index);
+    Geometry(
+        const std::vector<float>& vert,
+        const std::vector<float>& norm,
+        const std::vector<float>& texc);
+    Geometry(
+        const std::vector<float>& vert,
+        const std::vector<float>& norm);
+    Geometry(const std::vector<float>& vert);
     virtual ~Geometry();
     const std::vector<float>& VertexData() const;
     const std::vector<float>& NormalData() const;

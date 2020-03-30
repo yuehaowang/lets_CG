@@ -141,39 +141,39 @@ public:
         LoadPikachuModel();
     }
 
-    void CreateTriangle()
-    {
-        std::vector<float> vert = std::vector<float>(
-            TRIANGLE_VERTICES,
-            TRIANGLE_VERTICES + (sizeof(TRIANGLE_VERTICES) / sizeof(TRIANGLE_VERTICES[0]))
-        );
-        std::vector<float> norm = std::vector<float>(
-            TRIANGLE_NORMALS,
-            TRIANGLE_NORMALS + (sizeof(TRIANGLE_NORMALS) / sizeof(TRIANGLE_NORMALS[0]))
-        );
-        Mesh* tri = new Mesh(mat2, vert, norm);
-        tri->Translate(-3.5, 0, 1.3);
-        tri->Rotate(0, 30, 0);
-        main_scene.Add(tri);
-    }
+    // void CreateTriangle()
+    // {
+    //     std::vector<float> vert = std::vector<float>(
+    //         TRIANGLE_VERTICES,
+    //         TRIANGLE_VERTICES + (sizeof(TRIANGLE_VERTICES) / sizeof(TRIANGLE_VERTICES[0]))
+    //     );
+    //     std::vector<float> norm = std::vector<float>(
+    //         TRIANGLE_NORMALS,
+    //         TRIANGLE_NORMALS + (sizeof(TRIANGLE_NORMALS) / sizeof(TRIANGLE_NORMALS[0]))
+    //     );
+    //     Mesh* tri = new Mesh(mat2, vert, norm);
+    //     tri->Translate(-3.5, 0, 1.3);
+    //     tri->Rotate(0, 30, 0);
+    //     main_scene.Add(tri);
+    // }
 
-    void CreateTetrahedron()
-    {
-        std::vector<float> vert = std::vector<float>(
-            TETRAHEDRON_VERTICES,
-            TETRAHEDRON_VERTICES + (sizeof(TETRAHEDRON_VERTICES) / sizeof(TETRAHEDRON_VERTICES[0]))
-        );
-        std::vector<float> norm = std::vector<float>(
-            TETRAHEDRON_NORMALS,
-            TETRAHEDRON_NORMALS + (sizeof(TETRAHEDRON_NORMALS) / sizeof(TETRAHEDRON_NORMALS[0]))
-        );
+    // void CreateTetrahedron()
+    // {
+    //     std::vector<float> vert = std::vector<float>(
+    //         TETRAHEDRON_VERTICES,
+    //         TETRAHEDRON_VERTICES + (sizeof(TETRAHEDRON_VERTICES) / sizeof(TETRAHEDRON_VERTICES[0]))
+    //     );
+    //     std::vector<float> norm = std::vector<float>(
+    //         TETRAHEDRON_NORMALS,
+    //         TETRAHEDRON_NORMALS + (sizeof(TETRAHEDRON_NORMALS) / sizeof(TETRAHEDRON_NORMALS[0]))
+    //     );
 
-        Mesh* tetra = new Mesh(mat2, vert, norm);
-        tetra->Translate(2.0, -0.5, 3);
-        tetra->Scale(1, 1.3, 1);
-        tetra->Rotate(0, 60, 0);
-        main_scene.Add(tetra);
-    }
+    //     Mesh* tetra = new Mesh(mat2, vert, norm);
+    //     tetra->Translate(2.0, -0.5, 3);
+    //     tetra->Scale(1, 1.3, 1);
+    //     tetra->Rotate(0, 60, 0);
+    //     main_scene.Add(tetra);
+    // }
 
     void CreateBox()
     {
@@ -192,7 +192,7 @@ public:
     void LoadPikachuModel()
     {
         std::vector<Geometry> models = Loader::LoadModel("model_texture/resources/pikachu.obj");
-        Mesh* pikachu = new Mesh(mat2, models[0]);
+        Mesh* pikachu = new Mesh(mat1, models[0]);
         pikachu->Translate(0, 0, -4.5);
         main_scene.Add(pikachu);
     }
