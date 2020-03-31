@@ -1,6 +1,8 @@
 #include "glyk/texture.h"
 
 
+std::map<std::string, GLuint> Texture::texture_list = std::map<std::string, GLuint>(); 
+
 Texture::Texture()
 : is_null(true)
 {
@@ -17,17 +19,11 @@ Texture::Texture(const Image& img)
     Load(img);
 }
 
-void Texture::Load(const Image& img)
+void Texture::CreateTex(const Image& img)
 {
-    if (img.IsNull()) {
-        return;
-    }
-
-    width = img.Width();
-    height = img.Height();
-    channels = img.Channels();
-
     glGenTextures(1, &tex_id);
+
+    std::cout << img.Path() << std::endl;
 
     GLenum format;
     if (img.Channels() == 1) {
@@ -47,32 +43,40 @@ void Texture::Load(const Image& img)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    if (!img.Path().empty()) {
+        texture_list.insert(std::pair<std::string, GLuint>(img.Path(), tex_id));
+    }
+}
+
+void Texture::Load(const Image& img)
+{
+    if (img.IsNull()) {
+        return;
+    }
+
+    std::map<std::string, GLuint>::iterator search = texture_list.find(img.Path());
+    if (search != texture_list.end()) {
+        tex_id = search->second;
+    } else {
+        CreateTex(img);
+    }
+
     is_null = false;
 }
 
 void Texture::Load(const std::string& path)
 {
-    Image img;
-    img.Load(path);
+    std::map<std::string, GLuint>::iterator search = texture_list.find(path);
+    if (search != texture_list.end()) {
+        tex_id = search->second;
+    } else {
+        Image img;
+        img.Load(path);
+        CreateTex(img);
+        img.Free();
+    }
 
-    Load(img);
-
-    img.Free();
-}
-
-int Texture::Width() const
-{
-    return width;
-}
-
-int Texture::Height() const
-{
-    return height;
-}
-
-int Texture::Channels() const
-{
-    return channels;
+    is_null = false;
 }
 
 GLuint Texture::TexId() const

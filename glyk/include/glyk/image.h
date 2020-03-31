@@ -10,6 +10,7 @@ class Image
 protected:
 
     unsigned char* data;
+    std::string path;
     int width;
     int height;
     int channels;
@@ -28,6 +29,7 @@ public:
     int Width() const;
     int Height() const;
     int Channels() const;
+    std::string Path() const;
 
 };
 

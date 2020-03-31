@@ -2,6 +2,8 @@
 #define _TEXTURE_H_
 
 #include <string>
+#include <map>
+#include <iostream>
 #include "glyk/image.h"
 #include "glyk/gl_header_files.h"
 
@@ -14,21 +16,19 @@ class Texture
 protected:
 
     GLuint tex_id;
-    int width;
-    int height;
-    int channels;
     bool is_null;
 
+    void CreateTex(const Image& img);
+
 public:
+
+    static std::map<std::string, GLuint> texture_list; 
 
     Texture();
     Texture(const std::string& path);
     Texture(const Image& img);
     void Load(const Image& img);
     void Load(const std::string& path);
-    int Width() const;
-    int Height() const;
-    int Channels() const;
     GLuint TexId() const;
     bool IsNull() const;
 

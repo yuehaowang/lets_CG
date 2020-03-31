@@ -38,7 +38,7 @@ public:
     virtual void Scale(const Vec3f& s);
     virtual void Rotate(float euler_x, float euler_y, float euler_z);
     virtual void Rotate(const Vec3f& e);
-    virtual void LookAt(const Vec3f& f);
+    virtual void LookAt(const Vec3f& f, bool flip_up = false);
     
 };
 

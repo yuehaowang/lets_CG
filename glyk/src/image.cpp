@@ -19,13 +19,17 @@ Image::Image(unsigned char* d, int w, int h, int ch)
 , channels(ch)
 {
     Free();
+
     data = (unsigned char*)malloc(w * h * ch * sizeof(unsigned char));
     memcpy(data, d, w * h * ch);
+
+    path = "";
 }
 
 Image::Image(const Image& img)
 {
     Image(img.Data(), img.Width(), img.Height(), img.Channels());
+    path = img.Path();
 }
 
 Image::Image(const std::string& path)
@@ -38,10 +42,11 @@ Image::~Image()
     Free();
 }
 
-void Image::Load(const std::string& path)
+void Image::Load(const std::string& file_path)
 {
     Free();
-    data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    path = file_path;
+    data = stbi_load(file_path.c_str(), &width, &height, &channels, 0);
 }
 
 bool Image::IsNull() const
@@ -56,6 +61,7 @@ void Image::Free()
     }
     stbi_image_free(data);
     data = NULL;
+    path = "";
 }
 
 unsigned char* Image::Data() const
@@ -76,4 +82,9 @@ int Image::Height() const
 int Image::Channels() const
 {
     return channels;
+}
+
+std::string Image::Path() const
+{
+    return path;
 }

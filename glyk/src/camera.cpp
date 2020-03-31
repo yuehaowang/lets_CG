@@ -84,11 +84,11 @@ void Camera::Rotate(const Vec3f& e)
     view.Rotate(-e.x, -e.y, -e.z);
 }
 
-void Camera::LookAt(const Vec3f& f)
+void Camera::LookAt(const Vec3f& f, bool flip_up)
 {
     Vec3f front = f;
     front.Normalize();
-    Vec3f right = Vec3f(0.0f, 1.0f, 0.0f) * front;
+    Vec3f right = Vec3f(0.0f, (flip_up ? -1 : 1) * 1.0f, 0.0f) * front;
     right.Normalize();
     Vec3f up = front * right;
     up.Normalize();
