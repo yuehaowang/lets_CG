@@ -47,6 +47,7 @@ protected:
     Texture diffuse_map;
     Texture specular_map;
     Texture shininess_map;
+    Texture normal_map;
 
     virtual void PipeUniformData(GLuint shader_id) const;
     virtual std::string ShaderMaterialUniformIdentifier(const std::string& member_name) const;
@@ -63,7 +64,17 @@ public:
         float shininess);
     BasicMaterial(
         const std::string& shader_name,
+        const Vec3f& diffuse,
+        const Vec3f& specular,
+        float shininess,
+        const Texture& normal_map);
+    BasicMaterial(
+        const std::string& shader_name,
         const Vec3f& diffuse);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Vec3f& diffuse,
+        const Texture& normal_map);
     BasicMaterial(
         const std::string& shader_name,
         const Texture& diffuse_map,
@@ -73,10 +84,26 @@ public:
         const std::string& shader_name,
         const Texture& diffuse_map,
         const Texture& specular_map,
+        float shininess,
+        const Texture& normal_map);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Texture& diffuse_map,
+        const Texture& specular_map,
         const Texture& shininess_map);
     BasicMaterial(
         const std::string& shader_name,
+        const Texture& diffuse_map,
+        const Texture& specular_map,
+        const Texture& shininess_map,
+        const Texture& normal_map);
+    BasicMaterial(
+        const std::string& shader_name,
         const Texture& diffuse_map);
+    BasicMaterial(
+        const std::string& shader_name,
+        const Texture& diffuse_map,
+        const Texture& normal_map);
     Vec3f Diffuse() const;
     Vec3f Specular() const;
     float Shininess() const;

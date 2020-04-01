@@ -6,7 +6,10 @@ std::string Mesh::mesh_uniform_name = "mesh";
 Mesh::Mesh(const Material* mat, const Geometry& geom)
 : Object3D()
 {
-    Initialize(mat, geom.VertexData(), geom.NormalData(), geom.TexCoordData(), geom.IndexData());
+    Initialize(
+        mat, geom.VertexData(), geom.NormalData(),
+        geom.TexCoordData(), geom.TBNData(), geom.IndexData()
+    );
 }
 
 Mesh::~Mesh()
@@ -18,6 +21,7 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &vertex_buffer);
     glDeleteBuffers(1, &normal_buffer);
     glDeleteBuffers(1, &texcoord_buffer);
+    glDeleteBuffers(1, &TBN_buffer);
     glDeleteVertexArrays(1, &VAO);
 
     shader.Dismiss();
@@ -28,6 +32,7 @@ void Mesh::Initialize(
         const std::vector<float>& vertex_data,
         const std::vector<float>& normal_data,
         const std::vector<float>& texcoord_data,
+        const std::vector<float>& TBN_data,
         const std::vector<unsigned int>& index_data)
 {
     SetMaterial(mat);
@@ -55,6 +60,14 @@ void Mesh::Initialize(
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
     if (!texcoord_data.empty()) {
         glEnableVertexAttribArray(2);
+    }
+
+    glGenBuffers(1, &TBN_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, TBN_buffer);
+    glBufferData(GL_ARRAY_BUFFER, TBN_data.size() * sizeof(float), &TBN_data[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    if (!TBN_data.empty()) {
+        glEnableVertexAttribArray(3);
     }
 
     glGenBuffers(1, &EBO);

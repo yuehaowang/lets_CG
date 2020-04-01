@@ -6,6 +6,11 @@
 #include "thirdparty/tiny_obj_loader.h"
 
 
+Loader::PreprocessFlag operator| (Loader::PreprocessFlag f1, Loader::PreprocessFlag f2)
+{
+    return static_cast<Loader::PreprocessFlag>(static_cast<int>(f1) | static_cast<int>(f2));
+}
+
 std::string Loader::LoadPlainText(const std::string& file_path)
 {
     std::string txt;
@@ -79,10 +84,10 @@ std::vector<Geometry> Loader::LoadModel(const std::string& path, PreprocessFlag 
 
                 float texcoord_x = attrib.texcoords[2 * idx.texcoord_index + 0];
                 float texcoord_y = attrib.texcoords[2 * idx.texcoord_index + 1];
-                if (flag & FlipTexcoordX) {
+                if (flag & FlipTexcoordU) {
                     texcoord_x = 1.0 - texcoord_x;
                 }
-                if (flag & FlipTexcoordY) {
+                if (flag & FlipTexcoordV) {
                     texcoord_y = 1.0 - texcoord_y;
                 }
                 texc.push_back(texcoord_x);
@@ -92,6 +97,9 @@ std::vector<Geometry> Loader::LoadModel(const std::string& path, PreprocessFlag 
         }
 
         Geometry geom(vert, norm, texc);
+        if (flag & ComputeTBN) {
+            geom.GenerateTBN();
+        }
         res.push_back(geom);
     }
 

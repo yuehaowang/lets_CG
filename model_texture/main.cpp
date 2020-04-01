@@ -36,7 +36,7 @@ private:
 public:
 
     MainWindow()
-        : Window("Lighting", 800, 600)
+        : Window("Model Texture", 800, 600)
         , cam(45, (float)WindowWidth() / (float)WindowHeight(), 0.1, 100)
         , old_mouse_pos(0, 0, 0)
     {
@@ -73,13 +73,15 @@ public:
         mat1 = new BasicMaterial(
             "glyk/shaders/standard",
             Texture("model_texture/resources/cat_tex.jpg"),
-            Texture("model_texture/resources/cat_tex.jpg"),
-            12.0f
+            Texture("model_texture/resources/cat_normal.png")
         );
 
         mat2 = new BasicMaterial(
             "glyk/shaders/standard",
-            Texture("model_texture/resources/pikachu.jpg")
+            Texture("model_texture/resources/pikachu.jpg"),
+            Texture("model_texture/resources/pikachu.jpg"),
+            32.0f,
+            Texture("model_texture/resources/wall_normal.jpg")
         );
 
         /* Create objects */
@@ -105,7 +107,10 @@ public:
 
     void LoadCatModel()
     {
-        std::vector<Geometry> models = Loader::LoadModel("model_texture/resources/cat.obj", Loader::FlipTexcoordY);
+        std::vector<Geometry> models = Loader::LoadModel(
+            "model_texture/resources/cat.obj",
+            Loader::FlipTexcoordV | Loader::ComputeTBN
+        );
 
         Mesh* cat = new Mesh(mat1, models[0]);
         cat->Translate(4, -3, -5);
@@ -116,9 +121,13 @@ public:
 
     void LoadPikachuModel()
     {
-        std::vector<Geometry> models = Loader::LoadModel("model_texture/resources/pikachu.obj");
+        std::vector<Geometry> models = Loader::LoadModel(
+            "model_texture/resources/pikachu.obj",
+            Loader::ComputeTBN
+        );
 
         Mesh* pikachu = new Mesh(mat2, models[0]);
+        pikachu->Rotate(-45, 0, 0);
         pikachu->Scale(0.5, 0.5, 0.5);
         pikachu->Translate(-1, -5, -4.5);
         main_scene.Add(pikachu);
@@ -132,8 +141,6 @@ public:
         /* Enabled MSAA */
         glfwWindowHint(GLFW_SAMPLES, 4);
         glEnable(GL_MULTISAMPLE);
-
-        glClearColor(0.6f, 0.6f, 0.6f, 0.6f);
 
         /* Hide mouse cursor */
         glfwSetInputMode(WindowHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);

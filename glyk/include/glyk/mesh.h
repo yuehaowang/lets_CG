@@ -32,6 +32,7 @@ protected:
     GLuint vertex_buffer;
     GLuint normal_buffer;
     GLuint texcoord_buffer;
+    GLuint TBN_buffer;
     GLuint EBO; 
     const Material* material;
 
@@ -40,6 +41,7 @@ protected:
         const std::vector<float>& vertex_data,
         const std::vector<float>& normal_data,
         const std::vector<float>& texcoord_data,
+        const std::vector<float>& TBN_data,
         const std::vector<unsigned int>& index_data
     );
     void Render();

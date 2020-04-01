@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <iostream>
 #include "glyk/image.h"
 #include "glyk/gl_header_files.h"
 

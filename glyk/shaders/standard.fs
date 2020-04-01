@@ -7,6 +7,8 @@
 in vec3 frag_pos;
 in vec3 frag_normal;
 in vec2 frag_texcoord;
+flat in vec3 frag_cam_pos;
+flat in mat3 frag_TBN;
 
 /* Ouput */
 out vec4 frag_color;
@@ -20,6 +22,7 @@ struct Material
     sampler2D diffuse_map;
     sampler2D specular_map;
     sampler2D shininess_map;
+    sampler2D normal_map;
 };
 uniform Material material;
 
@@ -63,19 +66,16 @@ vec3 compute_dir_light(Material material, vec3 normal, vec3 view_dir)
 }
 
 
-/* Camera */
-struct Camera {
-    mat4 view;
-    mat4 projection;
-    vec3 position;
-};
-uniform Camera camera;
-
-
 void main()
 {
-    vec3 normal = normalize(frag_normal);
-    vec3 view_dir = normalize(camera.position - frag_pos);
+    vec3 normal;
+    if (frag_TBN == mat3(0)) {
+        normal = normalize(frag_normal);
+    } else {
+        normal = normalize(frag_TBN * (texture(material.normal_map, frag_texcoord).rgb * 2.0 - 1.0));
+    }
+    
+    vec3 view_dir = normalize(frag_cam_pos - frag_pos);
 
     vec3 color = vec3(0.0, 0.0, 0.0);
 

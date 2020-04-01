@@ -23,8 +23,6 @@ void Texture::CreateTex(const Image& img)
 {
     glGenTextures(1, &tex_id);
 
-    std::cout << img.Path() << std::endl;
-
     GLenum format;
     if (img.Channels() == 1) {
         format = GL_RED;

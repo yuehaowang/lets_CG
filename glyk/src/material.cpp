@@ -53,10 +53,37 @@ BasicMaterial::BasicMaterial(
 
 BasicMaterial::BasicMaterial(
     const std::string& shader_name,
+    const Vec3f& diffuse,
+    const Vec3f& specular,
+    float shininess,
+    const Texture& normal)
+: Material(shader_name)
+, diffuse(diffuse)
+, specular(specular)
+, shininess(shininess)
+, normal_map(normal)
+{
+
+}
+
+BasicMaterial::BasicMaterial(
+    const std::string& shader_name,
     const Vec3f& diffuse)
 : Material(shader_name)
 , shininess(0)
 , diffuse(diffuse)
+{
+
+}
+
+BasicMaterial::BasicMaterial(
+    const std::string& shader_name,
+    const Vec3f& diffuse,
+    const Texture& normal)
+: Material(shader_name)
+, shininess(0)
+, diffuse(diffuse)
+, normal_map(normal)
 {
 
 }
@@ -78,6 +105,21 @@ BasicMaterial::BasicMaterial(
     const std::string& shader_name,
     const Texture& diffuse_map,
     const Texture& specular_map,
+    float shininess,
+    const Texture& normal)
+: Material(shader_name)
+, shininess(shininess)
+, diffuse_map(diffuse_map)
+, specular_map(specular_map)
+, normal_map(normal)
+{
+
+}
+
+BasicMaterial::BasicMaterial(
+    const std::string& shader_name,
+    const Texture& diffuse_map,
+    const Texture& specular_map,
     const Texture& shininess_map)
 : Material(shader_name)
 , shininess(0)
@@ -90,10 +132,38 @@ BasicMaterial::BasicMaterial(
 
 BasicMaterial::BasicMaterial(
     const std::string& shader_name,
+    const Texture& diffuse_map,
+    const Texture& specular_map,
+    const Texture& shininess_map,
+    const Texture& normal)
+: Material(shader_name)
+, shininess(0)
+, diffuse_map(diffuse_map)
+, specular_map(specular_map)
+, shininess_map(shininess_map)
+, normal_map(normal)
+{
+
+}
+
+BasicMaterial::BasicMaterial(
+    const std::string& shader_name,
     const Texture& diffuse_map)
 : Material(shader_name)
 , shininess(0)
 , diffuse_map(diffuse_map)
+{
+
+}
+
+BasicMaterial::BasicMaterial(
+    const std::string& shader_name,
+    const Texture& diffuse_map,
+    const Texture& normal_map)
+: Material(shader_name)
+, shininess(0)
+, diffuse_map(diffuse_map)
+, normal_map(normal_map)
 {
 
 }
@@ -148,6 +218,13 @@ void BasicMaterial::PipeUniformData(GLuint shader_id) const
         glBindTexture(GL_TEXTURE_2D, shininess_map.TexId());
     } else {
         glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("shininess_map").c_str()), 5);
+    }
+    if (!normal_map.IsNull()) {
+        glActiveTexture(GL_TEXTURE3);
+        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("normal_map").c_str()), 3);
+        glBindTexture(GL_TEXTURE_2D, normal_map.TexId());
+    } else {
+        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("normal_map").c_str()), 5);
     }
 }
 
