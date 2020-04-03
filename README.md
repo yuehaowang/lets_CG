@@ -34,7 +34,7 @@ sudo apt-get install cmake libx11-dev xorg-dev libglu1-mesa-dev freeglut3-dev li
 
 ## Build & Run
 
-Type commands below to build the project.
+Type commands below to download and build the project.
 
 ```bash
 # Clone this repo
