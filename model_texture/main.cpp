@@ -33,6 +33,7 @@ private:
     BasicMaterial* mat1;
     BasicMaterial* mat2;
     BasicMaterial* mat3;
+    BasicMaterial* mat4;
 
 public:
 
@@ -87,6 +88,14 @@ public:
 
         mat3 = new BasicMaterial(
             "glyk/shaders/standard",
+            Texture("model_texture/resources/awesomeface.jpg"),
+            Texture("model_texture/resources/awesomeface.jpg"),
+            12.0f,
+            Texture("model_texture/resources/wall_normal.jpg")
+        );
+
+        mat4 = new BasicMaterial(
+            "glyk/shaders/standard",
             Vec3f(1.0f, 0.5f, 0.31f),
             Vec3f(0.5f, 0.5f, 0.5f),
             12.0f,
@@ -110,7 +119,7 @@ public:
 
     void CreateBall()
     {
-        Mesh* sphere = new Mesh(mat3, SphereGeometry(true));
+        Mesh* sphere = new Mesh(mat4, SphereGeometry(true));
         sphere->Translate(-4.5, 0, 1);
         main_scene.Add(sphere);
     }
@@ -169,6 +178,7 @@ public:
         delete mat1;
         delete mat2;
         delete mat3;
+        delete mat4;
     }
 
     void MouseControl()
