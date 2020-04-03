@@ -32,6 +32,7 @@ private:
     PerspectiveCamera cam;
     BasicMaterial* mat1;
     BasicMaterial* mat2;
+    BasicMaterial* mat3;
 
 public:
 
@@ -84,24 +85,33 @@ public:
             Texture("model_texture/resources/wall_normal.jpg")
         );
 
+        mat3 = new BasicMaterial(
+            "glyk/shaders/standard",
+            Vec3f(1.0f, 0.5f, 0.31f),
+            Vec3f(0.5f, 0.5f, 0.5f),
+            12.0f,
+            Texture("model_texture/resources/wall_normal.jpg")
+        );
+
         /* Create objects */
-        // CreateBox();
-        // CreateBall();
+        CreateBox();
+        CreateBall();
         LoadPikachuModel();
         LoadCatModel();
     }
 
     void CreateBox()
     {
-        Mesh* box = new Mesh(mat2, BoxGeometry());
-        box->Translate(-1.5, 0, 0.5);
+        Mesh* box = new Mesh(mat3, BoxGeometry(true));
+        box->Translate(4.5, 0, 1.5);
+        box->Scale(2.0, 2.0, 2.0);
         main_scene.Add(box);
     }
 
     void CreateBall()
     {
-        Mesh* sphere = new Mesh(mat1, SphereGeometry());
-        sphere->Translate(1, 0, 0);
+        Mesh* sphere = new Mesh(mat3, SphereGeometry(true));
+        sphere->Translate(-4.5, 0, 1);
         main_scene.Add(sphere);
     }
 
@@ -122,9 +132,9 @@ public:
     void LoadPikachuModel()
     {
         std::vector<Geometry> models = Loader::LoadModel(
-            "model_texture/resources/pikachu.obj",
-            Loader::ComputeTBN
+            "model_texture/resources/pikachu.obj"
         );
+        models[0].GenerateTBN(0.001);
 
         Mesh* pikachu = new Mesh(mat2, models[0]);
         pikachu->Rotate(-45, 0, 0);
@@ -158,6 +168,7 @@ public:
     {
         delete mat1;
         delete mat2;
+        delete mat3;
     }
 
     void MouseControl()

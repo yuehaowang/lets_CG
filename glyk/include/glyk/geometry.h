@@ -36,7 +36,7 @@ public:
         const std::vector<float>& norm);
     Geometry(const std::vector<float>& vert);
     virtual ~Geometry();
-    void GenerateTBN();
+    void GenerateTBN(float epsilon = 0.00001);
     const std::vector<float>& VertexData() const;
     const std::vector<float>& NormalData() const;
     const std::vector<float>& TexCoordData() const;
@@ -55,10 +55,11 @@ protected:
 
     static float VERTICES[108];
     static float NORMALS[108];
+    static float TEXCOORDS[72];
 
 public:
 
-    BoxGeometry();
+    BoxGeometry(bool gen_TBN = false);
 
 };
 
@@ -72,15 +73,16 @@ protected:
 
     static std::vector<float> VERTICES;
     static std::vector<float> NORMALS;
+    static std::vector<float> TEXCOORDS;
     static std::vector<unsigned int> INDICES;
 
 public:
 
-    SphereGeometry();
+    SphereGeometry(bool gen_TBN = false);
     static void GenerateSphere(
         std::vector<float>& vert,
         std::vector<float>& norm,
-        std::vector<unsigned int>& index,
+        std::vector<float>& texc,
         float radius, unsigned int divi_count);
 
 };

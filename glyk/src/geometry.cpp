@@ -54,36 +54,43 @@ Geometry::~Geometry()
 
 }
 
-void Geometry::GenerateTBN()
+void Geometry::GenerateTBN(float epsilon)
 {
     TBN_data.clear();
 
     unsigned int vert_num = vertex_data.size() / 3;
-    for (int i = 0; i < vert_num; i += 3) {
+    for (unsigned int i = 0; i < vert_num; i += 3) {
         unsigned int vi = i * 3;
-        Vec3f pos1(vertex_data[vi], vertex_data[vi + 1], vertex_data[vi + 2]);
-        Vec3f pos2(vertex_data[vi + 3], vertex_data[vi + 4], vertex_data[vi + 5]);
-        Vec3f pos3(vertex_data[vi + 6], vertex_data[vi + 7], vertex_data[vi + 8]);
+        Vec3f vert1(vertex_data[vi], vertex_data[vi + 1], vertex_data[vi + 2]);
+        Vec3f vert2(vertex_data[vi + 3], vertex_data[vi + 4], vertex_data[vi + 5]);
+        Vec3f vert3(vertex_data[vi + 6], vertex_data[vi + 7], vertex_data[vi + 8]);
         unsigned int ti = i * 2;
-        Vec3f uv1(texcoord_data[ti], texcoord_data[ti + 1], 0.0f);
-        Vec3f uv2(texcoord_data[ti + 2], texcoord_data[ti + 3], 0.0f);
-        Vec3f uv3(texcoord_data[ti + 4], texcoord_data[ti + 5], 0.0f);
+        Vec3f tex1(texcoord_data[ti], texcoord_data[ti + 1], 0.0f);
+        Vec3f tex2(texcoord_data[ti + 2], texcoord_data[ti + 3], 0.0f);
+        Vec3f tex3(texcoord_data[ti + 4], texcoord_data[ti + 5], 0.0f);
         
-        Vec3f edge1 = pos2 - pos1;
-        Vec3f edge2 = pos3 - pos1;
-        Vec3f deltaUV1 = uv2 - uv1;
-        Vec3f deltaUV2 = uv3 - uv1;
+        Vec3f e1 = vert2 - vert1;
+        Vec3f e2 = vert3 - vert1;
+        Vec3f dt_12 = tex2 - tex1;
+        Vec3f dt_13 = tex3 - tex1;
 
-        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+        Vec3f tangent;
 
-        Vec3f tangent(
-            f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x),
-            f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y),
-            f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z)
-        );
-        tangent.Normalize();
+        float det = (dt_12.x * dt_13.y - dt_13.x * dt_12.y);
 
-        for (int j = 0; j < 3; j++) {
+        if (abs(det) < epsilon) {
+            tangent.x = tangent.y = tangent.z = 0;
+        } else {
+            float f = 1.0f / det;
+            tangent = Vec3f(
+                f * (dt_13.y * e1.x - dt_12.y * e2.x),
+                f * (dt_13.y * e1.y - dt_12.y * e2.y),
+                f * (dt_13.y * e1.z - dt_12.y * e2.z)
+            );
+            tangent.Normalize();
+        }
+
+        for (unsigned int j = 0; j < 3; j++) {
             TBN_data.push_back(tangent.x);
             TBN_data.push_back(tangent.y);
             TBN_data.push_back(tangent.z);
@@ -207,10 +214,59 @@ float BoxGeometry::NORMALS[108] = {
     0.0f,  1.0f,  0.01f
 };
 
-BoxGeometry::BoxGeometry()
+float BoxGeometry::TEXCOORDS[72] = {
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f
+};
+
+BoxGeometry::BoxGeometry(bool gen_TBN)
 {
     vertex_data = std::vector<float>(VERTICES, VERTICES + sizeof(VERTICES) / sizeof(VERTICES[0]));
     normal_data = std::vector<float>(NORMALS, NORMALS + sizeof(NORMALS) / sizeof(NORMALS[0]));
+    texcoord_data = std::vector<float>(TEXCOORDS, TEXCOORDS + sizeof(TEXCOORDS) / sizeof(TEXCOORDS[0]));
+
+    if (gen_TBN) {
+        GenerateTBN();
+    }
 }
 
 
@@ -218,24 +274,29 @@ BoxGeometry::BoxGeometry()
 
 std::vector<float> SphereGeometry::VERTICES;
 std::vector<float> SphereGeometry::NORMALS;
+std::vector<float> SphereGeometry::TEXCOORDS;
 std::vector<unsigned int> SphereGeometry::INDICES;
 
 
-SphereGeometry::SphereGeometry()
+SphereGeometry::SphereGeometry(bool gen_TBN)
 {
     if (VERTICES.size() == 0) {
-        GenerateSphere(VERTICES, NORMALS, INDICES, 1.0f, 50);
+        GenerateSphere(VERTICES, NORMALS, TEXCOORDS, 1.0f, 100);
     }
 
     vertex_data = VERTICES;
     normal_data = NORMALS;
-    index_data = INDICES;
+    texcoord_data = TEXCOORDS;
+
+    if (gen_TBN) {
+        GenerateTBN();
+    }
 }
 
 void SphereGeometry::GenerateSphere(
     std::vector<float>& vert,
     std::vector<float>& norm,
-    std::vector<unsigned int>& index,
+    std::vector<float>& texc,
     float radius, unsigned int divi_count)
 {
     float init_azimuth = 0.0f;
@@ -247,7 +308,10 @@ void SphereGeometry::GenerateSphere(
     float d_azimuth = (max_azimuth - init_azimuth) / divi_count;
     float d_zenith = (max_zenith - init_zenith) / divi_count;
 
-    for (unsigned int i = 0; i < divi_count; i++) {
+    std::vector<float> vert_, norm_, texc_;
+    std::vector<unsigned int> index_;
+
+    for (unsigned int i = 0; i <= divi_count; i++) {
         float zenith = d_zenith * i + init_zenith;
 
         float y = radius * sinf(zenith * PI / 180);
@@ -259,20 +323,50 @@ void SphereGeometry::GenerateSphere(
             float x = proj_xz * sinf(azimuth * PI / 180);
             float z = proj_xz * cosf(azimuth * PI / 180);
 
-            vert.push_back(x);
-            vert.push_back(y);
-            vert.push_back(z);
+            vert_.push_back(x);
+            vert_.push_back(y);
+            vert_.push_back(z);
 
-            norm.push_back(x / radius);
-            norm.push_back(y / radius);
-            norm.push_back(z / radius);
+            norm_.push_back(x / radius);
+            norm_.push_back(y / radius);
+            norm_.push_back(z / radius);
 
-            index.push_back(i * divi_count + j);
-            index.push_back((i + 1) * divi_count + j);
-            index.push_back(i * divi_count + (j + 1) % divi_count);
-            index.push_back(i * divi_count + (j + 1) % divi_count); 
-            index.push_back((i + 1) * divi_count + j);
-            index.push_back((i + 1) * divi_count + (j + 1) % divi_count);
+            texc_.push_back((float)j / divi_count);
+            texc_.push_back((float)i / divi_count);
+
+            if (i != divi_count) {
+                index_.push_back(i * divi_count + j);
+                index_.push_back((i + 1) * divi_count + j);
+                index_.push_back(i * divi_count + (j + 1) % divi_count);
+                index_.push_back(i * divi_count + (j + 1) % divi_count); 
+                index_.push_back((i + 1) * divi_count + j);
+                index_.push_back((i + 1) * divi_count + (j + 1) % divi_count);
+            }
+        }
+    }
+
+    std::vector<unsigned int>::iterator it; 
+    for (it = index_.begin(); it != index_.end(); it += 3) {
+        int p1_row_index = *it % divi_count;
+
+        for (unsigned int i = 0; i < 3; i++) {
+            vert.push_back(vert_[*(it + i) * 3]);
+            vert.push_back(vert_[*(it + i) * 3 + 1]);
+            vert.push_back(vert_[*(it + i) * 3 + 2]);
+
+            norm.push_back(norm_[*(it + i) * 3]);
+            norm.push_back(norm_[*(it + i) * 3 + 1]);
+            norm.push_back(norm_[*(it + i) * 3 + 2]);
+
+            int curr_row_index = *(it + i) % divi_count;
+            if (p1_row_index - curr_row_index == divi_count - 1) {
+                texc.push_back(texc_[*(it + i) * 2] + 1.0f);
+            } else if (p1_row_index - curr_row_index == -(divi_count - 1)) {
+                texc.push_back(texc_[*(it + i) * 2] - 1.0f);
+            } else {
+                texc.push_back(texc_[*(it + i) * 2]);
+            }
+            texc.push_back(texc_[*(it + i) * 2 + 1]);
         }
     }
 }

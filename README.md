@@ -92,6 +92,6 @@ Therefore, matrices stored in row-major order should be transposed before sent t
 - [Learn OpenGL](https://learnopengl.com/)
 - [OpenGL Projection Matrix](http://www.songho.ca/opengl/gl_projectionmatrix.html)
 - [WebGL Fundamentals](https://webglfundamentals.org/)
-- [How to install a OpenGL environment on Ubuntu](https://medium.com/@Plimsky/how-to-install-a-opengl-environment-on-ubuntu-e3918cf5ab6c)
+- [How to install OpenGL environment on Ubuntu](https://medium.com/@Plimsky/how-to-install-a-opengl-environment-on-ubuntu-e3918cf5ab6c)
 - [CMake Examples](http://ttroy50.github.io/cmake-examples/)
 - Dunn, Fletcher, and Ian Parberry. 3D math primer for graphics and game development. Jones & Bartlett Publishers, 2010.

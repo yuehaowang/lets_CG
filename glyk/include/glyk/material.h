@@ -107,6 +107,10 @@ public:
     Vec3f Diffuse() const;
     Vec3f Specular() const;
     float Shininess() const;
+    Texture DiffuseMap() const;
+    Texture SpecularMap() const;
+    Texture ShininessMap() const;
+    Texture NormalMap() const;
 
 };
 

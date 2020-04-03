@@ -31,11 +31,8 @@ void main()
     mat3 normal_mat = transpose(inverse(mat3(mesh.model)));
 
     mat3 TBN;
-    if (length(vertex_tangent) > 0 && (!isnan(vertex_tangent.x) || !isnan(vertex_tangent.y) || !isnan(vertex_tangent.z))) {
+    if (length(vertex_tangent) > 0) {
         vec3 T = vertex_tangent;
-        if (isnan(T.x)) T.x = 0.0;
-        if (isnan(T.y)) T.y = 0.0;
-        if (isnan(T.z)) T.z = 0.0;
         vec3 N = normalize(vertex_normal);
         T = normalize(normal_mat * (T - dot(T, N) * N));
         N = normalize(normal_mat * N);

@@ -183,6 +183,26 @@ float BasicMaterial::Shininess() const
     return shininess;
 }
 
+Texture BasicMaterial::DiffuseMap() const
+{
+    return diffuse_map;
+}
+
+Texture BasicMaterial::SpecularMap() const
+{
+    return specular_map;
+}
+
+Texture BasicMaterial::ShininessMap() const
+{
+    return shininess_map;
+}
+
+Texture BasicMaterial::NormalMap() const
+{
+    return normal_map;
+}
+
 void BasicMaterial::PipeUniformData(GLuint shader_id) const
 {
     glUniform3f(
