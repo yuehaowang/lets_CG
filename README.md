@@ -70,7 +70,16 @@ cube_texture/cube_texture
 # Phong shading
 lighting/lighting
 
+# Model loading + texture & normal mapping
+model_texture/model_texture
+
 ```
+
+
+## Third-party Libraries
+
+- [stb_image](https://github.com/nothings/stb)
+- [tiny_obj_loader](https://github.com/tinyobjloader/tinyobjloader)
 
 
 ## Notes
