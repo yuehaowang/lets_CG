@@ -18,6 +18,7 @@ class Material
 
 protected:
 
+    static GLuint empty_texture_id;
     std::string shader_name;
     virtual void PipeUniformData(GLuint shader_id) const = 0;
     virtual std::string ShaderMaterialUniformIdentifier(const std::string& member_name) const = 0;
@@ -27,7 +28,7 @@ protected:
 public:
 
     Material();
-    Material(const std::string& shader);
+    Material(const std::string& shader_name);
     virtual ~Material();
     std::string ShaderName() const;
 
@@ -57,6 +58,7 @@ public:
     static std::string material_uniform_name;
 
     BasicMaterial();
+    BasicMaterial(const std::string& shader_name);
     BasicMaterial(
         const std::string& shader_name,
         const Vec3f& diffuse,

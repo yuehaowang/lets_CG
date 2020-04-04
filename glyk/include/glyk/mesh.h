@@ -4,15 +4,12 @@
 #include <string>
 #include <vector>
 #include "glyk/gl_header_files.h"
+#include "glyk/object3d.h"
 #include "glyk/mat4x4.h"
 #include "glyk/vec3.h"
 #include "glyk/shader.h"
-#include "glyk/object3d.h"
 #include "glyk/material.h"
 #include "glyk/geometry.h"
-
-
-class Scene;
 
 
 class Mesh : public Object3D
@@ -21,12 +18,14 @@ class Mesh : public Object3D
 protected:
 
     enum DrawMode {
-        DRAW_ARRAYS = 10,
-        DRAW_ELEMENTS
+        None = 0x00000000,
+        Arrays,
+        Elements
     };
 
     Shader shader;
     DrawMode draw_mode;
+    GLenum draw_primitives;
     unsigned int draw_count;
     GLuint VAO;
     GLuint vertex_buffer;
@@ -42,14 +41,15 @@ protected:
         const std::vector<float>& normal_data,
         const std::vector<float>& texcoord_data,
         const std::vector<float>& TBN_data,
-        const std::vector<unsigned int>& index_data
+        const std::vector<unsigned int>& index_data,
+        Geometry::PrimitivesType p
     );
     void Render();
     void PrepareMaterial(GLuint shader_id);
     void PipeUniformData(GLuint shader_id);
     std::string ShaderMeshUniformIdentifier(const std::string& member_name);
 
-    friend class Scene; 
+    friend class Scene;
 
 public:
 

@@ -4,14 +4,16 @@
 
 /***************** Material *****************/
 
+GLuint Material::empty_texture_id = 5;
+
 Material::Material()
 : shader_name("")
 {
 
 }
 
-Material::Material(const std::string& shader)
-: shader_name(shader)
+Material::Material(const std::string& shader_name)
+: shader_name(shader_name)
 {
 
 }
@@ -33,6 +35,13 @@ std::string BasicMaterial::material_uniform_name = "material";
 
 BasicMaterial::BasicMaterial()
 : Material("")
+, shininess(0)
+{
+
+}
+
+BasicMaterial::BasicMaterial(const std::string& shader_name)
+: Material(shader_name)
 , shininess(0)
 {
 
@@ -223,28 +232,28 @@ void BasicMaterial::PipeUniformData(GLuint shader_id) const
         glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("diffuse_map").c_str()), 0);
         glBindTexture(GL_TEXTURE_2D, diffuse_map.TexId());
     } else {
-        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("diffuse_map").c_str()), 5);
+        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("diffuse_map").c_str()), empty_texture_id);
     }
     if (!specular_map.IsNull()) {
         glActiveTexture(GL_TEXTURE1);
         glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("specular_map").c_str()), 1);
         glBindTexture(GL_TEXTURE_2D, specular_map.TexId());
     } else {
-        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("specular_map").c_str()), 5);
+        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("specular_map").c_str()), empty_texture_id);
     }
     if (!shininess_map.IsNull()) {
         glActiveTexture(GL_TEXTURE2);
         glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("shininess_map").c_str()), 2);
         glBindTexture(GL_TEXTURE_2D, shininess_map.TexId());
     } else {
-        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("shininess_map").c_str()), 5);
+        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("shininess_map").c_str()), empty_texture_id);
     }
     if (!normal_map.IsNull()) {
         glActiveTexture(GL_TEXTURE3);
         glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("normal_map").c_str()), 3);
         glBindTexture(GL_TEXTURE_2D, normal_map.TexId());
     } else {
-        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("normal_map").c_str()), 5);
+        glUniform1i(glGetUniformLocation(shader_id, ShaderMaterialUniformIdentifier("normal_map").c_str()), empty_texture_id);
     }
 }
 

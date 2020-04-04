@@ -7,8 +7,8 @@ Mesh::Mesh(const Material* mat, const Geometry& geom)
 : Object3D()
 {
     Initialize(
-        mat, geom.VertexData(), geom.NormalData(),
-        geom.TexCoordData(), geom.TBNData(), geom.IndexData()
+        mat, geom.VertexData(), geom.NormalData(), geom.TexCoordData(),
+        geom.TBNData(), geom.IndexData(), geom.Primitives()
     );
 }
 
@@ -33,7 +33,8 @@ void Mesh::Initialize(
         const std::vector<float>& normal_data,
         const std::vector<float>& texcoord_data,
         const std::vector<float>& TBN_data,
-        const std::vector<unsigned int>& index_data)
+        const std::vector<unsigned int>& index_data,
+        Geometry::PrimitivesType p)
 {
     SetMaterial(mat);
 
@@ -74,11 +75,23 @@ void Mesh::Initialize(
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_data.size() * sizeof(unsigned int), &index_data[0], GL_STATIC_DRAW);
 
+    switch (p) {
+        case Geometry::Lines:
+            draw_primitives = GL_LINES;
+            break;
+        case Geometry::Triangles:
+            draw_primitives = GL_TRIANGLES;
+            break;
+        default:
+            draw_primitives = GL_TRIANGLES;
+            break;
+    }
+
     if (index_data.size() > 0) {
-        draw_mode = DRAW_ELEMENTS;
+        draw_mode = Elements;
         draw_count = index_data.size();
     } else {
-        draw_mode = DRAW_ARRAYS;
+        draw_mode = Arrays;
         draw_count = vertex_data.size() / 3;
     }
 }
@@ -95,10 +108,10 @@ void Mesh::SetMaterial(const Material* mat)
 void Mesh::Render()
 {
     glBindVertexArray(VAO);
-    if (draw_mode == DRAW_ARRAYS) {
-        glDrawArrays(GL_TRIANGLES, 0, draw_count);
-    } else {
-        glDrawElements(GL_TRIANGLES, draw_count, GL_UNSIGNED_INT, 0);
+    if (draw_mode == Arrays) {
+        glDrawArrays(draw_primitives, 0, draw_count);
+    } else if (draw_mode == Elements) {
+        glDrawElements(draw_primitives, draw_count, GL_UNSIGNED_INT, 0);
     }
     glBindVertexArray(0);
 }

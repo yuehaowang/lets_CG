@@ -11,6 +11,8 @@ add_library(${PROJECT_NAME}
     src/material.cpp
     src/mesh.cpp
     src/object3d.cpp
+    src/indicator.cpp
+    src/invisibleobject3d.cpp
     src/scene.cpp
     src/shader.cpp
     src/texture.cpp
@@ -18,8 +20,12 @@ add_library(${PROJECT_NAME}
 )
 
 
-###### Add shader files ######
+###### Find shader files ######
 find_shaders()
+
+###### Find resource files ######
+find_resources()
+
 
 ###### Set include directories ######
 target_include_directories(${PROJECT_NAME}

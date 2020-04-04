@@ -4,7 +4,10 @@
 #include <iostream>
 #include "glyk/gl_header_files.h"
 #include "glyk/vec3.h"
-#include "glyk/object3d.h"
+#include "glyk/invisibleobject3d.h"
+#include "glyk/mesh.h"
+#include "glyk/material.h"
+#include "glyk/indicator.h"
 
 
 class Scene;
@@ -12,7 +15,7 @@ class Scene;
 
 /***************** Light *****************/
 
-class Light : public Object3D
+class Light : public InvisibleObject3D
 {
 
 protected:
@@ -20,7 +23,7 @@ protected:
     Vec3f ambient;
     Vec3f diffuse;
     Vec3f specular;
-    
+
     virtual void PipeUniformData(GLuint shader_id, unsigned int light_index);
     virtual std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name) = 0;
     virtual std::string ShaderLightCountUniformIdentifier() = 0;
@@ -38,6 +41,7 @@ public:
     void SetAmbient(const Vec3f& v);
     void SetDiffuse(const Vec3f& v);
     void SetSpecular(const Vec3f& v);
+    virtual void ShowIndicator() = 0;
 
 };
 
@@ -49,15 +53,16 @@ class DirectionalLight : public Light
 
 protected:
 
-    void PipeUniformData(GLuint shader_id, unsigned int light_index);
-    std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name);
-    std::string ShaderLightCountUniformIdentifier();
+    virtual void PipeUniformData(GLuint shader_id, unsigned int light_index);
+    virtual std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name);
+    virtual std::string ShaderLightCountUniformIdentifier();
 
 public:
 
     static std::string lights_uniform_name;
 
     DirectionalLight(const Vec3f& a, const Vec3f& d, const Vec3f& s);
+    virtual void ShowIndicator();
 
 };
 

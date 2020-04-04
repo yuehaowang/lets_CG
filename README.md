@@ -3,7 +3,7 @@
 Learning and Practice of Modern OpenGL.
 
 
-## Setup
+## Prerequisites
 
 ### Build Tools
 
@@ -76,10 +76,20 @@ model_texture/model_texture
 ```
 
 
-## Third-party Libraries
+## Attributions
+
+### Third-party Libraries
 
 - [stb_image](https://github.com/nothings/stb)
 - [tiny_obj_loader](https://github.com/tinyobjloader/tinyobjloader)
+
+### Resources
+
+Some resources used in this project are downloaded online. Here are their attributions.
+
+- Sun icon made by [DinosoftLabs](https://www.flaticon.com/authors/dinosoftlabs) from [www.flaticon.com](https://www.flaticon.com/)
+- Lamp icon made by [Pixelmeetup](https://www.flaticon.com/authors/pixelmeetup) from [www.flaticon.com](https://www.flaticon.com/)</a>
+- Cat model downloaded from [free3d.com](https://free3d.com/3d-model/cat-v1--522281.html)
 
 
 ## Notes

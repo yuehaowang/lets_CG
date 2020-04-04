@@ -52,24 +52,30 @@ public:
             Vec3f(0.4f, 0.4f, 0.4f),
             Vec3f(0.4f, 0.6f, 0.8f)
         );
+        light1->Translate(0, 3, 0);
         light1->Rotate(180, 0, 0);
         main_scene.Add(light1);
+        light1->ShowIndicator();
 
         DirectionalLight* light2 = new DirectionalLight(
             Vec3f(0.08f, 0.08f, 0.08f),
             Vec3f(1.0f, 1.0f, 1.0f),
             Vec3f(0.8f, 0.5f, 0.2f)
         );
+        light2->Translate(0, -3, 1);
         light2->Rotate(-45, 0, 0);
         main_scene.Add(light2);
+        light2->ShowIndicator();
 
         DirectionalLight* light3 = new DirectionalLight(
             Vec3f(0.1f, 0.1f, 0.1f),
             Vec3f(0.4f, 0.5f, 0.4f),
             Vec3f(0.6f, 0.7f, 0.6f)
         );
+        light3->Translate(1, 4, 1);
         light3->Rotate(0, 90, 0);
         main_scene.Add(light3);
+        light3->ShowIndicator();
 
         /* Materials */
         mat1 = new BasicMaterial(

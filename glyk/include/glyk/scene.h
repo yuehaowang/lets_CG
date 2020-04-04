@@ -13,12 +13,21 @@ class Scene
 
 protected:
 
+    enum RenderMeshFlag {
+        None = 0x00000000,
+        Lights = 0x00000001,
+        View = 0x00000002
+    };
+
     std::vector<Mesh*> mesh_list;
     std::vector<Light*> light_list;
     Camera* main_camera;
     void PrepareMesh(GLuint shader_id, Mesh* m);
     void PrepareCamera(GLuint shader_id);
     void PrepareLights(GLuint shader_id);
+    void RenderMesh(Mesh* m, RenderMeshFlag flag = None);
+
+    friend RenderMeshFlag operator| (RenderMeshFlag f1, RenderMeshFlag f2);
 
 public:
 
@@ -30,6 +39,8 @@ public:
     void Render();
 
 };
+
+Scene::RenderMeshFlag operator| (Scene::RenderMeshFlag f1, Scene::RenderMeshFlag f2);
 
 
 #endif

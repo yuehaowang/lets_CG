@@ -1,6 +1,7 @@
 #ifndef _OBJECT3D_H_
 #define _OBJECT3D_H_
 
+#include <vector>
 #include "glyk/gl_header_files.h"
 #include "glyk/mat4x4.h"
 #include "glyk/vec3.h"
@@ -21,6 +22,7 @@ public:
     virtual ~Object3D();
     unsigned int Id() const;
     const Mat4x4f& Transform() const;
+    virtual void SetTransform(const Mat4x4f& mat);
     virtual void Translate(float x, float y, float z);
     virtual void Translate(const Vec3f& t);
     virtual void Scale(float sx, float sy, float sz);

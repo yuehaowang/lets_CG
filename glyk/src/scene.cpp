@@ -2,6 +2,11 @@
 #include "glyk/vec3.h"
 
 
+Scene::RenderMeshFlag operator| (Scene::RenderMeshFlag f1, Scene::RenderMeshFlag f2)
+{
+    return static_cast<Scene::RenderMeshFlag>(static_cast<int>(f1) | static_cast<int>(f2));
+}
+
 Scene::Scene()
 : main_camera(NULL)
 {
@@ -66,15 +71,35 @@ void Scene::PrepareLights(GLuint shader_id)
     }
 }
 
+void Scene::RenderMesh(Mesh* m, RenderMeshFlag flag)
+{
+    GLuint shader_id = m->ShaderId();
+    glUseProgram(shader_id);
+    PrepareMesh(shader_id, m);
+    if (flag & View) {
+        PrepareCamera(shader_id);
+    }
+    if (flag & Lights) {
+        PrepareLights(shader_id);
+    }
+    m->Render();
+}
+
 void Scene::Render()
 {
     for (std::vector<Mesh*>::iterator it = mesh_list.begin(); it != mesh_list.end(); it++) {
         Mesh* m = *it;
-        GLuint shader_id = m->ShaderId();
-        glUseProgram(shader_id);
-        PrepareMesh(shader_id, m);
-        PrepareCamera(shader_id);
-        PrepareLights(shader_id);
-        m->Render();
+        RenderMesh(m, View | Lights);
+    }
+
+    for (std::vector<Light*>::iterator it = light_list.begin(); it != light_list.end(); it++) {
+        Light* l = *it;
+
+        std::vector<Indicator*>::iterator ind_it;
+        for (ind_it = l->indicators.begin(); ind_it != l->indicators.end(); ind_it++) {
+            Indicator* ind = *ind_it;
+            l->BindIndicator(ind);
+            RenderMesh(ind->mesh, View);
+        }
     }
 }

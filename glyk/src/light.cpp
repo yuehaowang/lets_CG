@@ -1,15 +1,18 @@
 #include "glyk/light.h"
+#include "glyk/geometry.h"
 
 
 /***************** Light *****************/
 
 Light::Light()
+: InvisibleObject3D()
 {
 
 }
 
 Light::Light(const Vec3f& a, const Vec3f& d, const Vec3f& s)
-: ambient(a)
+: InvisibleObject3D()
+, ambient(a)
 , diffuse(d)
 , specular(s)
 {
@@ -104,4 +107,10 @@ std::string DirectionalLight::ShaderLightsUniformIdentifier(unsigned int index, 
 std::string DirectionalLight::ShaderLightCountUniformIdentifier()
 {
     return lights_uniform_name + "_count";
+}
+
+void DirectionalLight::ShowIndicator()
+{
+    AddIndicator(new AxesIndicator());
+    AddIndicator(new IconIndicator("glyk/resources/icon_dir_light.png"));
 }

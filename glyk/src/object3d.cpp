@@ -19,6 +19,11 @@ const Mat4x4f& Object3D::Transform() const
     return transform;
 }
 
+void Object3D::SetTransform(const Mat4x4f& mat)
+{
+    transform = mat;
+}
+
 unsigned int Object3D::Id() const
 {
     return id;
@@ -34,7 +39,6 @@ void Object3D::Translate(const Vec3f& t)
     Mat4x4f m;
     m.Translate(t.x, t.y, t.z);
     transform *= m;
-
 }
 
 void Object3D::Scale(float sx, float sy, float sz)

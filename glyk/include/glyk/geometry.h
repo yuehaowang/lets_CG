@@ -11,6 +11,13 @@
 class Geometry
 {
 
+public:
+
+    enum PrimitivesType {
+        Lines = 0,
+        Triangles
+    };
+
 protected:
 
     std::vector<float> vertex_data;
@@ -18,6 +25,7 @@ protected:
     std::vector<float> texcoord_data;
     std::vector<float> TBN_data;
     std::vector<unsigned int> index_data;
+    PrimitivesType primitives;
 
 public:
 
@@ -26,15 +34,18 @@ public:
         const std::vector<float>& vert,
         const std::vector<float>& norm,
         const std::vector<float>& texc,
-        const std::vector<unsigned int>& index);
+        const std::vector<unsigned int>& index,
+        PrimitivesType p = Triangles);
     Geometry(
         const std::vector<float>& vert,
         const std::vector<float>& norm,
-        const std::vector<float>& texc);
+        const std::vector<float>& texc,
+        PrimitivesType p = Triangles);
     Geometry(
         const std::vector<float>& vert,
-        const std::vector<float>& norm);
-    Geometry(const std::vector<float>& vert);
+        const std::vector<float>& norm,
+        PrimitivesType p = Triangles);
+    Geometry(const std::vector<float>& vert, PrimitivesType p = Triangles);
     virtual ~Geometry();
     void GenerateTBN(float epsilon = 0.00001);
     const std::vector<float>& VertexData() const;
@@ -42,6 +53,7 @@ public:
     const std::vector<float>& TexCoordData() const;
     const std::vector<float>& TBNData() const;
     const std::vector<unsigned int>& IndexData() const;
+    PrimitivesType Primitives() const;
 
 };
 
@@ -74,7 +86,6 @@ protected:
     static std::vector<float> VERTICES;
     static std::vector<float> NORMALS;
     static std::vector<float> TEXCOORDS;
-    static std::vector<unsigned int> INDICES;
 
 public:
 
@@ -84,6 +95,24 @@ public:
         std::vector<float>& norm,
         std::vector<float>& texc,
         float radius, unsigned int divi_count);
+
+};
+
+
+/***************** QuadGeometry *****************/
+
+class QuadGeometry : public Geometry
+{
+
+protected:
+
+    static float VERTICES[18];
+    static float NORMALS[18];
+    static float TEXCOORDS[12];
+
+public:
+
+    QuadGeometry(bool gen_TBN = false);
 
 };
 

@@ -1,11 +1,13 @@
 #include <cmath>
 #include "glyk/geometry.h"
+#include "glyk/vec3.h"
 #include "glyk/mat4x4.h"
 
 
 /***************** Geometry *****************/
 
 Geometry::Geometry()
+: primitives(Triangles)
 {
 
 }
@@ -14,11 +16,13 @@ Geometry::Geometry(
     const std::vector<float>& vert,
     const std::vector<float>& norm,
     const std::vector<float>& texc,
-    const std::vector<unsigned int>& index)
+    const std::vector<unsigned int>& index,
+    PrimitivesType p)
 : vertex_data(vert)
 , normal_data(norm)
 , texcoord_data(texc)
 , index_data(index)
+, primitives(p)
 {
 
 }
@@ -26,25 +30,30 @@ Geometry::Geometry(
 Geometry::Geometry(
     const std::vector<float>& vert,
     const std::vector<float>& norm,
-    const std::vector<float>& texc)
+    const std::vector<float>& texc,
+    PrimitivesType p)
 : vertex_data(vert)
 , normal_data(norm)
 , texcoord_data(texc)
+, primitives(p)
 {
 
 }
 
 Geometry::Geometry(
     const std::vector<float>& vert,
-    const std::vector<float>& norm)
+    const std::vector<float>& norm,
+    PrimitivesType p)
 : vertex_data(vert)
 , normal_data(norm)
+, primitives(p)
 {
 
 }
 
-Geometry::Geometry(const std::vector<float>& vert)
+Geometry::Geometry(const std::vector<float>& vert, PrimitivesType p)
 : vertex_data(vert)
+, primitives(p)
 {
 
 }
@@ -57,6 +66,10 @@ Geometry::~Geometry()
 void Geometry::GenerateTBN(float epsilon)
 {
     TBN_data.clear();
+
+    if (primitives != Triangles) {
+        return;
+    }
 
     unsigned int vert_num = vertex_data.size() / 3;
     for (unsigned int i = 0; i < vert_num; i += 3) {
@@ -121,6 +134,11 @@ const std::vector<float>& Geometry::TBNData() const
 const std::vector<unsigned int>& Geometry::IndexData() const
 {
     return index_data;
+}
+
+Geometry::PrimitivesType Geometry::Primitives() const
+{
+    return primitives;
 }
 
 
@@ -259,11 +277,12 @@ float BoxGeometry::TEXCOORDS[72] = {
 };
 
 BoxGeometry::BoxGeometry(bool gen_TBN)
-{
-    vertex_data = std::vector<float>(VERTICES, VERTICES + sizeof(VERTICES) / sizeof(VERTICES[0]));
-    normal_data = std::vector<float>(NORMALS, NORMALS + sizeof(NORMALS) / sizeof(NORMALS[0]));
-    texcoord_data = std::vector<float>(TEXCOORDS, TEXCOORDS + sizeof(TEXCOORDS) / sizeof(TEXCOORDS[0]));
+: Geometry(
+    std::vector<float>(VERTICES, VERTICES + sizeof(VERTICES) / sizeof(VERTICES[0])),
+    std::vector<float>(NORMALS, NORMALS + sizeof(NORMALS) / sizeof(NORMALS[0])),
+    std::vector<float>(TEXCOORDS, TEXCOORDS + sizeof(TEXCOORDS) / sizeof(TEXCOORDS[0])))
 
+{
     if (gen_TBN) {
         GenerateTBN();
     }
@@ -275,8 +294,6 @@ BoxGeometry::BoxGeometry(bool gen_TBN)
 std::vector<float> SphereGeometry::VERTICES;
 std::vector<float> SphereGeometry::NORMALS;
 std::vector<float> SphereGeometry::TEXCOORDS;
-std::vector<unsigned int> SphereGeometry::INDICES;
-
 
 SphereGeometry::SphereGeometry(bool gen_TBN)
 {
@@ -287,6 +304,7 @@ SphereGeometry::SphereGeometry(bool gen_TBN)
     vertex_data = VERTICES;
     normal_data = NORMALS;
     texcoord_data = TEXCOORDS;
+    primitives = Triangles;
 
     if (gen_TBN) {
         GenerateTBN();
@@ -368,5 +386,49 @@ void SphereGeometry::GenerateSphere(
             }
             texc.push_back(texc_[*(it + i) * 2 + 1]);
         }
+    }
+}
+
+
+/***************** QuadGeometry *****************/
+
+float QuadGeometry::VERTICES[18] = {
+    -0.5f, 0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    0.5f, 0.5f, 0.0f,
+
+    0.5f, 0.5f, 0.0f,
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f
+};
+
+float QuadGeometry::NORMALS[18] = {  
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f
+};
+
+float QuadGeometry::TEXCOORDS[12] = {  
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 1.0f,
+
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f
+};
+
+QuadGeometry::QuadGeometry(bool gen_TBN)
+: Geometry(
+    std::vector<float>(VERTICES, VERTICES + sizeof(VERTICES) / sizeof(VERTICES[0])),
+    std::vector<float>(NORMALS, NORMALS + sizeof(NORMALS) / sizeof(NORMALS[0])),
+    std::vector<float>(TEXCOORDS, TEXCOORDS + sizeof(TEXCOORDS) / sizeof(TEXCOORDS[0])))
+{
+    if (gen_TBN) {
+        GenerateTBN();
     }
 }
