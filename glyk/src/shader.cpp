@@ -6,8 +6,8 @@
 
 std::map<Shader::ShaderKey, Shader::ShaderProgram> Shader::shader_list = std::map<Shader::ShaderKey, Shader::ShaderProgram>();
 
-bool operator < (const Shader::ShaderKey& k1, const Shader::ShaderKey& k2) {
-    return (k1.vert_shader_file != k2.vert_shader_file) || (k1.frag_shader_file != k1.frag_shader_file);
+bool operator< (const Shader::ShaderKey& k1, const Shader::ShaderKey& k2) {
+    return (k1.vert_shader_file < k2.vert_shader_file) || (k1.vert_shader_file == k2.vert_shader_file && k1.frag_shader_file < k2.frag_shader_file);
 }
 
 Shader::Shader()
@@ -42,7 +42,6 @@ void Shader::Dismiss()
     }
 
     if (shader_list.find(ShaderKey(vert_shader_file, frag_shader_file)) != shader_list.end()) {
-
         ShaderProgram& prog = shader_list[ShaderKey(vert_shader_file, frag_shader_file)];
         prog.ref_count--;
 
@@ -64,7 +63,9 @@ void Shader::CreateProgram(const std::string& vert_shader_path, const std::strin
         return;
     }
 
+    printf("-- Compiling vertex shader %s...\n", vert_shader_path.c_str());
     GLuint vert_shader_id = CompileShader(Loader::LoadPlainText(vert_shader_path), GL_VERTEX_SHADER);
+    printf("-- Compiling fragment shader %s...\n", frag_shader_path.c_str());
     GLuint frag_shader_id = CompileShader(Loader::LoadPlainText(frag_shader_path), GL_FRAGMENT_SHADER);
 
     program_id = glCreateProgram();
@@ -77,8 +78,6 @@ void Shader::CreateProgram(const std::string& vert_shader_path, const std::strin
 
 GLuint Shader::CompileShader(const std::string& src, GLenum shader_type)
 {
-    printf("Compiling %s...\n", (shader_type == GL_FRAGMENT_SHADER) ? "fragment shader" : "vertex shader");
-
     int info_log_length = 0;
     GLint compilation_res = GL_FALSE;
 

@@ -40,6 +40,8 @@ Image Loader::LoadImage(const std::string& path)
 
 std::vector<Geometry> Loader::LoadModel(const std::string& path, PreprocessFlag flag)
 {
+    printf("-- Loading model %s...\n", path.c_str());
+
     std::vector<Geometry> res;
 
     tinyobj::attrib_t attrib;

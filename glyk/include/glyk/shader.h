@@ -54,7 +54,7 @@ protected:
         }
     };
 
-    friend bool operator < (const ShaderKey& k1, const ShaderKey& k2);
+    friend bool operator< (const ShaderKey& k1, const ShaderKey& k2);
     friend class Mesh;
 
 public:

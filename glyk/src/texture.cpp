@@ -21,6 +21,8 @@ Texture::Texture(const Image& img)
 
 void Texture::CreateTex(const Image& img)
 {
+    printf("-- Creating texture %s...\n", img.Path().c_str());
+
     glGenTextures(1, &tex_id);
 
     GLenum format;
