@@ -38,6 +38,7 @@ struct AxesIndicator : public Indicator
 {
 
     static std::vector<float> geom_vertex_data;
+    static std::vector<float> geom_normal_data;
 
     AxesIndicator();
     void GenerateAxesGeometry();

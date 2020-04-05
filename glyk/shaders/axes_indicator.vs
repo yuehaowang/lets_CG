@@ -1,6 +1,7 @@
 #version 330 core
 
 layout(location = 0) in vec3 vertex_pos;
+layout(location = 1) in vec3 vertex_normal;
 
 
 struct Mesh {
@@ -20,6 +21,6 @@ out vec3 color;
 
 void main()
 {
-    color = vertex_pos;
+    color = vertex_normal;
     gl_Position = camera.projection * camera.view * mesh.model * vec4(vertex_pos, 1.0);
 }

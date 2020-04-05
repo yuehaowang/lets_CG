@@ -48,6 +48,7 @@ struct Vec3
 
     void operator *= (T c) { *this = *this * c; }
     void operator *= (Vec3<T> v) { *this = *this * v; }
+    void operator /= (T c) { *this = *this / c; }
     void operator += (Vec3<T> v1) { *this = *this + v1; }
     void operator -= (Vec3<T> v1) { *this = *this - v1; }
     void operator = (const Vec3<T>& v)
@@ -71,6 +72,12 @@ template <typename T>
 Vec3<T> operator * (Vec3<T> v1, Vec3<T> v2)
 {
     return Vec3<T>::Cross(v1, v2);
+}
+
+template <typename T>
+Vec3<T> operator / (Vec3<T> v, T c)
+{
+    return Vec3<T>(v.x / c, v.y / c, v.z / c);
 }
 
 template <typename T>

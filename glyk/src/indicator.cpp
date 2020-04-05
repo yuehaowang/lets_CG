@@ -32,15 +32,16 @@ IconIndicator::IconIndicator(std::string tex_path)
 /***************** AxesIndicator *****************/
 
 std::vector<float> AxesIndicator::geom_vertex_data = std::vector<float>();
+std::vector<float> AxesIndicator::geom_normal_data = std::vector<float>();
 
 AxesIndicator::AxesIndicator()
 {
-    if (geom_vertex_data.size() == 0) {
+    if (geom_vertex_data.size() == 0 || geom_normal_data.size() == 0) {
         GenerateAxesGeometry();
     }
 
     mat = new BasicMaterial("glyk/shaders/axes_indicator");
-    mesh = new Mesh(mat, Geometry(geom_vertex_data));
+    mesh = new Mesh(mat, Geometry(geom_vertex_data, geom_normal_data));
 }
 
 void AxesIndicator::GenerateAxesGeometry() {
@@ -58,8 +59,13 @@ void AxesIndicator::GenerateAxesGeometry() {
     Mat4x4f trans_z;
     trans_z.Translate(0, 0, 0.5);
     trans_z.Scale(0.04, 0.04, 0.5);
-
     Mat4x4f* trans_list[] = {&trans_x, &trans_y, &trans_z};
+
+    Vec3f normal_list[] = {
+        Vec3f(235.0f, 64.0f, 52.0f) / 255.0f,
+        Vec3f(50.0f, 168.0f, 82.0f) / 255.0f,
+        Vec3f(66.0f, 135.0f, 245.0f) / 255.0f
+    };
 
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < vert.size(); j += 3) {
@@ -69,6 +75,11 @@ void AxesIndicator::GenerateAxesGeometry() {
             geom_vertex_data.push_back(v.x);
             geom_vertex_data.push_back(v.y);
             geom_vertex_data.push_back(v.z);
+
+            Vec3f n = normal_list[i];
+            geom_normal_data.push_back(n.x);
+            geom_normal_data.push_back(n.y);
+            geom_normal_data.push_back(n.z);
         }
     }
 }
