@@ -18,11 +18,19 @@ class Scene;
 class Light : public InvisibleObject3D
 {
 
+public:
+
+    enum LightType {
+        Directional = 0,
+        Point
+    };
+
 protected:
 
     Vec3f ambient;
     Vec3f diffuse;
     Vec3f specular;
+    LightType type;
 
     virtual void PipeUniformData(GLuint shader_id, unsigned int light_index);
     virtual std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name) = 0;
@@ -41,6 +49,7 @@ public:
     void SetAmbient(const Vec3f& v);
     void SetDiffuse(const Vec3f& v);
     void SetSpecular(const Vec3f& v);
+    LightType Type() const;
     virtual void ShowIndicator() = 0;
 
 };
@@ -62,6 +71,33 @@ public:
     static std::string lights_uniform_name;
 
     DirectionalLight(const Vec3f& a, const Vec3f& d, const Vec3f& s);
+    virtual void ShowIndicator();
+
+};
+
+
+/***************** PointLight *****************/
+
+class PointLight : public Light
+{
+
+protected:
+
+    float constant;
+    float linear;
+    float quadratic;
+
+    virtual void PipeUniformData(GLuint shader_id, unsigned int light_index);
+    virtual std::string ShaderLightsUniformIdentifier(unsigned int light_index, const std::string& member_name);
+    virtual std::string ShaderLightCountUniformIdentifier();
+
+public:
+
+    static std::string lights_uniform_name;
+
+    PointLight(
+        const Vec3f& a, const Vec3f& d, const Vec3f& s,
+        float quadratic = 0.0f, float linear = 0.0f, float constant = 1.0f);
     virtual void ShowIndicator();
 
 };

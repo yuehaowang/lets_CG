@@ -24,6 +24,11 @@ Light::~Light()
 
 }
 
+Light::LightType Light::Type() const
+{
+    return type;
+}
+
 Vec3f Light::Ambient() const
 {
     return ambient;
@@ -84,7 +89,7 @@ DirectionalLight::DirectionalLight(
     const Vec3f& s)
 : Light(a, d, s)
 {
-
+    type = Directional;
 }
 
 void DirectionalLight::PipeUniformData(GLuint shader_id, unsigned int light_index)
@@ -92,7 +97,6 @@ void DirectionalLight::PipeUniformData(GLuint shader_id, unsigned int light_inde
     Light::PipeUniformData(shader_id, light_index);
 
     Vec3f direction = Forward();
-
     glUniform3f(
         glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "direction").c_str()),
         direction.x, direction.y, direction.z
@@ -113,4 +117,61 @@ void DirectionalLight::ShowIndicator()
 {
     AddIndicator(new AxesIndicator());
     AddIndicator(new IconIndicator("glyk/resources/icon_dir_light.png"));
+}
+
+
+/***************** PointLight *****************/
+
+std::string PointLight::lights_uniform_name = "pt_lights";
+
+PointLight::PointLight(
+    const Vec3f& a,
+    const Vec3f& d,
+    const Vec3f& s,
+    float quadratic,
+    float linear,
+    float constant)
+: Light(a, d, s)
+, quadratic(quadratic)
+, linear(linear)
+, constant(constant)
+{
+    type = Point;
+}
+
+void PointLight::PipeUniformData(GLuint shader_id, unsigned int light_index)
+{
+    Light::PipeUniformData(shader_id, light_index);
+
+    Vec3f pos = Position();
+    glUniform3f(
+        glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "position").c_str()),
+        pos.x, pos.y, pos.z
+    );
+    
+    glUniform1f(
+        glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "quadratic").c_str()), quadratic
+    );
+    glUniform1f(
+        glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "linear").c_str()), linear
+    );
+    glUniform1f(
+        glGetUniformLocation(shader_id, ShaderLightsUniformIdentifier(light_index, "constant").c_str()), constant
+    );
+}
+
+std::string PointLight::ShaderLightsUniformIdentifier(unsigned int index, const std::string& member_name)
+{
+    return lights_uniform_name + "[" + std::to_string(index) + "]." + member_name;
+}
+
+std::string PointLight::ShaderLightCountUniformIdentifier()
+{
+    return lights_uniform_name + "_count";
+}
+
+void PointLight::ShowIndicator()
+{
+    AddIndicator(new AxesIndicator());
+    AddIndicator(new IconIndicator("glyk/resources/icon_pt_light.png"));
 }

@@ -63,11 +63,15 @@ void Scene::PrepareCamera(GLuint shader_id)
 void Scene::PrepareLights(GLuint shader_id)
 {
     std::vector<Light*>::iterator it;
-    unsigned int light_index = 0;
+    unsigned int dir_light_index = 0, pt_light_index = 0;
 
-    for (it = light_list.begin(); it != light_list.end(); it++, light_index++) {
+    for (it = light_list.begin(); it != light_list.end(); it++) {
         Light* light = *it;
-        light->PipeUniformData(shader_id, light_index);
+        if (light->Type() == Light::Directional) {
+            light->PipeUniformData(shader_id, dir_light_index++);
+        } else if (light->Type() == Light::Point) {
+            light->PipeUniformData(shader_id, pt_light_index++);
+        }
     }
 }
 

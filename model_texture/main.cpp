@@ -3,7 +3,7 @@
 #define LIMIT_ROTATION_PITCH 60.0f
 
 #include <vector>
-#include <iterator>
+#include <cmath>
 #include "glyk/shader.h"
 #include "glyk/window.h"
 #include "glyk/mat4x4.h"
@@ -34,6 +34,10 @@ private:
     BasicMaterial* mat2;
     BasicMaterial* mat3;
     BasicMaterial* mat4;
+    DirectionalLight* light1;
+    PointLight* light2;
+    PointLight* light3;
+    PointLight* light4;
 
 public:
 
@@ -41,41 +45,55 @@ public:
         : Window("Model Texture", 800, 600)
         , cam(45, (float)WindowWidth() / (float)WindowHeight(), 0.1, 100)
         , old_mouse_pos(0, 0, 0)
+        , light1(NULL)
+        , light2(NULL)
+        , light3(NULL)
+        , light4(NULL)
     {
         /* Cameras */
-        cam.Translate(0, 0, 5);
+        cam.Translate(0, 0, 10);
         main_scene.SetMainCamera(&cam);
 
         /* Lights */
-        DirectionalLight* light1 = new DirectionalLight(
+        light1 = new DirectionalLight(
             Vec3f(0.05f, 0.05f, 0.05f),
             Vec3f(0.4f, 0.4f, 0.4f),
             Vec3f(0.4f, 0.6f, 0.8f)
         );
         light1->Translate(0, 3, 0);
-        light1->Rotate(180, 0, 0);
+        light1->Rotate(45, 0, 0);
         main_scene.Add(light1);
         light1->ShowIndicator();
 
-        DirectionalLight* light2 = new DirectionalLight(
+        light2 = new PointLight(
             Vec3f(0.08f, 0.08f, 0.08f),
             Vec3f(1.0f, 1.0f, 1.0f),
-            Vec3f(0.8f, 0.5f, 0.2f)
+            Vec3f(0.8f, 0.5f, 0.2f),
+            0.1, 0.3, 1.0
         );
-        light2->Translate(0, -3, 1);
-        light2->Rotate(-45, 0, 0);
+        light2->Translate(2, 0, 1);
         main_scene.Add(light2);
         light2->ShowIndicator();
 
-        DirectionalLight* light3 = new DirectionalLight(
+        light3 = new PointLight(
             Vec3f(0.1f, 0.1f, 0.1f),
             Vec3f(0.4f, 0.5f, 0.4f),
-            Vec3f(0.6f, 0.7f, 0.6f)
+            Vec3f(0.6f, 0.7f, 0.6f),
+            0.0, 0.0, 1.0
         );
-        light3->Translate(1, 4, 1);
-        light3->Rotate(0, 90, 0);
+        light3->Translate(-2, 1, 0);
         main_scene.Add(light3);
         light3->ShowIndicator();
+
+        light4 = new PointLight(
+            Vec3f(0.1f, 0.1f, 0.1f),
+            Vec3f(0.8f, 0.8f, 0.8f),
+            Vec3f(0.6f, 0.7f, 0.6f),
+            0.1, 0.3, 1.0
+        );
+        light4->Translate(2.3, 0, -4);
+        main_scene.Add(light4);
+        light4->ShowIndicator();
 
         /* Materials */
         mat1 = new BasicMaterial(
@@ -175,6 +193,7 @@ public:
     {
         MouseControl();
         KeyControl();
+        MoveLight();
 
         main_scene.Render();
     }
@@ -215,17 +234,26 @@ public:
 
     void KeyControl()
     {
+        /* Control main camera */
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             cam.Translate(0, 0, -TRANSLATION_STEP);
         } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
             cam.Translate(0, 0, TRANSLATION_STEP);
         }
-        
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             cam.Translate(TRANSLATION_STEP, 0, 0);
         } else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             cam.Translate(-TRANSLATION_STEP, 0, 0);
         }
+    }
+
+    void MoveLight()
+    {
+        if (!light2) {
+            return;
+        }
+        light2->Translate(0.1 * sin(glfwGetTime() * 5), 0.0f, 0.1 * cos(glfwGetTime() * 5));
+        light4->Translate(0.1 * cos(glfwGetTime() * 5), 0.0f, 0.0);
     }
 
 };
