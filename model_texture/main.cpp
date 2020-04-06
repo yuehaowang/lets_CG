@@ -87,9 +87,9 @@ public:
 
         light4 = new PointLight(
             Vec3f(0.1f, 0.1f, 0.1f),
-            Vec3f(0.8f, 0.8f, 0.8f),
-            Vec3f(0.6f, 0.7f, 0.6f),
-            0.1, 0.3, 1.0
+            Vec3f(0.2f, 1.0f, 0.5f),
+            Vec3f(0.2f, 0.2f, 0.2f),
+            0.5, 0.3, 1.0
         );
         light4->Translate(2.3, 0, -4);
         main_scene.Add(light4);
@@ -152,7 +152,7 @@ public:
     {
         std::vector<Geometry> models = Loader::LoadModel(
             "model_texture/resources/cat.obj",
-            Loader::FlipTexcoordV | Loader::ComputeTBN
+            Loader::ComputeTBN
         );
 
         Mesh* cat = new Mesh(mat1, models[0]);
@@ -165,7 +165,8 @@ public:
     void LoadPikachuModel()
     {
         std::vector<Geometry> models = Loader::LoadModel(
-            "model_texture/resources/pikachu.obj"
+            "model_texture/resources/pikachu.obj",
+            Loader::FlipTexcoordV
         );
         models[0].GenerateTBN(0.001);
 
@@ -253,7 +254,7 @@ public:
             return;
         }
         light2->Translate(0.1 * sin(glfwGetTime() * 5), 0.0f, 0.1 * cos(glfwGetTime() * 5));
-        light4->Translate(0.1 * cos(glfwGetTime() * 5), 0.0f, 0.0);
+        light4->Translate(0.05 * cos(glfwGetTime() * 5), 0.0f, 0.0);
     }
 
 };

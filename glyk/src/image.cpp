@@ -46,6 +46,7 @@ void Image::Load(const std::string& file_path)
 {
     Free();
     path = file_path;
+    stbi_set_flip_vertically_on_load(true);
     data = stbi_load(file_path.c_str(), &width, &height, &channels, 0);
 }
 
