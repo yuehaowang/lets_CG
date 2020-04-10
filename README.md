@@ -106,6 +106,12 @@ Some resources used in this project are downloaded online. Here are their attrib
 Therefore, matrices stored in row-major order should be transposed before sent to shader programs. A more general way is to set the 3rd parameter of `glUnifromMatrixXXX` to `GL_TRUE`. Also note, some mathematical frameworks like *glm* stores matrices in column-major order and `mat[i][j]` gives element at column *i* and row *j*, which is different from the mathematical convention.
 
 
+## Screenshots
+
+Model loading, texture & normal mapping and lighting.
+![Model Texture](screenshots/model_texture.png)
+
+
 ## References
 
 - [Learn OpenGL](https://learnopengl.com/)
