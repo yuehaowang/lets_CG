@@ -2,7 +2,7 @@
 #include "integrator.hpp"
 #include "material.hpp"
 #include <cmath>
-#include <omp.h>
+// #include <omp.h>
 
 class PathTracingIntegrator : public Integrator
 {
@@ -23,7 +23,7 @@ public:
 	Eigen::Vector3f radiance(Interaction * interaction, Ray * ray) override
 	{
 		// TODO: Calculate color here
-	};
+	}
 };	
 
 

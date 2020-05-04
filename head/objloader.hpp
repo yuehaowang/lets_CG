@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include <cstdio>
-#include <stdlib.h>
 #include <vector>
 #include <map>
 //#include "../3rdLibs/glm/glm/glm.hpp"
@@ -42,7 +40,7 @@ bool loadOBJ(const char* path, std::vector<Eigen::Vector3f>& out_vertices, std::
     std::vector< Eigen::Vector3f > temp_normals;
     printf("%s\n", path);
     FILE* file;
-    fopen_s(&file, path, "r");
+    file = fopen(path, "r");
     if (file == NULL) {
         printf("Cannot open the file !\n");
         return false;
@@ -52,32 +50,32 @@ bool loadOBJ(const char* path, std::vector<Eigen::Vector3f>& out_vertices, std::
 
         char lineHeader[64];
         // read the first word of the line
-        int res = fscanf_s(file, "%s", lineHeader,64);
+        int res = fscanf(file, "%s", lineHeader,64);
         //printf("%s\n", lineHeader);
         if (res == EOF)
             break;
         if (strcmp(lineHeader, "v") == 0) {
             Eigen::Vector3f vertex;
-            fscanf_s(file, "%f %f %f\n", &vertex(0), &vertex(1), &vertex(2));
+            fscanf(file, "%f %f %f\n", &vertex(0), &vertex(1), &vertex(2));
             temp_vertices.push_back(vertex);
             //printf("v\n");
         }
         else if (strcmp(lineHeader, "vt") == 0) {
             Eigen::Vector2f uv;
-            fscanf_s(file, "%f %f\n", &uv(0), &uv(1));
+            fscanf(file, "%f %f\n", &uv(0), &uv(1));
             temp_uvs.push_back(uv);
             //printf("vt\n");
         }
         else if (strcmp(lineHeader, "vn") == 0) {
             Eigen::Vector3f normal;
-            fscanf_s(file, "%f %f %f\n", &normal(0), &normal(1), &normal(2));
+            fscanf(file, "%f %f %f\n", &normal(0), &normal(1), &normal(2));
             temp_normals.push_back(normal);
             //printf("vn\n");
         }
         else if (strcmp(lineHeader, "f") == 0) {
             std::string vertex1, vertex2, vertex3;
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            int matches = fscanf_s(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+            int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
             if (matches != 9) {
                 printf("File can't be read by our simple parser : ( Try exporting with other options\n");
                 return false;
@@ -135,7 +133,7 @@ bool loadOBJ_index(const char* path,
     std::vector< Eigen::Vector3f > temp_normals;
     printf("%s\n", path);
     FILE* file;
-    fopen_s(&file, path, "r");
+    file = fopen(path, "r");
     if (file == NULL) {
         printf("Cannot open the file !\n");
         return false;
@@ -145,32 +143,32 @@ bool loadOBJ_index(const char* path,
 
         char lineHeader[64];
         // read the first word of the line
-        int res = fscanf_s(file, "%s", lineHeader, 64);
+        int res = fscanf(file, "%s", lineHeader, 64);
         //printf("%s\n", lineHeader);
         if (res == EOF)
             break;
         if (strcmp(lineHeader, "v") == 0) {
             Eigen::Vector3f vertex;
-            fscanf_s(file, "%f %f %f\n", &vertex(0), &vertex(1), &vertex(2));
+            fscanf(file, "%f %f %f\n", &vertex(0), &vertex(1), &vertex(2));
             out_vertices.push_back(vertex);
             //printf("v\n");
         }
         else if (strcmp(lineHeader, "vt") == 0) {
             Eigen::Vector2f uv;
-            fscanf_s(file, "%f %f\n", &uv(0), &uv(1));
+            fscanf(file, "%f %f\n", &uv(0), &uv(1));
             out_uvs.push_back(uv);
             //printf("vt\n");
         }
         else if (strcmp(lineHeader, "vn") == 0) {
             Eigen::Vector3f normal;
-            fscanf_s(file, "%f %f %f\n", &normal(0), &normal(1), &normal(2));
+            fscanf(file, "%f %f %f\n", &normal(0), &normal(1), &normal(2));
             out_normals.push_back(normal);
             //printf("vn\n");
         }
         else if (strcmp(lineHeader, "f") == 0) {
             std::string vertex1, vertex2, vertex3;
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            int matches = fscanf_s(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+            int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
             if (matches != 9) {
                 printf("File can't be read by our simple parser : ( Try exporting with other options\n");
                 return false;
@@ -207,7 +205,7 @@ bool loadOBJ_without_norm(
 //
 //    printf("%s\n", path);
 //    FILE* file;
-//    fopen_s(&file, path, "r");
+//    fopen(&file, path, "r");
 //    if (file == NULL) {
 //        printf("Cannot open the file !\n");
 //        return false;
@@ -217,23 +215,23 @@ bool loadOBJ_without_norm(
 //
 //        char lineHeader[8192];
 //        // read the first word of the line
-//        int res = fscanf_s(file, "%s", &lineHeader,8192);
+//        int res = fscanf(file, "%s", &lineHeader,8192);
 //        if (res == EOF)
 //            break;
 //        if (strcmp(lineHeader, "v") == 0) {
 //            Eigen::Vector3f vertex;
-//            fscanf_s(file, "%f %f %f\n", &vertex(0), &vertex(1), &vertex(2));
+//            fscanf(file, "%f %f %f\n", &vertex(0), &vertex(1), &vertex(2));
 //            temp_vertices.push_back(vertex);
 //        }
 //        else if (strcmp(lineHeader, "vt") == 0) {
 //            Eigen::Vector2f uv;
-//            fscanf_s(file, "%f %f\n", &uv(0), &uv(1));
+//            fscanf(file, "%f %f\n", &uv(0), &uv(1));
 //            temp_uvs.push_back(uv);
 //        }
 //        else if (strcmp(lineHeader, "f") == 0) {
 //            std::string vertex1, vertex2, vertex3;
 //            unsigned int vertexIndex[3], uvIndex[3];
-//            int matches = fscanf_s(file, "%d/%d %d/%d %d/%d\n", &vertexIndex[0], &uvIndex[0], &vertexIndex[1], &uvIndex[1], &vertexIndex[2], &uvIndex[2]);
+//            int matches = fscanf(file, "%d/%d %d/%d %d/%d\n", &vertexIndex[0], &uvIndex[0], &vertexIndex[1], &uvIndex[1], &vertexIndex[2], &uvIndex[2]);
 //            if (matches != 6) {
 //                printf("File can't be read by our simple parser : ( Try exporting with other options\n");
 //                printf("acture match:%d\n", matches);

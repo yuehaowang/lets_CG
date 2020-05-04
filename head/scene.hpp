@@ -50,7 +50,7 @@ public:
 		}
 		surfaceInteraction.lightId = -1;
 		for(int i = 0;i<lights.size();i++){
-			if(lights[i]->hitted(ray)){
+			if(lights[i]->isHit(ray)){
 				surfaceInteraction.lightId = i;
 			}
 		}

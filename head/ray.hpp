@@ -1,6 +1,8 @@
 #pragma once
 #include "Eigen/Dense"
 
+#define FLT_MAX 1e+30f
+
 //! @brief  Data structure representing a ray.
 class Ray {
 public:
