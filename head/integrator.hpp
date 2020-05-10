@@ -13,5 +13,5 @@ public:
 	virtual ~Integrator() = default;
 	
 	virtual void render() = 0;
-	virtual Eigen::Vector3f radiance(Interaction * interaction, Ray* ray) = 0;
+	virtual Eigen::Vector3f radiance(Ray ray) = 0;
 };
