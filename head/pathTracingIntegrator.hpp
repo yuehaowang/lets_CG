@@ -2,10 +2,11 @@
 #include "integrator.hpp"
 #include "material.hpp"
 #include <cmath>
+#include <iostream>
 #include <omp.h>
 
 #define MAX_DEPTH 5
-#define NUM_SAMPLES 20
+#define NUM_SAMPLES 5
 
 class PathTracingIntegrator : public Integrator
 {
@@ -13,28 +14,29 @@ public:
 	PathTracingIntegrator(Scene* scene, Camera* camera)
 		: Integrator(scene, camera)
 	{
+		int n_threads = omp_get_max_threads();
+		omp_set_num_threads(n_threads);
+		std::cout << "number of threads: " << n_threads << std::endl;
 	}
 
 	void render() override
 	{
 		int dx, dy;
 		int w = camera->m_Film.m_Res.x(), h = camera->m_Film.m_Res.y();
-		#pragma omp parallel
+
+		#pragma omp parallel for private(dy)
+		for (dx = 0; dx < w; dx++)
 		{
-			#pragma omp parallel for
-			for (dx = 0; dx < w; dx++)
+			for (dy = 0; dy < h; dy++)
 			{
-				for (dy = 0; dy < h; dy++)
-				{
-					/* Generate a ray from the camera to a pixel */
-					Ray ray = camera->generateRay(dx, dy);
-					/* Sample multiple times for a pixel */
-					Eigen::Vector3f L(0, 0, 0);
-					for (int t = 0; t < NUM_SAMPLES; ++t) {
-						L += radiance(ray);
-					}
-					camera->setPixel(dx, dy, L / NUM_SAMPLES);
+				/* Generate a ray from the camera to a pixel */
+				Ray ray = camera->generateRay(dx, dy);
+				/* Sample multiple times for a pixel */
+				Eigen::Vector3f L(0, 0, 0);
+				for (int t = 0; t < NUM_SAMPLES; ++t) {
+					L += radiance(ray);
 				}
+				camera->setPixel(dx, dy, L / NUM_SAMPLES);
 			}
 		}
 	}

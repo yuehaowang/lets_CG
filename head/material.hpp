@@ -38,7 +38,7 @@ public:
 			float cos_theta_o = _interact.outputDir.dot(_interact.normal);
 			*pdf = (cos_theta_i * cos_theta_o < 0) ? 0 : (abs(cos_theta_i) / PI);
 		}
-		return _interact.surfaceColor / PI;
+		return _interact.surfaceColor;
 	}
 
 	float sample(Interaction& _interact)
