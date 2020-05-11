@@ -1,4 +1,4 @@
-﻿
+
 #include <iostream>
 #include <algorithm>
 
@@ -107,7 +107,7 @@ int main()
 	BRDF* diffuseMat = new IdealDiffuse();
 	BRDF* specularMat = new IdealSpecular();
 	backWall.material = diffuseMat;
-	floor.material = specularMat;
+	floor.material = diffuseMat; // specularMat;
 	leftWall.material = diffuseMat;
 	rightWall.material = diffuseMat;
 	ceiling.material = diffuseMat;

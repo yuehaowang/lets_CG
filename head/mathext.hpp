@@ -8,25 +8,29 @@
 #define EPSILON 1e-6f
 #define DELTA 1e-4f
 #define PI 3.14159265358979323846f
+#define PI_INV 0.31830988618f
 
 
 namespace sampler {
     std::default_random_engine random_generator;
 
-    int unif_int(int a, int b)
+    std::vector<float> unif(float a, float b, int N = 1)
     {
-        std::uniform_int_distribution<int> dis(a, b);
-        return dis(random_generator);
+        std::vector<float> res;
+        std::uniform_real_distribution<float> dis(a, b);
+
+        for (int i = 0; i < N; i++) {
+            res.push_back(dis(random_generator));
+        }
+        return res;
     }
 
     Eigen::Vector2f disk(float r)
     {
-        std::uniform_real_distribution<float> unif(0.0, 1.0f);
+        // std::uniform_real_distribution<float> unif(0.0f, 1.0f);
+        std::vector<float> u = unif(0.0f, 1.0f, 2);
 
-        float xi_1 = r * unif(random_generator);
-        float xi_2 = unif(random_generator);
-
-        return Eigen::Vector2f(sqrt(xi_1), 2 * PI * xi_2);
+        return Eigen::Vector2f(r * sqrt(u[0]), 2 * PI * u[1]);
     }
 
     Eigen::Vector2f cosine_weighted_hemisphere(float r)
@@ -53,12 +57,12 @@ namespace pdf {
 
     float cosine_weighted_hemisphere_w(float theta)
     {
-        return abs(cos(theta) / PI);
+        return abs(cos(theta) * PI_INV);
     }
 
     float cosine_weighted_hemisphere_polar(float theta)
     {
-        return abs(cos(theta) * sin(theta) / PI);
+        return abs(cos(theta) * sin(theta) * PI_INV);
     }
 }
 
