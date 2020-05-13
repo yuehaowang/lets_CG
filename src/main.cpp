@@ -8,14 +8,19 @@
 #include "parallelogram.hpp"
 #include "scene.hpp"
 #include "camera.hpp"
+#include "config.hpp"
 #include "pathTracingIntegrator.hpp"
 #include "triangleMesh.hpp"
+
+Config conf;
 
 inline float clamp(float x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
 inline unsigned char toInt(float x) { unsigned char c(pow(clamp(x), 1 / 2.2) * 255 + .5);return c; }
 
-int main()
+int main(int argc, char* argv[])
 {
+	conf.parse_args(argc, argv);
+
 	/*
 	 * 1. Camera Setting
 	 */
@@ -98,7 +103,7 @@ int main()
 	 * 4. Light setting
 	 */
 	//Light light(Eigen::Vector3f(0, 5.99, 5), Eigen::Vector3f(1, 1, 1));
-	AreaLight light(Eigen::Vector3f(-0, 5.8, -5), Eigen::Vector3f(1, 1, 1));
+	AreaLight light(Eigen::Vector3f(-0, 6, -5), Eigen::Vector3f(1, 1, 1));
 	
 
 	/*
@@ -107,7 +112,7 @@ int main()
 	BRDF* diffuseMat = new IdealDiffuse();
 	BRDF* specularMat = new IdealSpecular();
 	backWall.material = diffuseMat;
-	floor.material = diffuseMat; // specularMat;
+	floor.material = specularMat;
 	leftWall.material = diffuseMat;
 	rightWall.material = diffuseMat;
 	ceiling.material = diffuseMat;
@@ -139,7 +144,7 @@ int main()
 	/*
 	 * 7. Output image to file
 	 */
-	std::string outputPath = "./output.png";
+	std::string outputPath = "./output_" + std::to_string(conf.num_samples) + "_" + std::to_string(conf.max_depth) + ".png";
 	std::vector<unsigned char> outputData;
 	outputData.reserve(int(filmRes.x() * filmRes.y() * 3));
 	for (Eigen::Vector3f v : camera.m_Film.pixelSamples)

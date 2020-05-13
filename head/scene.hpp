@@ -57,7 +57,6 @@ public:
 		interaction = surfaceInteraction;
 		if (surfaceInteraction.entryDist != -1 && surfaceInteraction.entryDist >= ray->m_fMin && surfaceInteraction.entryDist <= ray->m_fMax)
 		{
-			
 			return true;
 		}
 		return false;

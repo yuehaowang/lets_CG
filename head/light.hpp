@@ -8,7 +8,7 @@
 #include "mathext.hpp"
 
 
-#define LIGHT_MAX_POWER 24
+#define LIGHT_MAX_POWER 50
 
 
 class Light
@@ -28,8 +28,6 @@ public:
 	virtual Eigen::Vector3f SampleSurfacePos(Eigen::Vector3f& sampled_lightPos, float* pdf = nullptr) = 0;
 
 	virtual bool isHit(Ray* ray) = 0;
-
-	virtual bool isEmissive(const Eigen::Vector3f& dir) = 0;
 
 	Eigen::Vector3f emission()
 	{
@@ -51,22 +49,18 @@ public:
 		float r = 1.0f, Eigen::Vector3f n = Eigen::Vector3f(0.0f, -1.0f, 0.0f))
 	: Light(pos, color), radius(r), normal(n.normalized())
 	{
-		right = transform::rot_align_normal(normal) * Eigen::Vector3f(1.0f, 0.0f, 0.0f);
-	}
-	
-	bool isEmissive(const Eigen::Vector3f& dir)
-	{
-		return dir.dot(normal) < 0;
+		right = mathext::rot_align_normal(normal) * Eigen::Vector3f(1.0f, 0.0f, 0.0f);
 	}
 
 	Eigen::Vector3f SampleSurfacePos(Eigen::Vector3f& sampled_lightPos, float* pdf = nullptr) override
 	{
-		Eigen::Vector2f sample = sampler::disk(radius);
+		Eigen::Vector2f sample = mathext::disk(radius);
 		/* Convert polar to cartesian coordinate */	
 		sampled_lightPos = m_Pos + sample.x() * (Eigen::AngleAxisf(sample.y(), normal) * right);
 
+		/* Compute PDF of sampling a point in the area light */
 		if (pdf) {
-			*pdf = pdf::disk_xy(radius);
+			*pdf = 1 / (PI * radius * radius);
 		}
 
 		return emission();

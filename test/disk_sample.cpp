@@ -25,7 +25,7 @@ int main()
 	Camera camera(cameraPosition, cameraLookAt, cameraUp, verticalFov, filmRes);
 
     for (int i = 0; i < 10000; i++) {
-        Eigen::Vector2f sample = sampler::disk(250);
+        Eigen::Vector2f sample = mathext::disk(250);
 
         float x = sample.x() * cos(sample.y()) + 250.0f;
         float y = sample.x() * sin(sample.y()) + 250.0f;
