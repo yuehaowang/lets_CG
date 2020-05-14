@@ -6,9 +6,10 @@
 #include "ray.hpp"
 #include "interaction.hpp"
 #include "mathext.hpp"
+#include "config.hpp"
 
 
-#define LIGHT_MAX_POWER 50
+extern Config conf;
 
 
 class Light
@@ -25,14 +26,13 @@ public:
 	 * Set PDF and the surface position
 	 * Return color of light
 	 */
-	virtual Eigen::Vector3f SampleSurfacePos(Eigen::Vector3f& sampled_lightPos, float* pdf = nullptr) = 0;
+	virtual Eigen::Vector3f sampleSurfacePos(float* pdf = nullptr) = 0;
 
-	virtual bool isHit(Ray* ray) = 0;
+	virtual float samplePdf() = 0;
 
-	Eigen::Vector3f emission()
-	{
-		return LIGHT_MAX_POWER * m_Color;
-	}
+	virtual bool isHit(Ray* ray, float* hit_t = nullptr) = 0;
+
+	virtual Eigen::Vector3f emission(Eigen::Vector3f d) = 0;
 	
 	Eigen::Vector3f m_Pos;
 	Eigen::Vector3f m_Color;
@@ -52,24 +52,34 @@ public:
 		right = mathext::rot_align_normal(normal) * Eigen::Vector3f(1.0f, 0.0f, 0.0f);
 	}
 
-	Eigen::Vector3f SampleSurfacePos(Eigen::Vector3f& sampled_lightPos, float* pdf = nullptr) override
+	float samplePdf()
+	{
+		return PI_INV / (radius * radius);
+	}
+
+	Eigen::Vector3f sampleSurfacePos(float* pdf = nullptr) override
 	{
 		Eigen::Vector2f sample = mathext::disk(radius);
 		/* Convert polar to cartesian coordinate */	
-		sampled_lightPos = m_Pos + sample.x() * (Eigen::AngleAxisf(sample.y(), normal) * right);
+		Eigen::Vector3f sampled_light_pos = m_Pos + (Eigen::AngleAxisf(sample.y(), normal) * (sample.x() * right));
 
 		/* Compute PDF of sampling a point in the area light */
 		if (pdf) {
-			*pdf = 1 / (PI * radius * radius);
+			*pdf = samplePdf();
 		}
 
-		return emission();
+		return sampled_light_pos;
+	}
+
+	Eigen::Vector3f emission(Eigen::Vector3f d) override
+	{
+		return conf.light_power * m_Color * abs(d.dot(normal));
 	}
 	
 	/* 
 	 * Reference: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
 	 */
-	bool isHit(Ray * ray) override
+	bool isHit(Ray* ray, float* hit_t = nullptr) override
 	{
 		float d = ray->m_Dir.dot(normal);
 
@@ -83,6 +93,12 @@ public:
 		}
 
 		Eigen::Vector3f isect = ray->getPoint(t);
-		return (isect - m_Pos).norm() <= radius;
+		bool is_hit = (isect - m_Pos).norm() <= radius;
+
+		if (is_hit && hit_t) {
+			*hit_t = t;
+		}
+
+		return is_hit;
 	}
 };

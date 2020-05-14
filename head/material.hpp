@@ -37,7 +37,7 @@ public:
 		if (pdf) {
 			float cos_theta_i = _interact.inputDir.dot(_interact.normal);
 			float cos_theta_o = _interact.outputDir.dot(_interact.normal);
-			*pdf = (cos_theta_i * cos_theta_o < 0) ? 0 : (abs(cos_theta_i) * PI_INV);
+			*pdf = abs(cos_theta_i) * PI_INV;
 		}
 		return _interact.surfaceColor * PI_INV;
 	}
@@ -66,11 +66,16 @@ public:
 
 	Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr)
 	{
-		if (pdf) {
-			Eigen::Vector3f v2 = mathext::reflect(_interact.outputDir, _interact.normal);
-			*pdf = (int)(v2 == _interact.inputDir);
+		bool flag_reflect = false;
+		Eigen::Vector3f v2 = mathext::reflect(_interact.outputDir, _interact.normal);
+		if ((v2 - _interact.inputDir).norm() < DELTA) {
+			flag_reflect = true;
 		}
-		return _interact.surfaceColor;
+		if (pdf) {
+			*pdf = flag_reflect ? 1.0f : 0.0f;
+		}
+
+		return flag_reflect ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
 	};
 
 	float sample(Interaction& _interact)

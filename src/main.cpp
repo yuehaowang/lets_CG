@@ -102,8 +102,7 @@ int main(int argc, char* argv[])
 	/*
 	 * 4. Light setting
 	 */
-	//Light light(Eigen::Vector3f(0, 5.99, 5), Eigen::Vector3f(1, 1, 1));
-	AreaLight light(Eigen::Vector3f(-0, 6, -5), Eigen::Vector3f(1, 1, 1));
+	AreaLight light(Eigen::Vector3f(0, 6, -5), Eigen::Vector3f(1, 1, 1));
 	
 
 	/*

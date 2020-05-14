@@ -39,11 +39,17 @@ namespace mathext {
 
     Eigen::Matrix3f rot_align_normal(Eigen::Vector3f n)
     {
-        return rot_from_two_vectors(Eigen::Vector3f(0, 0, 1.0f), n);
+        return rot_from_two_vectors(Eigen::Vector3f(0.0f, 0.0f, 1.0f), n);
     }
 
     Eigen::Vector3f reflect(Eigen::Vector3f v1, Eigen::Vector3f n)
     {
         return 2 * n.dot(v1) * n - v1;
+    }
+
+    float power_heuristic(int n_f, float p_f, int n_g, float p_g, float beta = 2)
+    {
+        float c_f = (float)n_f * p_f, c_g = (float)n_g * p_g;
+        return pow(c_f, beta) / (pow(c_f, beta) + pow(c_g, beta));
     }
 }
