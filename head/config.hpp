@@ -1,11 +1,14 @@
 #pragma once
 #include <string>
+#include <map>
 #include <omp.h>
 
-#define DEFAULT_NUM_SAMPLES 30
-#define DEFAULT_MAX_DEPTH 5
-#define DEFAULT_LIGHT_POWER 24.0f
-#define DEFUALT_NUM_THREADS omp_get_max_threads()
+#define CONF_DEFAULT_NUM_SAMPLES 30
+#define CONF_DEFAULT_MAX_DEPTH 5
+#define CONF_DEFAULT_LIGHT_POWER 48.0f
+#define CONF_DEFUALT_NUM_THREADS omp_get_max_threads()
+#define CONF_DEFAULT_INTEGRAL_METHOD "mis"
+#define CONF_DEFAULT_OUTPUT_DIR "./"
 
 
 struct Config
@@ -14,6 +17,8 @@ struct Config
 	int max_depth;
 	float light_power;
 	int num_threads;
+	std::string integral_method;
+	std::string output_dir;
 
 	static std::string get_cmd_option(int argc, char* argv[], const std::string& option)
 	{
@@ -31,33 +36,52 @@ struct Config
 
 	void parse_args(int argc, char* argv[])
 	{
-		std::string num_samples_str = get_cmd_option(argc, argv, "-num_samples=");
-		std::string max_depth_str = get_cmd_option(argc, argv, "-max_depth=");
-		std::string light_power_str = get_cmd_option(argc, argv, "-light_pow=");
-		std::string num_threads_str = get_cmd_option(argc, argv, "-num_threads=");
-
-		if (num_samples_str.empty()) {
-			num_samples = DEFAULT_NUM_SAMPLES;
-		} else {
-			num_samples = std::stoi(num_samples_str);
+		/* Set default configure values */
+		std::map<std::string, std::string> args_map;
+		args_map["-num_samples"] = std::to_string(CONF_DEFAULT_NUM_SAMPLES);
+		args_map["-max_depth"] = std::to_string(CONF_DEFAULT_MAX_DEPTH);
+		args_map["-light_pow"] = std::to_string(CONF_DEFAULT_LIGHT_POWER);
+		args_map["-num_threads"] = std::to_string(CONF_DEFUALT_NUM_THREADS);
+		args_map["-int_mth"] = CONF_DEFAULT_INTEGRAL_METHOD;
+		args_map["-out_dir"] = CONF_DEFAULT_OUTPUT_DIR;
+		/* Parse given arguments */
+		for (int i = 0; i < argc; ++i) {
+			std::string arg = argv[i];
+			size_t splitter_pos = arg.find("=");
+			if (splitter_pos != std::string::npos) {
+				std::string arg_key = arg.substr(0, splitter_pos);
+				std::string arg_val = arg.substr(splitter_pos + 1);
+				args_map[arg_key] = arg_val;
+			} else {
+				args_map[arg] = "1";
+			}
 		}
 
-		if (max_depth_str.empty()) {
-			max_depth = DEFAULT_MAX_DEPTH;
-		} else {
-			max_depth = std::stoi(max_depth_str);
+		num_samples = std::stoi(args_map["-num_samples"]);
+		max_depth = std::stoi(args_map["-max_depth"]);
+		light_power = std::stof(args_map["-light_pow"]);
+		num_threads = std::stoi(args_map["-num_threads"]);
+		integral_method = args_map["-int_mth"];
+		output_dir = args_map["-out_dir"];
+		if (output_dir.back() != '/') {
+			output_dir += "/";
 		}
 
-		if (light_power_str.empty()) {
-			light_power = DEFAULT_LIGHT_POWER;
-		} else {
-			light_power = std::stof(light_power_str);
+		std::cout << "=====================" << std::endl;
+		std::cout << "max depth: " << max_depth << std::endl;
+		std::cout << "number of samples: " << num_samples << std::endl;
+		std::cout << "light power: " << light_power << std::endl;
+		std::cout << "integral method: " << integral_method << std::endl;
+		std::cout << "max number of threads: " << omp_get_max_threads() << std::endl;
+		omp_set_num_threads(num_threads);
+		#pragma omp parallel
+		{
+			#pragma omp single
+			{
+				std::cout << "number of using threads: " << omp_get_num_threads() << std::endl;
+			}
 		}
-
-		if (num_threads_str.empty()) {
-			num_threads = DEFUALT_NUM_THREADS;
-		} else {
-			num_threads = std::stof(num_threads_str);
-		}
+		std::cout << "output directory: " << output_dir << std::endl;
+		std::cout << "=====================" << std::endl << std::endl;
 	}
 };

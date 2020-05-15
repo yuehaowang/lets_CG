@@ -1,6 +1,6 @@
-
 #include <iostream>
 #include <algorithm>
+#include <vector>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -15,7 +15,27 @@
 Config conf;
 
 inline float clamp(float x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-inline unsigned char toInt(float x) { unsigned char c(pow(clamp(x), 1 / 2.2) * 255 + .5);return c; }
+inline unsigned char toInt(float x) { unsigned char c(pow(clamp(x), 1 / 2.2) * 255 + .5); return c; }
+
+std::string concat_strings(std::vector<std::string> ls)
+{
+	std::string str = "";
+	for (auto it = ls.begin(); it != ls.end(); ++it) {
+		str += *it;
+		if (it + 1 != ls.end()) {
+			str += "_";
+		}
+	}
+	return str;
+}
+
+std::string to_string_float(float v, int n = 3)
+{
+    std::ostringstream out;
+    out.precision(n);
+    out << std::fixed << v;
+    return out.str();
+}
 
 int main(int argc, char* argv[])
 {
@@ -99,6 +119,14 @@ int main(int argc, char* argv[])
 	mesh_3.applyTransformation(obj_3_transform);
 	mesh_3.buildUniformGrid();
 
+	std::string obj_4_filePos("../resources/sphere.obj");
+	Eigen::Vector3f obj_4_color(1,1,1);
+	Eigen::Affine3f obj_4_transform;
+	obj_4_transform = Eigen::Translation3f(-4.5, 1, -8) * Eigen::Scaling(0.5f);
+	TriangleMesh mesh_4(obj_4_color, obj_4_filePos);
+	mesh_4.applyTransformation(obj_4_transform);
+	mesh_4.buildUniformGrid();
+
 	/*
 	 * 4. Light setting
 	 */
@@ -110,6 +138,7 @@ int main(int argc, char* argv[])
 	 */
 	BRDF* diffuseMat = new IdealDiffuse();
 	BRDF* specularMat = new IdealSpecular();
+	BRDF* fresnelMat = new Fresnel(IOR_DIAMOND);
 	backWall.material = diffuseMat;
 	floor.material = specularMat;
 	leftWall.material = diffuseMat;
@@ -118,6 +147,7 @@ int main(int argc, char* argv[])
 	mesh_1.material = diffuseMat;
 	mesh_2.material = diffuseMat;
 	mesh_3.material = diffuseMat;
+	mesh_4.material = fresnelMat;
 
 
 	/*
@@ -132,6 +162,7 @@ int main(int argc, char* argv[])
 	scene.addShape(&mesh_1);
 	scene.addShape(&mesh_2);
 	scene.addShape(&mesh_3);
+	scene.addShape(&mesh_4);
 	scene.addLight(&light);
 	
 	/*
@@ -143,7 +174,13 @@ int main(int argc, char* argv[])
 	/*
 	 * 7. Output image to file
 	 */
-	std::string outputPath = "./output_" + std::to_string(conf.num_samples) + "_" + std::to_string(conf.max_depth) + ".png";
+	// std::string outputPath = "./output_" + std::to_string(conf.num_samples) + "_" + std::to_string(conf.max_depth) + ".png";
+	std::vector<std::string> tokens;
+	tokens.push_back(conf.integral_method);
+	tokens.push_back(std::to_string(conf.num_samples));
+	tokens.push_back(std::to_string(conf.max_depth));
+	tokens.push_back(to_string_float(conf.light_power));
+	std::string outputPath = conf.output_dir + concat_strings(tokens) + ".png";
 	std::vector<unsigned char> outputData;
 	outputData.reserve(int(filmRes.x() * filmRes.y() * 3));
 	for (Eigen::Vector3f v : camera.m_Film.pixelSamples)

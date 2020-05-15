@@ -47,6 +47,19 @@ namespace mathext {
         return 2 * n.dot(v1) * n - v1;
     }
 
+    Eigen::Vector3f refract(Eigen::Vector3f v1, Eigen::Vector3f n, float ior = 1.0f)
+    {
+        float cos_theta_i = v1.dot(n); 
+        float eta = 1 / ior;
+        if (cos_theta_i < 0) {
+            eta = 1 / eta;
+            n *= -1;
+            cos_theta_i *= -1;
+        }
+        float c = sqrt(1 - eta * eta * (1 - cos_theta_i * cos_theta_i));
+        return c < 0 ? Eigen::Vector3f(0, 0, 0) : (eta * (-v1) + (eta * cos_theta_i - c) * n);
+    }
+
     float power_heuristic(int n_f, float p_f, int n_g, float p_g, float beta = 2)
     {
         float c_f = (float)n_f * p_f, c_g = (float)n_g * p_g;

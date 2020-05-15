@@ -15,19 +15,7 @@ public:
 	PathTracingIntegrator(Scene* scene, Camera* camera)
 		: Integrator(scene, camera)
 	{
-		std::cout << "max depth: " << conf.max_depth << std::endl;
-		std::cout << "number of samples: " << conf.num_samples << std::endl;
-		std::cout << "light power: " << conf.light_power << std::endl;
-
-		std::cout << "max number of threads: " << omp_get_max_threads() << std::endl;
-		omp_set_num_threads(conf.num_threads);
-		#pragma omp parallel
-		{
-			#pragma omp single
-			{
-				std::cout << "number of using threads: " << omp_get_num_threads() << std::endl;
-			}
-		}
+		
 	}
 
 	void render() override
@@ -65,7 +53,7 @@ public:
 		/**
 		 * Sample light source
 		 */
-		{
+		if (conf.integral_method == "mis" || conf.integral_method == "lso") {
 			/* Sample a point from the area light and find its PDF w.r.t area */
 			float light_pdf;
 			Eigen::Vector3f light_pos = l->sampleSurfacePos(&light_pdf);
@@ -93,18 +81,20 @@ public:
 					float brdf_pdf;
 					Eigen::Vector3f f = brdf->eval(isect, &brdf_pdf);
 
-					/* Compute the light contribution according to MIS */
-					float w = mathext::power_heuristic(1, light_pdf, 1, brdf_pdf);
-					L += f.cwiseProduct(Ld) * w / light_pdf;
+					/* Compute the light contribution */
+					L += f.cwiseProduct(Ld) / light_pdf;
+					if (conf.integral_method == "mis") {
+						float w = mathext::power_heuristic(1, light_pdf, 1, brdf_pdf);
+						L *= w;
+					}
 				}
 			}
 		}
 
-
 		/**
 		 * Sample BRDF
 		 */
-		{
+		if (conf.integral_method == "mis" || conf.integral_method == "bso") {
 			BRDF* brdf = (BRDF*)isect.material;
 			/* Sample BRDF to get a incoming light ray */
 			float brdf_pdf = brdf->sample(isect);
@@ -122,14 +112,17 @@ public:
 					float cos_theta_i = isect.inputDir.dot(isect.normal);
 					/* Compute PDF of the incoming light w.r.t solid angle */
 					float light_pdf = 0.0f;
-					if (!brdf->isSpecular) {
+					if (!brdf->isDelta) {
 						light_pdf = l->sampleSurfacePdf() * light_hit_t / abs(cos_theta_i);
 					}
 					/* Radiance of the incoming light */
 					Eigen::Vector3f Ld = l->emission(-isect.inputDir) * abs(cos_theta_i);
-					/* Compute the light contribution according to the MIS */
-					float w = mathext::power_heuristic(1, brdf_pdf, 1, light_pdf);
-					L += f.cwiseProduct(Ld) * w / brdf_pdf;
+					/* Compute the light contribution */
+					L += f.cwiseProduct(Ld) / brdf_pdf;
+					if (conf.integral_method == "mis") {
+						float w = mathext::power_heuristic(1, brdf_pdf, 1, light_pdf);
+						L *= w;
+					}
 				}
 			}
 		}
@@ -141,7 +134,7 @@ public:
 	{
 		Eigen::Vector3f L(0, 0, 0);
 		Eigen::Vector3f beta(1.0f, 1.0f, 1.0f);
-		bool specularBounce = false;
+		bool delta_bounce = false;
     	for (int bounces = 0; bounces < conf.max_depth; ++bounces) {
 			Interaction isect;
 			bool found_intersection = scene->intersection(&ray, isect);
@@ -149,9 +142,9 @@ public:
 				break;
 			}
 
-			if ((bounces == 0 || specularBounce) && isect.lightId >= 0) {
+			if ((bounces == 0 || delta_bounce) && isect.lightId >= 0) {
 				/* Handle light sources */
-				L += beta.cwiseProduct(scene->lights[isect.lightId]->emission(ray.m_Dir));
+				L += beta.cwiseProduct(scene->lights[isect.lightId]->emission(-ray.m_Dir));
 			}
 
 			/* Ignore reflected rays hitting the light source */
@@ -170,7 +163,7 @@ public:
 			if (abs(brdf_pdf) < EPSILON) {
 				break;
 			}
-			specularBounce = brdf->isSpecular;
+			delta_bounce = brdf->isDelta;
 			beta = beta.cwiseProduct(brdf->eval(isect)) * abs(isect.inputDir.dot(isect.normal)) / brdf_pdf;
 			ray = Ray(isect.entryPoint, isect.inputDir, DELTA);
 		}

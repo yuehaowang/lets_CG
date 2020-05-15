@@ -8,7 +8,7 @@ class BRDF
 public:
 	BRDF()
 	{
-		isSpecular = false;
+		isDelta = false;
 	}
 	
 	/* Evaluate the BRDF
@@ -24,7 +24,7 @@ public:
 	virtual float sample(Interaction &_interact) = 0;
 	
 	/* Mark if the BRDF is specular */
-	bool isSpecular;
+	bool isDelta;
 };
 
 
@@ -60,8 +60,9 @@ class IdealSpecular : public BRDF
 {
 public:
 
-	IdealSpecular() {
-		isSpecular = true;
+	IdealSpecular()
+	{
+		isDelta = true;
 	}
 
 	Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr)
@@ -83,5 +84,43 @@ public:
 		_interact.inputDir = mathext::reflect(_interact.outputDir, _interact.normal);
 
 		return 1.0f;
-	};
+	}
+};
+
+
+#define IOR_DIAMOND 2.417f
+#define IOR_AMBER	1.550f
+#define IOR_WATER   1.333f
+
+class Fresnel : public BRDF
+{
+public:
+
+	float index_refraction;
+
+	Fresnel(float ior = 1.0f) : index_refraction(ior)
+	{
+		isDelta = true;
+	}
+
+	Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr)
+	{
+		bool flag_reflect = false;
+		Eigen::Vector3f v2 = mathext::refract(_interact.outputDir, _interact.normal, index_refraction);
+		if ((v2 - _interact.inputDir).norm() < DELTA) {
+			flag_reflect = true;
+		}
+		if (pdf) {
+			*pdf = flag_reflect ? 1.0f : 0.0f;
+		}
+
+		return flag_reflect ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
+	}
+
+	float sample(Interaction& _interact)
+	{
+		_interact.inputDir = mathext::refract(_interact.outputDir, _interact.normal, index_refraction);
+
+		return 1.0f;
+	}
 };
