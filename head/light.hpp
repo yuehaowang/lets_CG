@@ -28,7 +28,7 @@ public:
 	 */
 	virtual Eigen::Vector3f sampleSurfacePos(float* pdf = nullptr) = 0;
 
-	virtual float samplePdf() = 0;
+	virtual float sampleSurfacePdf() = 0;
 
 	virtual bool isHit(Ray* ray, float* hit_t = nullptr) = 0;
 
@@ -52,7 +52,7 @@ public:
 		right = mathext::rot_align_normal(normal) * Eigen::Vector3f(1.0f, 0.0f, 0.0f);
 	}
 
-	float samplePdf()
+	float sampleSurfacePdf()
 	{
 		return PI_INV / (radius * radius);
 	}
@@ -65,7 +65,7 @@ public:
 
 		/* Compute PDF of sampling a point in the area light */
 		if (pdf) {
-			*pdf = samplePdf();
+			*pdf = sampleSurfacePdf();
 		}
 
 		return sampled_light_pos;

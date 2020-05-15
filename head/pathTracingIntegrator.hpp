@@ -8,8 +8,6 @@
 
 extern Config conf;
 
-int count = 0;
-int max_count = 0;
 
 class PathTracingIntegrator : public Integrator
 {
@@ -52,8 +50,6 @@ public:
 				camera->setPixel(dx, dy, L / conf.num_samples);
 			}
 		}
-
-		std::cout << count << "/" << max_count << std::endl;
 	}
 
 	Eigen::Vector3f directLighting(Interaction& isect)
@@ -67,48 +63,46 @@ public:
 		Light* l = scene->lights[0];
 
 		/**
-		 * Sample from light source
+		 * Sample light source
 		 */
-		/* Sample a delta light from the area light and find its PDF */
-		// {
-		// 	float light_pdf;
-		// 	Eigen::Vector3f light_pos = l->sampleSurfacePos(&light_pdf);
-		// 	/* Displacement of the incoming delta light */
-		// 	Eigen::Vector3f diff = light_pos - isect.entryPoint;
-		// 	/* Direction of the incoming light */
-		// 	Eigen::Vector3f wi = diff.normalized();
-		// 	isect.inputDir = wi;
-		// 	/* Radiance emitted from the sampled light */
-		// 	Eigen::Vector3f Ld = l->emission(-wi);
+		{
+			/* Sample a point from the area light and find its PDF w.r.t area */
+			float light_pdf;
+			Eigen::Vector3f light_pos = l->sampleSurfacePos(&light_pdf);
+			/* Displacement of the incoming delta light */
+			Eigen::Vector3f diff = light_pos - isect.entryPoint;
+			/* Direction of the incoming light */
+			Eigen::Vector3f wi = diff.normalized();
+			isect.inputDir = wi;
 
-		// 	/* Test visibility */
-		// 	Interaction vis_isect;
-		// 	Ray light_ray = Ray(light_pos, -wi, DELTA, diff.norm() - DELTA);
-		// 	bool visibility = !scene->intersection(&light_ray, vis_isect);
-		// 	if (visibility) {
-		// 		/* Included angle between incoming light and the surface normal */
-		// 		float cos_theta_i = wi.dot(isect.normal);
-		// 		/* PDF transformation from area to solid angle */
-		// 		light_pdf *= diff.squaredNorm() / abs(cos_theta_i);
-		// 		/* Perform geometric term on the incoming radiance */
-		// 		Ld *= abs(cos_theta_i);
+			/* Test visibility */
+			Interaction vis_isect;
+			Ray light_ray = Ray(light_pos, -wi, DELTA, diff.norm() - DELTA);
+			bool visibility = !scene->intersection(&light_ray, vis_isect);
+			if (visibility) {
+				/* Included angle between incoming light and the surface normal */
+				float cos_theta_i = wi.dot(isect.normal);
+				/* PDF transformation from area to solid angle */
+				light_pdf *= diff.squaredNorm() / abs(cos_theta_i);
+				/* Radiance emitted from the sampled light */
+				Eigen::Vector3f Ld = l->emission(-wi) * abs(cos_theta_i);
 
-		// 		if (abs(light_pdf) > EPSILON && abs(cos_theta_i) > EPSILON) {
-		// 			BRDF* brdf = (BRDF*)isect.material;
-		// 			float brdf_pdf;
-		// 			Eigen::Vector3f f = brdf->eval(isect, &brdf_pdf);
+				if (abs(light_pdf) > EPSILON && abs(cos_theta_i) > EPSILON) {
+					/* Find BRDF and compute its PDF */
+					BRDF* brdf = (BRDF*)isect.material;
+					float brdf_pdf;
+					Eigen::Vector3f f = brdf->eval(isect, &brdf_pdf);
 
-		// 			/* Add the delta light contribution according to the PDF */
-		// 			float w = mathext::power_heuristic(1, light_pdf, 1, brdf_pdf);
-		// 			L += f.cwiseProduct(Ld) * w / light_pdf;
-		// 			// L += f.cwiseProduct(Ld) / light_pdf;
-		// 		}
-		// 	}
-		// }
+					/* Compute the light contribution according to MIS */
+					float w = mathext::power_heuristic(1, light_pdf, 1, brdf_pdf);
+					L += f.cwiseProduct(Ld) * w / light_pdf;
+				}
+			}
+		}
 
 
 		/**
-		 * Sample from BRDF
+		 * Sample BRDF
 		 */
 		{
 			BRDF* brdf = (BRDF*)isect.material;
@@ -119,32 +113,26 @@ public:
 			Interaction light_isect;
 			float light_hit_t = -1;
 			Ray light_ray = Ray(isect.entryPoint, isect.inputDir, DELTA);
-			if (l->isHit(&light_ray, &light_hit_t)) {
-				/* Check the visibility of the light ray */
+			if (abs(brdf_pdf) > EPSILON && l->isHit(&light_ray, &light_hit_t)) {
+				/* Check sheltering of the light ray */
 				Interaction vis_isect;
 				bool visibility = !scene->intersection(&light_ray, vis_isect) || (vis_isect.entryDist >= light_hit_t);
 				if (visibility) {
-					float w = 1.0f;
+					/* Included angle between incoming light and the surface normal */
 					float cos_theta_i = isect.inputDir.dot(isect.normal);
+					/* Compute PDF of the incoming light w.r.t solid angle */
+					float light_pdf = 0.0f;
 					if (!brdf->isSpecular) {
-						float light_pdf = l->samplePdf() * light_hit_t / abs(cos_theta_i);
-						w = mathext::power_heuristic(1, brdf_pdf, 1, light_pdf);
+						light_pdf = l->sampleSurfacePdf() * light_hit_t / abs(cos_theta_i);
 					}
-					if (abs(brdf_pdf) > EPSILON) {
-						Eigen::Vector3f Ld = l->emission(-isect.inputDir);
-						Ld *= abs(cos_theta_i);
-						// L += f.cwiseProduct(Ld) * w / brdf_pdf;
-						L += f.cwiseProduct(Ld) / brdf_pdf;
-					}
-					
+					/* Radiance of the incoming light */
+					Eigen::Vector3f Ld = l->emission(-isect.inputDir) * abs(cos_theta_i);
+					/* Compute the light contribution according to the MIS */
+					float w = mathext::power_heuristic(1, brdf_pdf, 1, light_pdf);
+					L += f.cwiseProduct(Ld) * w / brdf_pdf;
 				}
-
-				// count += 1;
 			}
-
-			// max_count += 1;
 		}
-		
 		
 		return L;
 	}
