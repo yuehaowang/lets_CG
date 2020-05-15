@@ -87,7 +87,6 @@ public:
 	}
 };
 
-
 #define IOR_DIAMOND 2.417f
 #define IOR_AMBER	1.550f
 #define IOR_WATER   1.333f
@@ -105,16 +104,16 @@ public:
 
 	Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr)
 	{
-		bool flag_reflect = false;
+		bool flag_refract = false;
 		Eigen::Vector3f v2 = mathext::refract(_interact.outputDir, _interact.normal, index_refraction);
 		if ((v2 - _interact.inputDir).norm() < DELTA) {
-			flag_reflect = true;
+			flag_refract = true;
 		}
 		if (pdf) {
-			*pdf = flag_reflect ? 1.0f : 0.0f;
+			*pdf = flag_refract ? 1.0f : 0.0f;
 		}
 
-		return flag_reflect ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
+		return flag_refract ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
 	}
 
 	float sample(Interaction& _interact)

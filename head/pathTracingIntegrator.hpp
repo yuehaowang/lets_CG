@@ -57,7 +57,7 @@ public:
 			/* Sample a point from the area light and find its PDF w.r.t area */
 			float light_pdf;
 			Eigen::Vector3f light_pos = l->sampleSurfacePos(&light_pdf);
-			/* Displacement of the incoming delta light */
+			/* Displacement of the sampled incoming light */
 			Eigen::Vector3f diff = light_pos - isect.entryPoint;
 			/* Direction of the incoming light */
 			Eigen::Vector3f wi = diff.normalized();
