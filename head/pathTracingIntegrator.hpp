@@ -152,6 +152,7 @@ public:
 				break;
 			}
 
+			/* Specify outcoming direction */
 			isect.outputDir = -ray.m_Dir;
 
 			/* Perform direct lighting */

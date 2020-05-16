@@ -6,16 +6,23 @@
 class BRDF
 {
 public:
-	BRDF()
+	enum Flag {
+		REFLECTION_DIFFUSE = 0x00000001,
+		REFLECTION_SEPULAR = 0x00000010,
+		REFRACTION = 0x00000100
+	};
+
+	BRDF(Flag f)
 	{
-		isDelta = false;
+		flag = f;
+		isDelta = (flag & REFLECTION_SEPULAR) || (flag & REFRACTION);
 	}
 	
 	/* Evaluate the BRDF
 	 * The information in @Interaction contains ray's direction, normal
 	 * and other information that you might need
 	 */
-	virtual Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr) = 0;
+	virtual Eigen::Vector3f eval(Interaction& _interact, float* pdf = nullptr) = 0;
 	
 	/* Sample a direction based on the BRDF
 	 * The sampled direction is stored in @Interaction
@@ -25,12 +32,25 @@ public:
 	
 	/* Mark if the BRDF is specular */
 	bool isDelta;
+
+	Flag flag;
 };
+
+BRDF::Flag operator| (BRDF::Flag f1, BRDF::Flag f2)
+{
+    return static_cast<BRDF::Flag>(static_cast<int>(f1) | static_cast<int>(f2));
+}
 
 
 class IdealDiffuse : public BRDF
 {
 public:
+
+	IdealDiffuse()
+	: BRDF(REFLECTION_DIFFUSE)
+	{
+
+	}
 	
 	Eigen::Vector3f eval(Interaction& _interact, float* pdf = nullptr)
 	{
@@ -61,22 +81,23 @@ class IdealSpecular : public BRDF
 public:
 
 	IdealSpecular()
+	: BRDF(REFLECTION_SEPULAR)
 	{
-		isDelta = true;
+
 	}
 
-	Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr)
+	Eigen::Vector3f eval(Interaction& _interact, float* pdf = nullptr)
 	{
-		bool flag_reflect = false;
+		bool is_reflect = false;
 		Eigen::Vector3f v2 = mathext::reflect(_interact.outputDir, _interact.normal);
 		if ((v2 - _interact.inputDir).norm() < DELTA) {
-			flag_reflect = true;
+			is_reflect = true;
 		}
 		if (pdf) {
-			*pdf = flag_reflect ? 1.0f : 0.0f;
+			*pdf = is_reflect ? 1.0f : 0.0f;
 		}
 
-		return flag_reflect ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
+		return is_reflect ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
 	};
 
 	float sample(Interaction& _interact)
@@ -90,36 +111,118 @@ public:
 #define IOR_DIAMOND 2.417f
 #define IOR_AMBER	1.550f
 #define IOR_WATER   1.333f
+#define IOR_GLASS   1.520f
+#define IOR_VACUUM  1.000f
 
-class Fresnel : public BRDF
+class IdealRefraction : public BRDF
+{
+public:
+
+	float ior;
+
+	IdealRefraction(float idx_refract = 1.0f)
+	: BRDF(REFRACTION)
+	, ior(idx_refract)
+	{
+
+	}
+
+	Eigen::Vector3f eval(Interaction& _interact, float* pdf = nullptr)
+	{
+		bool is_refract = false;
+		Eigen::Vector3f v2 = mathext::refract(_interact.outputDir, _interact.normal, ior);
+		if ((v2 - _interact.inputDir).norm() < DELTA) {
+			is_refract = true;
+		}
+		if (pdf) {
+			*pdf = is_refract ? 1.0f : 0.0f;
+		}
+
+		return is_refract ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
+	}
+
+	float sample(Interaction& _interact)
+	{
+		_interact.inputDir = mathext::refract(_interact.outputDir, _interact.normal, ior);
+
+		return 1.0f;
+	}
+};
+
+
+class FresnelBlend : public BRDF
 {
 public:
 
 	float index_refraction;
 
-	Fresnel(float ior = 1.0f) : index_refraction(ior)
+	IdealSpecular specular_brdf;
+	IdealRefraction refract_brdf;
+
+	FresnelBlend(float ior = 1.0f)
+	: BRDF(REFLECTION_SEPULAR | REFRACTION)
+	, refract_brdf(ior)
 	{
-		isDelta = true;
+	
 	}
 
-	Eigen::Vector3f eval(Interaction &_interact, float* pdf = nullptr)
+	float fresnel_R_eff(const Eigen::Vector3f& I, const Eigen::Vector3f& N) const
 	{
-		bool flag_refract = false;
-		Eigen::Vector3f v2 = mathext::refract(_interact.outputDir, _interact.normal, index_refraction);
-		if ((v2 - _interact.inputDir).norm() < DELTA) {
-			flag_refract = true;
+		/* Effective reflectivity */
+		float R_eff = 1.0f;
+		/* Included angle of incidence and the normal */
+		float cosi = I.dot(N);
+		/* IOR of mediums */
+		float eta_i, eta_t; 
+		if (cosi > 0) {
+			eta_i = 1.0f;
+			eta_t = refract_brdf.ior;
+		} else {
+			cosi *= -1;
+			eta_i = refract_brdf.ior;
+			eta_t = 1.0f;
 		}
-		if (pdf) {
-			*pdf = flag_refract ? 1.0f : 0.0f;
+		/* Refraction angle */
+		float sint = (eta_i / eta_t) * sqrt(1 - cosi * cosi); 
+		/* Once refraction angle >= 1, consider totally internal reflection */
+		if (sint < 1) { 
+			float cost = sqrt(1 - sint * sint); 
+			float Rs = ((eta_t * cosi) - (eta_i * cost)) / ((eta_t * cosi) + (eta_i * cost)); 
+			float Rp = ((eta_i * cosi) - (eta_t * cost)) / ((eta_i * cosi) + (eta_t * cost)); 
+			R_eff = (Rs * Rs + Rp * Rp) / 2; 
 		}
 
-		return flag_refract ? _interact.surfaceColor : Eigen::Vector3f(0, 0, 0);
+		return R_eff;
+	}
+
+	Eigen::Vector3f eval(Interaction& _interact, float* pdf = nullptr)
+	{
+		float R_eff = fresnel_R_eff(_interact.outputDir, _interact.normal);
+		Eigen::Vector2f effs(R_eff, 1 - R_eff);
+		Eigen::Vector2f pdfs;
+		Eigen::MatrixXf fs(3, 2);
+		fs.col(0) << specular_brdf.eval(_interact, &pdfs[0]);
+		fs.col(1) << refract_brdf.eval(_interact, &pdfs[1]);
+
+		Eigen::Vector3f::Index j;
+		pdfs.maxCoeff(&j);
+
+		if (pdf) {
+			*pdf = pdfs(j) * effs(j);
+		}
+
+		return fs.col(j);
 	}
 
 	float sample(Interaction& _interact)
 	{
-		_interact.inputDir = mathext::refract(_interact.outputDir, _interact.normal, index_refraction);
-
-		return 1.0f;
+		float R_eff = fresnel_R_eff(_interact.outputDir, _interact.normal);
+		/* Sample according to reflection and transmittance effects */
+		float u = mathext::unif(0, 1.0f)[0];
+		if (u > R_eff) {
+			return refract_brdf.sample(_interact) * (1 - R_eff);
+		} else {
+			return specular_brdf.sample(_interact) * R_eff;
+		}
 	}
 };

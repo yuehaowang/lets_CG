@@ -242,11 +242,11 @@ public:
 			gridDim[i] = (int)fmaxf(dim * m_BoundingBox.getDist(i), 1);
 			gridDeltaDist[i] = m_BoundingBox.getDist(i) / gridDim[i];
 		}
-		std::cout << "triangleCount:" << triangleCount << std::endl;
-		std::cout << "m_BoundingBox.lb:" << m_BoundingBox.lb[0] << " " << m_BoundingBox.lb[1] << " " << m_BoundingBox.lb[2] << std::endl;
-		std::cout << "m_BoundingBox.ub:" << m_BoundingBox.ub[0] << " " << m_BoundingBox.ub[1] << " " << m_BoundingBox.ub[2] << std::endl;
-		std::cout << "gridDim:" << gridDim[0] << " " << gridDim[1] << " " << gridDim[2] << std::endl;
-		std::cout << "gridDeltaDist:" << gridDeltaDist[0] << " " << gridDeltaDist[1] << " " << gridDeltaDist[2] << std::endl;
+		// std::cout << "triangleCount:" << triangleCount << std::endl;
+		// std::cout << "m_BoundingBox.lb:" << m_BoundingBox.lb[0] << " " << m_BoundingBox.lb[1] << " " << m_BoundingBox.lb[2] << std::endl;
+		// std::cout << "m_BoundingBox.ub:" << m_BoundingBox.ub[0] << " " << m_BoundingBox.ub[1] << " " << m_BoundingBox.ub[2] << std::endl;
+		// std::cout << "gridDim:" << gridDim[0] << " " << gridDim[1] << " " << gridDim[2] << std::endl;
+		// std::cout << "gridDeltaDist:" << gridDeltaDist[0] << " " << gridDeltaDist[1] << " " << gridDeltaDist[2] << std::endl;
 
 		grid.resize(gridDim[0] * gridDim[1] * gridDim[2]);
 
@@ -278,7 +278,7 @@ public:
 				}
 			}
 		}
-		std::cout << "gridContentCount:" << gridContentCount << std::endl << std::endl;
+		// std::cout << "gridContentCount:" << gridContentCount << std::endl << std::endl;
 
 		isUniformExisting = true;
 	}

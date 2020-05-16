@@ -12,6 +12,8 @@
 #include "pathTracingIntegrator.hpp"
 #include "triangleMesh.hpp"
 
+#define SCENE 1
+
 Config conf;
 
 inline float clamp(float x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
@@ -39,13 +41,24 @@ std::string to_string_float(float v, int n = 3)
 
 int main(int argc, char* argv[])
 {
+	/*
+	 * 0. Configuration & Loading
+	 */
+	std::string obj_1_filePos("../resources/Cloud_1.obj");
+	std::string obj_2_filePos("../resources/p.obj");
+	std::string obj_3_filePos("../resources/cube_8p.obj");
+	std::string obj_4_filePos("../resources/sphere.obj");
+
 	conf.parse_args(argc, argv);
+
 
 	/*
 	 * 1. Camera Setting
 	 */
 	Eigen::Vector3f cameraPosition(0, 0, 10);
 	Eigen::Vector3f cameraLookAt(0, 0, 0);
+	// Eigen::Vector3f cameraPosition(0, 5, 3);
+	// Eigen::Vector3f cameraLookAt(0, 0, -3);
 	Eigen::Vector3f cameraUp(0, 1, 0);
 	float verticalFov = 45;
 	Eigen::Vector2i filmRes(500, 500);
@@ -95,7 +108,6 @@ int main(int argc, char* argv[])
 	/*
 	 * 3. Triangle mesh setting
 	 */
-	std::string obj_1_filePos("../resources/Cloud_1.obj");
 	Eigen::Vector3f obj_1_color(1,1,1);
 	Eigen::Affine3f obj_1_transform;
 	obj_1_transform = Eigen::Translation3f(3, 1, -8) * Eigen::Scaling(0.5f);
@@ -103,7 +115,6 @@ int main(int argc, char* argv[])
 	mesh_1.applyTransformation(obj_1_transform);
 	mesh_1.buildUniformGrid();
 
-	std::string obj_2_filePos("../resources/p.obj");
 	Eigen::Vector3f obj_2_color(1,1,1);
 	Eigen::Affine3f obj_2_transform;
 	obj_2_transform = Eigen::Translation3f(3, -6.2, -8) * Eigen::Scaling(0.3f);
@@ -111,7 +122,6 @@ int main(int argc, char* argv[])
 	mesh_2.applyTransformation(obj_2_transform);
 	mesh_2.buildUniformGrid();
 
-	std::string obj_3_filePos("../resources/cube_8p.obj");
 	Eigen::Vector3f obj_3_color(1,1,1);
 	Eigen::Affine3f obj_3_transform;
 	obj_3_transform = Eigen::Translation3f(-2, -5.2, -8) * Eigen::Scaling(0.8f);
@@ -119,13 +129,19 @@ int main(int argc, char* argv[])
 	mesh_3.applyTransformation(obj_3_transform);
 	mesh_3.buildUniformGrid();
 
-	std::string obj_4_filePos("../resources/sphere.obj");
 	Eigen::Vector3f obj_4_color(1,1,1);
 	Eigen::Affine3f obj_4_transform;
-	obj_4_transform = Eigen::Translation3f(-4.5, 1, -8) * Eigen::Scaling(0.5f);
-	TriangleMesh mesh_4(obj_4_color, obj_4_filePos);
+	obj_4_transform = Eigen::Translation3f(0, -4.6, -8) * Eigen::Scaling(4.0f, 1.5f, 5.0f);
+	TriangleMesh mesh_4(obj_4_color, obj_3_filePos);
 	mesh_4.applyTransformation(obj_4_transform);
 	mesh_4.buildUniformGrid();
+
+	Eigen::Vector3f obj_5_color(1,1,1);
+	Eigen::Affine3f obj_5_transform;
+	obj_5_transform = Eigen::Translation3f(-4, 1, -8) * Eigen::Scaling(0.5f);
+	TriangleMesh mesh_5(obj_5_color, obj_4_filePos);
+	mesh_5.applyTransformation(obj_5_transform);
+	mesh_5.buildUniformGrid();
 
 	/*
 	 * 4. Light setting
@@ -138,9 +154,12 @@ int main(int argc, char* argv[])
 	 */
 	BRDF* diffuseMat = new IdealDiffuse();
 	BRDF* specularMat = new IdealSpecular();
-	BRDF* fresnelMat = new Fresnel(IOR_DIAMOND);
+	BRDF* refractMat = new IdealRefraction(IOR_DIAMOND);
+	BRDF* fresnelMat = new FresnelBlend(IOR_WATER);
+
 	backWall.material = diffuseMat;
-	floor.material = specularMat;
+	// floor.material = specularMat;
+	floor.material = diffuseMat;
 	leftWall.material = diffuseMat;
 	rightWall.material = diffuseMat;
 	ceiling.material = diffuseMat;
@@ -148,6 +167,7 @@ int main(int argc, char* argv[])
 	mesh_2.material = diffuseMat;
 	mesh_3.material = diffuseMat;
 	mesh_4.material = fresnelMat;
+	mesh_5.material = refractMat;
 
 
 	/*
@@ -163,6 +183,7 @@ int main(int argc, char* argv[])
 	scene.addShape(&mesh_2);
 	scene.addShape(&mesh_3);
 	scene.addShape(&mesh_4);
+	scene.addShape(&mesh_5);
 	scene.addLight(&light);
 	
 	/*
@@ -174,7 +195,6 @@ int main(int argc, char* argv[])
 	/*
 	 * 7. Output image to file
 	 */
-	// std::string outputPath = "./output_" + std::to_string(conf.num_samples) + "_" + std::to_string(conf.max_depth) + ".png";
 	std::vector<std::string> tokens;
 	tokens.push_back(conf.integral_method);
 	tokens.push_back(std::to_string(conf.num_samples));

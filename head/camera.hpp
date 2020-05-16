@@ -15,8 +15,8 @@ public:
 	{
         m_Pos = pos;
         m_Forward = (lookAt - pos).normalized();
-        m_Right = m_Forward.cross(up);
-        m_Up = m_Right.cross(m_Forward);
+        m_Up = (up - (up.dot(m_Forward) * m_Forward)).normalized();
+        m_Right = m_Forward.cross(m_Up);
 
         float vlen = tanf(0.5f * verticalFov * M_PIf / 180.0f);
         m_Up *= vlen;
