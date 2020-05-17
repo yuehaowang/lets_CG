@@ -10,7 +10,7 @@ public:
         pixelSamples.resize(m_Res.x() * m_Res.y(), Eigen::Vector3f(1, 1, 1));
     }
 
-	float getAspectRatio() {
+    float getAspectRatio() {
         return static_cast<float>(m_Res.x()) / m_Res.y();
     }
 

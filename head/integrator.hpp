@@ -6,12 +6,12 @@
 class Integrator
 {
 public:
-	Scene* scene;
-	Camera* camera;
-	
-	Integrator(Scene* scene, Camera* camera) : scene(scene), camera(camera) {}
-	virtual ~Integrator() = default;
-	
-	virtual void render() = 0;
-	virtual Eigen::Vector3f radiance(Ray ray) = 0;
+    Scene* scene;
+    Camera* camera;
+    
+    Integrator(Scene* scene, Camera* camera) : scene(scene), camera(camera) {}
+    virtual ~Integrator() = default;
+    
+    virtual void render() = 0;
+    virtual Eigen::Vector3f radiance(Ray ray) = 0;
 };
