@@ -23,17 +23,24 @@ public:
 		int dx, dy;
 		int w = camera->m_Film.m_Res.x(), h = camera->m_Film.m_Res.y();
 
+		int n = sqrt(conf.num_samples);
+
 		#pragma omp parallel for private(dy)
 		for (dx = 0; dx < w; dx++)
 		{
 			for (dy = 0; dy < h; dy++)
 			{
-				/* Generate a ray from the camera to a pixel */
-				Ray ray = camera->generateRay(dx, dy);
-				/* Sample multiple times for a pixel */
 				Eigen::Vector3f L(0, 0, 0);
-				for (int t = 0; t < conf.num_samples; ++t) {
-					L += radiance(ray);
+				/* Sample multiple times for a pixel using jitter */
+				for (int s = 0; s <= n-1; ++s) {
+       				for (int t = 0; t <= n-1; ++t) {
+						/* Generate and jitter a ray from the camera to a pixel */
+           				float u =  (s + mathext::unif(0, 1)[0]) / n;
+           				float v =  (t + mathext::unif(0, 1)[0]) / n;
+						Ray ray = camera->generateRay(dx + u, dy + v);
+						/* Compute radiance along the sampled ray */
+						L += radiance(ray);
+					}
 				}
 				camera->setPixel(dx, dy, L / conf.num_samples);
 			}
