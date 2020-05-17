@@ -6,10 +6,15 @@ Global illumination using Monte-Carlo path tracing.
 ## Results
 
 - samples = 2048, max depth = 5
+
 ![Result 1](results/res1.png)
 
+- samples = 16384, max depth = 5
 
-## Reference
+![Result 1](results/res2.png)
+
+
+## References
 
 [Path tracing - Physically Based Rendering](http://www.pbr-book.org/3ed-2018/Light_Transport_I_Surface_Reflection/Path_Tracing.html)
 
