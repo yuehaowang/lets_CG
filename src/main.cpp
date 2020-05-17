@@ -12,7 +12,6 @@
 #include "pathTracingIntegrator.hpp"
 #include "triangleMesh.hpp"
 
-#define SCENE 1
 
 Config conf;
 
@@ -158,8 +157,8 @@ int main(int argc, char* argv[])
 	BRDF* fresnelMat = new FresnelBlend(IOR_WATER);
 
 	backWall.material = diffuseMat;
-	// floor.material = specularMat;
-	floor.material = diffuseMat;
+	floor.material = specularMat;
+	// floor.material = diffuseMat;
 	leftWall.material = diffuseMat;
 	rightWall.material = diffuseMat;
 	ceiling.material = diffuseMat;
@@ -182,7 +181,7 @@ int main(int argc, char* argv[])
 	scene.addShape(&mesh_1);
 	scene.addShape(&mesh_2);
 	scene.addShape(&mesh_3);
-	scene.addShape(&mesh_4);
+	// scene.addShape(&mesh_4);
 	scene.addShape(&mesh_5);
 	scene.addLight(&light);
 	

@@ -51,7 +51,11 @@ struct Config
 			if (splitter_pos != std::string::npos) {
 				std::string arg_key = arg.substr(0, splitter_pos);
 				std::string arg_val = arg.substr(splitter_pos + 1);
-				args_map[arg_key] = arg_val;
+				if (args_map.find(arg_key) != args_map.end()) {
+					args_map[arg_key] = arg_val;
+				} else {
+					std::cout << "Unknown option: " << arg << std::endl;
+				}
 			} else {
 				args_map[arg] = "1";
 			}
