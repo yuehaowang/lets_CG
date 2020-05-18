@@ -5,14 +5,21 @@ Global illumination using Monte-Carlo path tracing.
 
 ## Results
 
-- samples = 2048, max depth = 5
+### Ideal Diffusion, Specular, and Refraction 
+
+- (samples = 2048, max depth = 5)
 
 ![Result 1](results/res1.png)
 
-- samples = 16384, max depth = 5
+- (samples = 16384, max depth = 5)
 
-![Result 1](results/res2.png)
+![Result 2](results/res2.png)
 
+### Fresnel Effect
+
+- (samples = 131072, max depth = 5)
+
+![Result 3](results/res3.png)
 
 ## References
 

@@ -201,8 +201,8 @@ public:
         Eigen::Vector2f effs(R_eff, 1 - R_eff);
         Eigen::Vector2f pdfs;
         Eigen::MatrixXf fs(3, 2);
-        fs.col(0) << specular_brdf.eval(_interact, &pdfs[0]);
-        fs.col(1) << refract_brdf.eval(_interact, &pdfs[1]);
+        fs.col(0) << specular_brdf.eval(_interact, &pdfs(0));
+        fs.col(1) << refract_brdf.eval(_interact, &pdfs(1));
 
         Eigen::Vector3f::Index j;
         pdfs.maxCoeff(&j);
