@@ -1,4 +1,4 @@
-# Let's OpenGL
+# OpenGL
 
 Learning and Practice of Modern OpenGL.
 
