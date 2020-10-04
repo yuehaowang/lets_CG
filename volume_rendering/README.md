@@ -29,8 +29,8 @@ A basic volume renderer with ray sampler, tri-linear/nearest-neighbor interpolat
     - -num_thread: The number of using threads.
     - -backward: Enable back-to-front composition.
     - -forward: Enable front-to-back composition.
-    - -out_dir: The output directory (default: ./).
-    - -in_dir: The input directory (default: data/).
+    - -out_dir: The output directory (default: *./*).
+    - -in_dir: The input directory (default: *data/*).
     - -frame: The filename of the volume data to render (e.g. test2).
     - -out_res: The resolution of output. Default: 1024.
     - -sample_step: Length of sampling step. Default: 0.1.
