@@ -16,7 +16,7 @@ An implementation of Loop subdivision.
     make
     ```
 
-2. Place your .obj model to the *resources* directory.
+2. Place your .obj model to the *resources/* directory.
 
 3. Suppose your model filename is *abc.obj*. Type the command to perform subdivision on your model:
 
