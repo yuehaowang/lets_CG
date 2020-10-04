@@ -1,6 +1,6 @@
 # Volume Rendering Using Ray-casting
 
-A basic volume renderer with ray sampler, tri-linear interpolator, Phong shading-based transfer function, from-to-back and back-to-front compositor.
+A basic volume renderer with ray sampler, tri-linear interpolator, Phong shading-based transfer function, front-to-back and back-to-front compositor.
 
 ## Dependencies
 
@@ -13,11 +13,11 @@ A basic volume renderer with ray sampler, tri-linear interpolator, Phong shading
 
 - Trilinear interpolator, back-to-front composition, sample step=0.01
 
-![Volume Rendering Result](results/tri_bw.png)
+<img width=500 src='results/tri_bw.png' alt='Volume Rendering Result1'>
 
 - Trilinear interpolator, back-to-front composition, sample step=0.1
 
-![Volume Rendering Result](results/tri_bw_s.png)
+<img width=500 src='results/tri_bw_s.png' alt='Volume Rendering Result2'>
 
 - More results are placed in the *results/* directory.
 
