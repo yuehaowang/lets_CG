@@ -8,5 +8,5 @@
 	path = convex_hull_3d
 	url = https://github.com/yuehaowang/convex_hull_3d.git
 [submodule "volume_renderer_cuda"]
-	path = volume_renderer
+	path = volume_renderer_cuda
 	url = https://github.com/yuehaowang/volume_renderer.git
