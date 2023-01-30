@@ -24,7 +24,7 @@ A collection of essential algorithms and applications for rendering and geometry
 
     Implements ray tracing, Marte Carlo integral, grid acceleration structure, and importance sampling.
 
-- [Volume Rendering](https://github.com/yuehaowang/lets_CG/tree/master/volume_rendering)
+- [Volume Rendering](https://github.com/yuehaowang/lets_CG/tree/master/volume_rendering_cpu)
 
     A basic volume renderer with ray sampler, tri-linear/nearest-neighbor interpolation, transfer function and backward/forward composition.
 
