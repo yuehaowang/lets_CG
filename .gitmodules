@@ -1,0 +1,12 @@
+[submodule "global_illumination"]
+	path = global_illumination
+	url = https://github.com/yuehaowang/global_illumination.git
+[submodule "OpenGL_grocery"]
+	path = OpenGL_grocery
+	url = https://github.com/yuehaowang/OpenGL_grocery.git
+[submodule "convex_hull_3d"]
+	path = convex_hull_3d
+	url = https://github.com/yuehaowang/convex_hull_3d.git
+[submodule "volume_renderer_cuda"]
+	path = volume_renderer
+	url = https://github.com/yuehaowang/volume_renderer.git
